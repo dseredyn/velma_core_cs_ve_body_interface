@@ -1,0 +1,30 @@
+import("rtt_ros");
+import("rtt_roscomm");
+import("rtt_rosparam");
+require("os")
+
+ros.import("rtt_rospack")
+ros.import("rtt_actionlib");
+ros.import("rtt_barrett_hand_controller_msgs");
+ros.import("rtt_velma_low_level_interface_msgs");
+ros.import("velma_low_level_interface");
+
+ros.import("eigen_typekit");
+ros.import("rtt_std_msgs");
+ros.import("port_operations");
+
+var ConnPolicy cp;
+cp.type = BUFFER;
+# buffer of size 10
+cp.size = 10;
+# the MQueue protocol id
+cp.transport = 2;
+# the connection id
+cp.name_id   = "/mydata_conn";
+
+loadComponent("lli_low_tx","VelmaLLILowTx")
+setActivityOnCPU("lli_low_tx", 0.5, 1, ORO_SCHED_RT, 0);
+lli_low_tx.configure();
+stream("lli_low_tx.status_OUTPORT", cp);
+lli_low_tx.start();
+
