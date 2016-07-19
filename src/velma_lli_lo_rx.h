@@ -25,20 +25,43 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <rtt/Component.hpp>
+#ifndef VELMA_LLI_LO_RX_H_
+#define VELMA_LLI_LO_RX_H_
 
-#include "velma_lli_hi_rx.h"
-#include "velma_lli_hi_tx.h"
-#include "velma_lli_lo_rx.h"
-#include "velma_lli_lo_tx.h"
+#include <cstring>
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
+#include <vector>
+#include <string>
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
+#include "rtt/RTT.hpp"
+#include "rtt/os/TimeService.hpp"
+#include "Eigen/Dense"
+#include "Eigen/LU"
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoRx)
+#include "velma_low_level_interface_msgs/VelmaLowLevelCommand.h"
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoTx)
+#include "eigen_conversions/eigen_msg.h"
 
-ORO_CREATE_COMPONENT_LIBRARY()
+class VelmaLLILoRx: public RTT::TaskContext {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  explicit VelmaLLILoRx(const std::string &name);
+
+  bool configureHook();
+
+  bool startHook();
+
+  void stopHook();
+
+  void updateHook();
+
+ private:
+
+    RTT::InputPort<velma_low_level_interface_msgs::VelmaLowLevelCommand> port_cmd_in_;
+
+    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_in_;
+};
+
+#endif  // VELMA_LLI_LO_RX_H_
 

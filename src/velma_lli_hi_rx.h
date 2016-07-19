@@ -25,8 +25,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef VELMA_LLI_HIGH_RX_H_
-#define VELMA_LLI_HIGH_RX_H_
+#ifndef VELMA_LLI_HI_RX_H_
+#define VELMA_LLI_HI_RX_H_
 
 #include <cstring>
 
@@ -42,11 +42,11 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
-class VelmaLLIHighRx: public RTT::TaskContext {
+class VelmaLLIHiRx: public RTT::TaskContext {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  explicit VelmaLLIHighRx(const std::string &name);
+  explicit VelmaLLIHiRx(const std::string &name);
 
   bool configureHook();
 
@@ -81,5 +81,5 @@ class VelmaLLIHighRx: public RTT::TaskContext {
     velma_low_level_interface_msgs::VelmaLowLevelStatus status_in_;
 };
 
-#endif  // VELMA_LLI_HIGH_RX_H_
+#endif  // VELMA_LLI_HI_RX_H_
 

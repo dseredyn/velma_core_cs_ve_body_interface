@@ -13,18 +13,27 @@ ros.import("eigen_typekit");
 ros.import("rtt_std_msgs");
 ros.import("port_operations");
 
-var ConnPolicy cp;
-cp.type = BUFFER;
-# buffer of size 10
-cp.size = 10;
-# the MQueue protocol id
-cp.transport = 2;
-# the connection id
-cp.name_id   = "/mydata_conn";
+var ConnPolicy cpTx;
+cpTx.transport = 2;                 # the MQueue protocol id
+cpTx.name_id   = "/lli_status";     # the connection id
 
-loadComponent("lli_low_tx","VelmaLLILowTx")
-setActivityOnCPU("lli_low_tx", 0.5, 1, ORO_SCHED_RT, 0);
-lli_low_tx.configure();
-stream("lli_low_tx.status_OUTPORT", cp);
-lli_low_tx.start();
+loadComponent("lli_lo_tx","VelmaLLILoTx")
+setActivity("lli_lo_tx", 2.0, 1, ORO_SCHED_RT);
+lli_lo_tx.configure();
+stream("lli_lo_tx.status_OUTPORT", cpTx);
+
+
+
+var ConnPolicy cpRx;
+cpRx.transport = 2;                 # the MQueue protocol id
+cpRx.name_id   = "/lli_command";    # the connection id
+
+loadComponent("lli_lo_rx","VelmaLLILoRx")
+setActivity("lli_lo_rx", 0, 1, ORO_SCHED_RT);
+lli_lo_rx.configure();
+stream("lli_lo_rx.command_INPORT", cpRx);
+
+
+lli_lo_tx.start();
+lli_lo_rx.start();
 

@@ -27,18 +27,33 @@
 
 #include <rtt/Component.hpp>
 
-#include "velma_lli_hi_rx.h"
-#include "velma_lli_hi_tx.h"
 #include "velma_lli_lo_rx.h"
-#include "velma_lli_lo_tx.h"
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
+  VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
+    RTT::TaskContext(name, PreOperational) {
+    this->ports()->addPort("command_INPORT", port_cmd_in_);
+  }
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
+  bool VelmaLLILoRx::configureHook() {
+    return true;
+  }
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoRx)
+  bool VelmaLLILoRx::startHook() {
+//    RESTRICT_ALLOC;
+    cmd_in_.rHandTactile_cmd = 0;
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoTx)
+//    UNRESTRICT_ALLOC;
+    return true;
+  }
 
-ORO_CREATE_COMPONENT_LIBRARY()
+  void VelmaLLILoRx::stopHook() {
+  }
+
+  void VelmaLLILoRx::updateHook() {
+//    RESTRICT_ALLOC;
+    // write outputs
+//    UNRESTRICT_ALLOC;
+    port_cmd_in_.read(cmd_in_);
+    std::cout << "VelmaLLILoRx " << cmd_in_.rHandTactile_cmd << std::endl;
+  }
 

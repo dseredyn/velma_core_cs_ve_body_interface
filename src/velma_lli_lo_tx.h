@@ -25,35 +25,55 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <rtt/Component.hpp>
+#ifndef VELMA_LLI_LO_TX_H_
+#define VELMA_LLI_LO_TX_H_
 
-#include "velma_lli_low_tx.h"
+#include <cstring>
 
-  VelmaLLILowTx::VelmaLLILowTx(const std::string &name) :
-    RTT::TaskContext(name, PreOperational) {
-    this->ports()->addPort("status_OUTPORT", port_status_out_);
-  }
+#include <vector>
+#include <string>
 
-  bool VelmaLLILowTx::configureHook() {
-    return true;
-  }
+#include "rtt/RTT.hpp"
+#include "rtt/os/TimeService.hpp"
+#include "Eigen/Dense"
+#include "Eigen/LU"
 
-  bool VelmaLLILowTx::startHook() {
-//    RESTRICT_ALLOC;
-    status_out_.lHand_s = 0;
+#include <geometry_msgs/Wrench.h>
+#include <geometry_msgs/WrenchStamped.h>
+#include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
+#include <barrett_hand_controller_msgs/BHPressureState.h>
 
-//    UNRESTRICT_ALLOC;
-    return true;
-  }
+#include <kuka_lwr_fri/friComm.h>
 
-  void VelmaLLILowTx::stopHook() {
-  }
+#include "eigen_conversions/eigen_msg.h"
 
-  void VelmaLLILowTx::updateHook() {
-//    RESTRICT_ALLOC;
-    // write outputs
-//    UNRESTRICT_ALLOC;
-    status_out_.lHand_s++;
-    port_status_out_.write(status_out_);
-  }
+#include "velma_lli_status_ports.h"
+
+class VelmaLLILoTx: public RTT::TaskContext {
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  explicit VelmaLLILoTx(const std::string &name);
+
+  bool configureHook();
+
+  bool startHook();
+
+  void stopHook();
+
+  void updateHook();
+
+ private:
+
+    // low-level interface port
+    RTT::OutputPort<velma_low_level_interface_msgs::VelmaLowLevelStatus> port_status_out_;
+
+    // low-level interface port variable
+    velma_low_level_interface_msgs::VelmaLowLevelStatus status_out_;
+
+    VelmaLLIStatusInput in_;
+
+};
+
+#endif  // VELMA_LLI_LO_TX_H_
 

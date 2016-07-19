@@ -25,8 +25,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef VELMA_LLI_LOW_TX_H_
-#define VELMA_LLI_LOW_TX_H_
+#ifndef VELMA_LLI_HI_TX_H_
+#define VELMA_LLI_HI_TX_H_
 
 #include <cstring>
 
@@ -38,15 +38,15 @@
 #include "Eigen/Dense"
 #include "Eigen/LU"
 
-#include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
+#include "velma_low_level_interface_msgs/VelmaLowLevelCommand.h"
 
 #include "eigen_conversions/eigen_msg.h"
 
-class VelmaLLILowTx: public RTT::TaskContext {
+class VelmaLLIHiTx: public RTT::TaskContext {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  explicit VelmaLLILowTx(const std::string &name);
+  explicit VelmaLLIHiTx(const std::string &name);
 
   bool configureHook();
 
@@ -56,30 +56,11 @@ class VelmaLLILowTx: public RTT::TaskContext {
 
   void updateHook();
 
-/*  typedef Eigen::MatrixXd Jacobian;
-  typedef Eigen::MatrixXd Inertia;
-  typedef Eigen::VectorXd Joints;
-  typedef Eigen::VectorXd Stiffness;
-  typedef Eigen::VectorXd Spring;
-  typedef Eigen::VectorXd Force;
-  typedef Eigen::Matrix<double, 4, 1> ToolMass;
-  typedef Eigen::Matrix<double, 7, 1> Tool;
-*/
  private:
-//  RTT::InputPort<Eigen::VectorXd> port_joint_position_;
-//  RTT::InputPort<Eigen::VectorXd> port_joint_velocity_;
-//  RTT::InputPort<Eigen::MatrixXd> port_mass_matrix_inv_;
+    RTT::OutputPort<velma_low_level_interface_msgs::VelmaLowLevelCommand> port_cmd_out_;
 
-//  std::vector<RTT::InputPort<geometry_msgs::Pose>* > port_cartesian_position_command_;
-  RTT::OutputPort<velma_low_level_interface_msgs::VelmaLowLevelStatus> port_status_out_;
-//  std::vector<RTT::InputPort<geometry_msgs::Pose>* > port_tool_position_command_;
-//  std::vector<RTT::InputPort<cartesian_trajectory_msgs::CartesianImpedance>* > port_cartesian_impedance_command_;
-
-//  RTT::InputPort<Eigen::VectorXd> port_nullspace_torque_command_;
-
-//  RTT::OutputPort<Eigen::VectorXd> port_joint_torque_command_;
-    velma_low_level_interface_msgs::VelmaLowLevelStatus status_out_;
+    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_out_;
 };
 
-#endif  // VELMA_LLI_LOW_TX_H_
+#endif  // VELMA_LLI_HI_TX_H_
 

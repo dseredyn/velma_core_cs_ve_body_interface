@@ -27,32 +27,34 @@
 
 #include <rtt/Component.hpp>
 
-#include "velma_lli_high_rx.h"
+#include "velma_lli_hi_tx.h"
 
-  VelmaLLIHighRx::VelmaLLIHighRx(const std::string &name) :
+  VelmaLLIHiTx::VelmaLLIHiTx(const std::string &name) :
     RTT::TaskContext(name, PreOperational) {
-    this->ports()->addPort("status_INPORT", port_status_in_);
+    this->ports()->addPort("command_OUTPORT", port_cmd_out_);
   }
 
-  bool VelmaLLIHighRx::configureHook() {
+  bool VelmaLLIHiTx::configureHook() {
+    cmd_out_.rHandTactile_cmd = 10000;
     return true;
   }
 
-  bool VelmaLLIHighRx::startHook() {
+  bool VelmaLLIHiTx::startHook() {
 //    RESTRICT_ALLOC;
 
 //    UNRESTRICT_ALLOC;
     return true;
   }
 
-  void VelmaLLIHighRx::stopHook() {
+  void VelmaLLIHiTx::stopHook() {
   }
 
-  void VelmaLLIHighRx::updateHook() {
+  void VelmaLLIHiTx::updateHook() {
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
-    port_status_in_.read(status_in_);
-    std::cout << status_in_.lHand_s << std::endl;
+    cmd_out_.rHandTactile_cmd--;
+    std::cout << "VelmaLLIHiTx " << cmd_out_.rHandTactile_cmd << std::endl;
+    port_cmd_out_.write(cmd_out_);
   }
 

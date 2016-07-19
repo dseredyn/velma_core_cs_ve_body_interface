@@ -28,17 +28,33 @@
 #include <rtt/Component.hpp>
 
 #include "velma_lli_hi_rx.h"
-#include "velma_lli_hi_tx.h"
-#include "velma_lli_lo_rx.h"
-#include "velma_lli_lo_tx.h"
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
+  VelmaLLIHiRx::VelmaLLIHiRx(const std::string &name) :
+    RTT::TaskContext(name, PreOperational) {
+    this->ports()->addEventPort("status_INPORT", port_status_in_);
+  }
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
+  bool VelmaLLIHiRx::configureHook() {
+    return true;
+  }
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoRx)
+  bool VelmaLLIHiRx::startHook() {
+//    RESTRICT_ALLOC;
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoTx)
+//    UNRESTRICT_ALLOC;
+    return true;
+  }
 
-ORO_CREATE_COMPONENT_LIBRARY()
+  void VelmaLLIHiRx::stopHook() {
+  }
+
+  void VelmaLLIHiRx::updateHook() {
+//    RESTRICT_ALLOC;
+    // write outputs
+//    UNRESTRICT_ALLOC;
+    port_status_in_.read(status_in_);
+    std::cout << "VelmaLLIHiRx " << status_in_.lHand_s << std::endl;
+
+//    this->getActivity()->trigger(); 
+  }
 
