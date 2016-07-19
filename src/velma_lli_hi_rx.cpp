@@ -29,32 +29,35 @@
 
 #include "velma_lli_hi_rx.h"
 
-  VelmaLLIHiRx::VelmaLLIHiRx(const std::string &name) :
-    RTT::TaskContext(name, PreOperational) {
+VelmaLLIHiRx::VelmaLLIHiRx(const std::string &name) :
+    RTT::TaskContext(name, PreOperational),
+    out_(*this)
+{
     this->ports()->addEventPort("status_INPORT", port_status_in_);
-  }
+}
 
-  bool VelmaLLIHiRx::configureHook() {
+bool VelmaLLIHiRx::configureHook() {
     return true;
-  }
+}
 
-  bool VelmaLLIHiRx::startHook() {
+bool VelmaLLIHiRx::startHook() {
 //    RESTRICT_ALLOC;
 
 //    UNRESTRICT_ALLOC;
     return true;
-  }
+}
 
-  void VelmaLLIHiRx::stopHook() {
-  }
+void VelmaLLIHiRx::stopHook() {
+}
 
-  void VelmaLLIHiRx::updateHook() {
+void VelmaLLIHiRx::updateHook() {
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
     port_status_in_.read(status_in_);
-    std::cout << "VelmaLLIHiRx " << status_in_.lHand_s << std::endl;
+    out_.writePorts(status_in_);
+//    std::cout << "VelmaLLIHiRx " << status_in_.lHand_s << std::endl;
 
 //    this->getActivity()->trigger(); 
-  }
+}
 

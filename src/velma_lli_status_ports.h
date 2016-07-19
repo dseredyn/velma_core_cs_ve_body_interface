@@ -40,6 +40,7 @@
 
 #include <geometry_msgs/Wrench.h>
 #include <geometry_msgs/WrenchStamped.h>
+#include <diagnostic_msgs/DiagnosticArray.h>
 #include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
 #include <barrett_hand_controller_msgs/BHPressureState.h>
 
@@ -63,14 +64,14 @@ public:
     void readPorts(ArmStatus_Ports<Data > &data);
     void writePorts(const ArmStatus_Ports<Data > &data);
 
-    T<tFriRobotState >              RobotState_;         // FRIx.RobotState
-    T<tFriIntfState >               FRIState_;           // FRIx.FRIState
-    T<Eigen::VectorXd >             JointPosition_;      // FRIx.JointPosition
-    T<Eigen::VectorXd >             JointVelocity_;      // FRIx.JointVelocity
-    T<geometry_msgs::Wrench >       CartesianWrench_;    // FRIx.CartesianWrench
-    T<Matrix77d >                   MassMatrix_;         // FRIx.MassMatrix
-    T<Eigen::VectorXd >             JointTorque_;        // FRIx.JointTorque
-    T<Eigen::VectorXd >             GravityTorque_;      // FRIx.GravityTorque
+    T<tFriRobotState >              RobotState_;
+    T<tFriIntfState >               FRIState_;
+    T<Eigen::VectorXd >             JointPosition_;
+    T<Eigen::VectorXd >             JointVelocity_;
+    T<geometry_msgs::Wrench >       CartesianWrench_;
+    T<Matrix77d >                   MassMatrix_;
+    T<Eigen::VectorXd >             JointTorque_;
+    T<Eigen::VectorXd >             GravityTorque_;
 };
 
 template <template <typename Type> class T>

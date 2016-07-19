@@ -5,6 +5,7 @@ project(velma_low_level_interface)
 # Find the RTT-ROS package (this transitively includes the Orocos CMake macros)
 find_package(catkin REQUIRED COMPONENTS
   rtt_ros
+  diagnostic_msgs
   velma_low_level_interface_msgs
   barrett_hand_controller_msgs
   kuka_lwr_fri

@@ -32,7 +32,6 @@ namespace velma_lli_types {
 // port data specialized constructor
 template <> ArmStatus_Ports<Data>::ArmStatus_Ports() {
     JointPosition_.resize(7);
-    JointPosition_.resize(7);
     JointVelocity_.resize(7);
     JointTorque_.resize(7);
     GravityTorque_.resize(7);
@@ -263,108 +262,71 @@ VelmaLLIStatusInput::VelmaLLIStatusInput(RTT::TaskContext &tc) :
 
 void VelmaLLIStatusInput::readPorts(velma_low_level_interface_msgs::VelmaLowLevelStatus &status) {
     ports_in_.readPorts(in_);
-/*
-    in_.rArm_.
-    RobotState_.read(data.RobotState_);
-    FRIState_.read(data.FRIState_);
-    JointPosition_.read(data.JointPosition_);
-    JointVelocity_.read(data.JointVelocity_);
-    CartesianWrench_.read(data.CartesianWrench_);
-    MassMatrix_.read(data.MassMatrix_);
-    JointTorque_.read(data.JointTorque_);
-    GravityTorque_.read(data.GravityTorque_);
-*/
 
-/*
-# leftArmJointPosition
-# rightArmJointPosition
-float64[7] lArm_q
-float64[7] rArm_q
+    uint8_t *rFriState = reinterpret_cast<uint8_t*>(&in_.rArm_.FRIState_);
+    uint8_t *lFriState = reinterpret_cast<uint8_t*>(&in_.lArm_.FRIState_);
+    for (int i = 0; i < 40; ++i) {
+        status.rArm_tFriIntfState[i] = rFriState[i];
+        status.lArm_tFriIntfState[i] = lFriState[i];
+    }
 
-# leftArmJointVelocity
-# rightArmJointVelocity
-float64[7] lArm_dq
-float64[7] rArm_dq
+    uint8_t *rRobotState = reinterpret_cast<uint8_t*>(&in_.rArm_.RobotState_);
+    uint8_t *lRobotState = reinterpret_cast<uint8_t*>(&in_.lArm_.RobotState_);
+    for (int i = 0; i < 36; ++i) {
+        status.rArm_tFriRobotState[i] = rRobotState[i];
+        status.lArm_tFriRobotState[i] = lRobotState[i];
+    }
 
-# leftArmJointTorque
-# rightArmJointTorque
-float64[7] lArm_t
-float64[7] rArm_t
+    for (int i = 0; i < 7; ++i) {
+        status.rArm_q[i] =  in_.rArm_.JointPosition_(i);
+        status.rArm_dq[i] = in_.rArm_.JointVelocity_(i);
+        status.rArm_t[i] =  in_.rArm_.JointTorque_(i);
+        status.rArm_gt[i] = in_.rArm_.GravityTorque_(i);
 
-# leftArmWrench
-# rightArmWrench
-float64[6] lArm_w
-float64[6] rArm_w
+        status.lArm_q[i] =  in_.lArm_.JointPosition_(i);
+        status.lArm_dq[i] = in_.lArm_.JointVelocity_(i);
+        status.lArm_t[i] =  in_.lArm_.JointTorque_(i);
+        status.lArm_gt[i] = in_.lArm_.GravityTorque_(i);
+    }
 
-# leftArmMassMatrix
-# rightArmMassMatrix
-float64[28] lArm_mm
-float64[28] rArm_mm
+    status.rArm_w = in_.rArm_.CartesianWrench_;
+    status.lArm_w = in_.lArm_.CartesianWrench_;
 
-# leftArmGravityTorque
-# rightArmGravityTorque
-float64[7] lArm_gt
-float64[7] rArm_gt
+    for (int i = 0, elem_i = 0; i < 7; ++i) {
+        for (int j = 0; j <= i; ++j) {
+            status.rArm_mm[elem_i] = in_.rArm_.MassMatrix_(i,j);
+            status.lArm_mm[elem_i] = in_.lArm_.MassMatrix_(i,j);
+            ++elem_i;
+        }
+    }
 
+    status.rHand_s = in_.rHand_.status_;
+    status.lHand_s = in_.lHand_.status_;
+    for (int i = 0; i < 4; ++i) {
+        status.rHand_q = in_.rHand_.q_(i);
+        //status.rHand_q = in_.rHand_.t_(i);    // ???
+        status.lHand_q = in_.lHand_.q_(i);
+        //status.lHand_q = in_.lHand_.t_(i);    // ???
+    }
 
-# leftHandStatus
-# rightHandStatus
-int32 lHand_s
-int32 rHand_s
+    status.rHand_p = in_.tactile_;
+    //max_pressure_;    // ???
 
-# leftHandJointPosition
-# rightHandJointPosition
-float64 lHand_q
-float64 rHand_q
+    for (int i = 0; i < 3; ++i) {
+        status.lHand_f[i] = in_.force_[i];
+    }
 
-# RightHandTactile.BHPressureState_OUTPORT
-barrett_hand_controller_msgs/BHPressureState rHand_p
+    status.tMotor_q = in_.t_MotorPosition_;
+    status.tMotor_dq = in_.t_MotorVelocity_;
 
-# LeftHandOptoforce.force_0_OUTPORT
-# LeftHandOptoforce.force_1_OUTPORT
-# LeftHandOptoforce.force_2_OUTPORT
-geometry_msgs/WrenchStamped[3] lHand_f
+    status.hpMotor_q = in_.hp_q_;
+    status.hpMotor_dq = in_.hp_v_;
+    status.htMotor_q = in_.ht_q_;
+    status.htMotor_dq = in_.ht_v_;
 
-# torsoMotorPosition
-float64 tMotor_q
-
-# torsoMotorVelocity
-float64 tMotor_dq
-
-# headPanMotorPosition
-float64 hpMotor_q
-
-# headPanMotorVelocity
-float64 hpMotor_dq
-
-# headTiltMotorPosition
-float64 htMotor_q
-
-# headTiltMotorVelocity
-float64 htMotor_dq
-
-
-# leftFtSensorRawWrench
-# rightFtSensorRawWrench
-float64[6] lFTSensor_rw
-float64[6] rFTSensor_rw
-
-# leftFtSensorFastFilteredWrench
-# rightFtSensorFastFilteredWrench
-float64[6] lFTSensor_ffw
-float64[6] rFTSensor_ffw
-
-# leftFtSensorSlowFilteredWrench
-# rightFtSensorSlowFilteredWrench
-float64[6] lFTSensor_sfw
-float64[6] rFTSensor_sfw
-
-# leftArmRobotState_OUTPORT_name()           { return string("FRIl.RobotState_OUTPORT"); }
-# leftArmFRIState_OUTPORT_name()             { return string("FRIl.FRIState_OUTPORT"); }
-# rightArmRobotState_OUTPORT_name()          { return string("FRIr.RobotState_OUTPORT"); }
-# rightArmFRIState_OUTPORT_name()            { return string("FRIr.FRIState_OUTPORT"); }
-int32 robot_s
-*/
+    status.rFTSensor_rw = in_.rFT_.raw_wrench_;
+    status.lFTSensor_ffw = in_.rFT_.fast_filtered_wrench_;
+    status.lFTSensor_sfw = in_.rFT_.slow_filtered_wrench_;
 }
 
 
@@ -377,6 +339,71 @@ VelmaLLIStatusOutput::VelmaLLIStatusOutput(RTT::TaskContext &tc) :
 }
 
 void VelmaLLIStatusOutput::writePorts(const velma_low_level_interface_msgs::VelmaLowLevelStatus &status) {
+    uint8_t *rFriState = reinterpret_cast<uint8_t*>(&out_.rArm_.FRIState_);
+    uint8_t *lFriState = reinterpret_cast<uint8_t*>(&out_.lArm_.FRIState_);
+    for (int i = 0; i < 40; ++i) {
+        rFriState[i] = status.rArm_tFriIntfState[i];
+        lFriState[i] = status.lArm_tFriIntfState[i];
+    }
+
+    uint8_t *rRobotState = reinterpret_cast<uint8_t*>(&out_.rArm_.RobotState_);
+    uint8_t *lRobotState = reinterpret_cast<uint8_t*>(&out_.lArm_.RobotState_);
+    for (int i = 0; i < 36; ++i) {
+        rRobotState[i] = status.rArm_tFriRobotState[i];
+        lRobotState[i] = status.lArm_tFriRobotState[i];
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        out_.rArm_.JointPosition_(i) =  status.rArm_q[i];
+        out_.rArm_.JointVelocity_(i) =  status.rArm_dq[i];
+        out_.rArm_.JointTorque_(i) =    status.rArm_t[i];
+        out_.rArm_.GravityTorque_(i) =  status.rArm_gt[i];
+
+        out_.lArm_.JointPosition_(i) =  status.lArm_q[i];
+        out_.lArm_.JointVelocity_(i) =  status.lArm_dq[i];
+        out_.lArm_.JointTorque_(i) =    status.lArm_t[i];
+        out_.lArm_.GravityTorque_(i) =  status.lArm_gt[i];
+    }
+
+    out_.rArm_.CartesianWrench_ = status.rArm_w;
+    out_.lArm_.CartesianWrench_ = status.lArm_w;
+
+    for (int i = 0, elem_i = 0; i < 7; ++i) {
+        for (int j = 0; j <= i; ++j) {
+            out_.rArm_.MassMatrix_(i,j) = out_.rArm_.MassMatrix_(j,i) = status.rArm_mm[elem_i];
+            out_.lArm_.MassMatrix_(i,j) = out_.lArm_.MassMatrix_(j,i) = status.lArm_mm[elem_i];
+            ++elem_i;
+        }
+    }
+
+    out_.rHand_.status_ = status.rHand_s;
+    out_.lHand_.status_ = status.lHand_s;
+    for (int i = 0; i < 4; ++i) {
+        out_.rHand_.q_(i) = status.rHand_q;
+        //status.rHand_q = out_.rHand_.t_(i);    // ???
+        out_.lHand_.q_(i) = status.lHand_q;
+        //status.lHand_q = out_.lHand_.t_(i);    // ???
+    }
+
+    out_.tactile_ = status.rHand_p;
+    //max_pressure_;    // ???
+
+    for (int i = 0; i < 3; ++i) {
+        out_.force_[i] = status.lHand_f[i];
+    }
+
+    out_.t_MotorPosition_ = status.tMotor_q;
+    out_.t_MotorVelocity_ = status.tMotor_dq;
+
+    out_.hp_q_ = status.hpMotor_q;
+    out_.hp_v_ = status.hpMotor_dq;
+    out_.ht_q_ = status.htMotor_q;
+    out_.ht_v_ = status.htMotor_dq;
+
+    out_.rFT_.raw_wrench_ = status.rFTSensor_rw;
+    out_.rFT_.fast_filtered_wrench_ = status.lFTSensor_ffw;
+    out_.rFT_.slow_filtered_wrench_ = status.lFTSensor_sfw;
+
     ports_out_.writePorts(out_);
 }
 

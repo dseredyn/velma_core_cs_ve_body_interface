@@ -42,6 +42,8 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
+#include "velma_lli_status_ports.h"
+
 class VelmaLLIHiRx: public RTT::TaskContext {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -79,6 +81,8 @@ class VelmaLLIHiRx: public RTT::TaskContext {
 
 //  RTT::OutputPort<Eigen::VectorXd> port_joint_torque_command_;
     velma_low_level_interface_msgs::VelmaLowLevelStatus status_in_;
+
+    VelmaLLIStatusOutput out_;
 };
 
 #endif  // VELMA_LLI_HI_RX_H_
