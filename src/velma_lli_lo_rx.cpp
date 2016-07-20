@@ -30,8 +30,10 @@
 #include "velma_lli_lo_rx.h"
 
   VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
-    RTT::TaskContext(name, PreOperational) {
-    this->ports()->addPort("command_INPORT", port_cmd_in_);
+    RTT::TaskContext(name, PreOperational),
+    out_(*this)
+  {
+    this->ports()->addEventPort("command_INPORT", port_cmd_in_);
   }
 
   bool VelmaLLILoRx::configureHook() {
@@ -55,5 +57,6 @@
 //    UNRESTRICT_ALLOC;
     port_cmd_in_.read(cmd_in_);
     std::cout << "VelmaLLILoRx " << cmd_in_.rHandTactile_cmd << std::endl;
+    out_.writePorts(cmd_in_);
   }
 

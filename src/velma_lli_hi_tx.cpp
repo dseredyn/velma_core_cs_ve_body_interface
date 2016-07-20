@@ -30,7 +30,9 @@
 #include "velma_lli_hi_tx.h"
 
   VelmaLLIHiTx::VelmaLLIHiTx(const std::string &name) :
-    RTT::TaskContext(name, PreOperational) {
+    RTT::TaskContext(name, PreOperational),
+    in_(*this)
+  {
     this->ports()->addPort("command_OUTPORT", port_cmd_out_);
   }
 
@@ -53,7 +55,8 @@
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
-    cmd_out_.rHandTactile_cmd--;
+    in_.readPorts(cmd_out_);
+//    cmd_out_.rHandTactile_cmd--;
     std::cout << "VelmaLLIHiTx " << cmd_out_.rHandTactile_cmd << std::endl;
     port_cmd_out_.write(cmd_out_);
   }

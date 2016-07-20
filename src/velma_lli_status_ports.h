@@ -48,7 +48,7 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
-namespace velma_lli_types {
+namespace velma_lli_status_types {
 
 typedef Eigen::Matrix<double, 7, 7> Matrix77d;
 
@@ -147,7 +147,7 @@ public:
     T<double > ht_v_;
 };
 
-};  // namespace velma_lli_types
+};  // namespace velma_lli_status_types
 
 class VelmaLLIStatusInput {
 public:
@@ -156,8 +156,8 @@ public:
     void readPorts(velma_low_level_interface_msgs::VelmaLowLevelStatus &status);
 
 protected:
-    velma_lli_types::VelmaStatus_Ports<velma_lli_types::Data > in_;
-    velma_lli_types::VelmaStatus_Ports<RTT::InputPort > ports_in_;
+    velma_lli_status_types::VelmaStatus_Ports<velma_lli_status_types::Data > in_;
+    velma_lli_status_types::VelmaStatus_Ports<RTT::InputPort > ports_in_;
 };
 
 class VelmaLLIStatusOutput {
@@ -167,8 +167,8 @@ public:
     void writePorts(const velma_low_level_interface_msgs::VelmaLowLevelStatus &status);
 
 protected:
-    velma_lli_types::VelmaStatus_Ports<velma_lli_types::Data > out_;
-    velma_lli_types::VelmaStatus_Ports<RTT::OutputPort > ports_out_;
+    velma_lli_status_types::VelmaStatus_Ports<velma_lli_status_types::Data > out_;
+    velma_lli_status_types::VelmaStatus_Ports<RTT::OutputPort > ports_out_;
 };
 
 #endif  // VELMA_LLI_STATUS_PORTS_H_

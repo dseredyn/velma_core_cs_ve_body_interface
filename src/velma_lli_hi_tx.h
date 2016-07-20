@@ -42,6 +42,8 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
+#include "velma_lli_command_ports.h"
+
 class VelmaLLIHiTx: public RTT::TaskContext {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -60,6 +62,8 @@ class VelmaLLIHiTx: public RTT::TaskContext {
     RTT::OutputPort<velma_low_level_interface_msgs::VelmaLowLevelCommand> port_cmd_out_;
 
     velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_out_;
+
+    VelmaLLICommandInput in_;
 };
 
 #endif  // VELMA_LLI_HI_TX_H_

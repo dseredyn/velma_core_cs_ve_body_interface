@@ -27,7 +27,7 @@
 
 #include "velma_lli_status_ports.h"
 
-namespace velma_lli_types {
+namespace velma_lli_status_types {
 
 // port data specialized constructor
 template <> ArmStatus_Ports<Data>::ArmStatus_Ports() {
@@ -155,10 +155,10 @@ template <> VelmaStatus_Ports<Data>::VelmaStatus_Ports() :
     rFT_(),
     lFT_()
 {
-    tactile_.finger1_tip.resize(24);
-    tactile_.finger2_tip.resize(24);
-    tactile_.finger3_tip.resize(24);
-    tactile_.palm_tip.resize(24);
+//    tactile_.finger1_tip.resize(24);
+//    tactile_.finger2_tip.resize(24);
+//    tactile_.finger3_tip.resize(24);
+//    tactile_.palm_tip.resize(24);
 }
 
 // input port specialized constructor
