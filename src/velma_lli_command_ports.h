@@ -49,59 +49,13 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
+#include "velma_lli_ports.h"
+
 using velma_low_level_interface_msgs::VelmaLowLevelCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandHand;
 
-namespace velma_lli_command_types {
-
-typedef Eigen::Matrix<double, 7, 7> Matrix77d;
-
-template <typename innerT, typename rosT >
-class PortRawData {
-public:
-    PortRawData();
-    void convertFromROS(const rosT &ros);
-    void convertToROS(rosT &ros);
-    innerT data_;
-};
-
-template <typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
-class PortData {
-public:
-    PortData(rosC &container);
-    void convertFromROS();
-    void convertToROS();
-    innerT& getDataRef();
-protected:
-    rosC &container_;
-    PortRawData<innerT, rosT > data_;
-};
-
-template <template <typename Type> class T >
-class PortSuffix {
-public:
-    PortSuffix();
-    std::string str_;
-};
-
-template <template <typename Type> class T, typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
-class Port {
-public:
-    Port(RTT::TaskContext &tc, const std::string &port_name, rosC &container);
-    void convertFromROS();
-    void convertToROS();
-    void writePorts();
-    void readPorts();
-
-protected:
-
-    rosC &container_;
-
-    PortSuffix<T > port_suffix_;
-    T<innerT > port_;
-    PortData<innerT, rosC, rosT, ptr > data_;
-};
+namespace velma_lli_types {
 
 template <template <typename Type> class T>
 class ArmCommand_Ports {
@@ -198,7 +152,7 @@ public:
     Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_dq_type, &VelmaLowLevelCommand::htMotor_dq> htMotor_dq_;
 };
 
-};  // namespace velma_lli_command_types
+};  // namespace velma_lli_types
 
 class VelmaLLICommandInput {
 public:
@@ -207,7 +161,7 @@ public:
     void readPorts(velma_low_level_interface_msgs::VelmaLowLevelCommand &command);
 
 protected:
-    velma_lli_command_types::VelmaCommand_Ports<RTT::InputPort > ports_in_;
+    velma_lli_types::VelmaCommand_Ports<RTT::InputPort > ports_in_;
 };
 
 class VelmaLLICommandOutput {
@@ -217,7 +171,7 @@ public:
     void writePorts(const velma_low_level_interface_msgs::VelmaLowLevelCommand &command);
 
 protected:
-    velma_lli_command_types::VelmaCommand_Ports<RTT::OutputPort > ports_out_;
+    velma_lli_types::VelmaCommand_Ports<RTT::OutputPort > ports_out_;
 };
 
 #endif  // VELMA_LLI_COMMAND_PORTS_H_

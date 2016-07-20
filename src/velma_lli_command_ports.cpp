@@ -30,90 +30,7 @@
 using velma_low_level_interface_msgs::VelmaLowLevelCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
 
-namespace velma_lli_command_types {
-
-//
-// data initialization
-//
-// general constructor
-template <typename innerT, typename rosT >
-PortRawData<innerT, rosT >::PortRawData() {}
-
-// specialized constructors
-template < >
-PortRawData<Eigen::VectorXd, boost::array<double, 7ul> >::PortRawData() : data_(7) {}
-
-template < >
-PortRawData<Eigen::VectorXd, boost::array<double, 4ul> >::PortRawData() : data_(4) {}
-
-//
-// data conversion
-//
-// general conversion
-template <typename innerT, typename rosT >
-void PortRawData<innerT, rosT >::convertFromROS(const rosT &ros) {
-    data_ = ros;
-}
-
-template <typename innerT, typename rosT >
-void PortRawData<innerT, rosT >::convertToROS(rosT &ros) {
-    ros = data_;
-}
-
-// specialized conversions
-template <>
-void PortRawData<Eigen::VectorXd, boost::array<double, 7ul> >::convertFromROS(const boost::array<double, 7ul> &ros) {
-    for (int i = 0; i < 7; ++i) {
-        data_(i) = ros[i];
-    }
-}
-
-template <>
-void PortRawData<Eigen::VectorXd, boost::array<double, 7ul> >::convertToROS(boost::array<double, 7ul> &ros) {
-    for (int i = 0; i < 7; ++i) {
-        ros[i] = data_(i);
-    }
-}
-
-template <>
-void PortRawData<Eigen::VectorXd, boost::array<double, 4ul> >::convertFromROS(const boost::array<double, 4ul> &ros) {
-    for (int i = 0; i < 4; ++i) {
-        data_(i) = ros[i];
-    }
-}
-
-template <>
-void PortRawData<Eigen::VectorXd, boost::array<double, 4ul> >::convertToROS(boost::array<double, 4ul> &ros) {
-    for (int i = 0; i < 4; ++i) {
-        ros[i] = data_(i);
-    }
-}
-
-//
-// PortData operations
-//
-template < > PortSuffix<RTT::InputPort >::PortSuffix() : str_("INPORT") {}
-template < > PortSuffix<RTT::OutputPort >::PortSuffix() : str_("OUTPORT") {}
-
-template <typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
-PortData<innerT, rosC, rosT, ptr>::PortData(rosC &container) :
-    container_(container)
-{}
-
-template <typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
-void PortData<innerT, rosC, rosT, ptr >::convertFromROS() {
-    data_.convertFromROS(container_.*ptr);
-}
-
-template <typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
-void PortData<innerT, rosC, rosT, ptr >::convertToROS() {
-    data_.convertToROS(container_.*ptr);
-}
-
-template <typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
-innerT& PortData<innerT, rosC, rosT, ptr >::getDataRef() {
-    return data_.data_;
-}
+namespace velma_lli_types {
 
 // example of specialized code
 // arm
@@ -131,183 +48,6 @@ void PortData<Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm:
     }
 }
 */
-/*
-template < >
-void PortData<int32_t, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_cmd_type, &VelmaLowLevelCommandArm::cmd>::convertToROS() {
-    data_ = container_.cmd;
-}
-template < >
-void PortData<int32_t, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_cmd_type, &VelmaLowLevelCommandArm::cmd>::convertFromROS() {
-    container_.cmd = data_;
-}
-
-// hand
-template < >
-void PortData<Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_q_type, &VelmaLowLevelCommandHand::q>::convertToROS() {
-    for (int i = 0; i < 4; ++i) {
-        data_(i) = container_.q[i];
-    }
-}
-template < >
-void PortData<Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_q_type, &VelmaLowLevelCommandHand::q>::convertFromROS() {
-    for (int i = 0; i < 4; ++i) {
-        container_.q[i] = data_(i);
-    }
-}
-
-template < >
-void PortData<Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_dq_type, &VelmaLowLevelCommandHand::dq>::convertToROS() {
-    for (int i = 0; i < 4; ++i) {
-        data_(i) = container_.dq[i];
-    }
-}
-template < >
-void PortData<Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_dq_type, &VelmaLowLevelCommandHand::dq>::convertFromROS() {
-    for (int i = 0; i < 4; ++i) {
-        container_.dq[i] = data_(i);
-    }
-}
-
-template < >
-void PortData<Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_i_type, &VelmaLowLevelCommandHand::max_i>::convertToROS() {
-    for (int i = 0; i < 4; ++i) {
-        data_(i) = container_.max_i[i];
-    }
-}
-template < >
-void PortData<Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_i_type, &VelmaLowLevelCommandHand::max_i>::convertFromROS() {
-    for (int i = 0; i < 4; ++i) {
-        container_.max_i[i] = data_(i);
-    }
-}
-
-template < >
-void PortData<Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_p_type, &VelmaLowLevelCommandHand::max_p>::convertToROS() {
-    for (int i = 0; i < 4; ++i) {
-        data_(i) = container_.max_p[i];
-    }
-}
-template < >
-void PortData<Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_p_type, &VelmaLowLevelCommandHand::max_p>::convertFromROS() {
-    for (int i = 0; i < 4; ++i) {
-        container_.max_p[i] = data_(i);
-    }
-}
-
-template < >
-void PortData<bool, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_hold_type, &VelmaLowLevelCommandHand::hold>::convertToROS() {
-    data_ = container_.hold;
-}
-template < >
-void PortData<bool, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_hold_type, &VelmaLowLevelCommandHand::hold>::convertFromROS() {
-    container_.hold = data_;
-}
-
-// tactile
-template < >
-void PortData<int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHandTactile_cmd_type, &VelmaLowLevelCommand::rHandTactile_cmd>::convertToROS() {
-    data_ = container_.rHandTactile_cmd;
-}
-template < >
-void PortData<int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHandTactile_cmd_type, &VelmaLowLevelCommand::rHandTactile_cmd>::convertFromROS() {
-    container_.rHandTactile_cmd = data_;
-}
-
-// head and torso
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_tMotor_i_type, &VelmaLowLevelCommand::tMotor_i>::convertToROS() {
-    data_ = container_.tMotor_i;
-}
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_tMotor_i_type, &VelmaLowLevelCommand::tMotor_i>::convertFromROS() {
-    container_.tMotor_i = data_;
-}
-
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_i_type, &VelmaLowLevelCommand::hpMotor_i>::convertToROS() {
-    data_ = container_.hpMotor_i;
-}
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_i_type, &VelmaLowLevelCommand::hpMotor_i>::convertFromROS() {
-    container_.hpMotor_i = data_;
-}
-
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_i_type, &VelmaLowLevelCommand::htMotor_i>::convertToROS() {
-    data_ = container_.htMotor_i;
-}
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_i_type, &VelmaLowLevelCommand::htMotor_i>::convertFromROS() {
-    container_.htMotor_i = data_;
-}
-
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_q_type, &VelmaLowLevelCommand::hpMotor_q>::convertToROS() {
-    data_ = container_.hpMotor_q;
-}
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_q_type, &VelmaLowLevelCommand::hpMotor_q>::convertFromROS() {
-    container_.hpMotor_q = data_;
-}
-
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_q_type, &VelmaLowLevelCommand::htMotor_q>::convertToROS() {
-    data_ = container_.htMotor_q;
-}
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_q_type, &VelmaLowLevelCommand::htMotor_q>::convertFromROS() {
-    container_.htMotor_q = data_;
-}
-
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_dq_type, &VelmaLowLevelCommand::hpMotor_dq>::convertToROS() {
-    data_ = container_.hpMotor_dq;
-}
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_dq_type, &VelmaLowLevelCommand::hpMotor_dq>::convertFromROS() {
-    container_.hpMotor_dq = data_;
-}
-
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_dq_type, &VelmaLowLevelCommand::htMotor_dq>::convertToROS() {
-    data_ = container_.htMotor_dq;
-}
-template < >
-void PortData<double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_dq_type, &VelmaLowLevelCommand::htMotor_dq>::convertFromROS() {
-    container_.htMotor_dq = data_;
-}
-*/
-
-//
-// Port operations
-//
-template <template <typename Type> class T, typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
-void Port<T, innerT, rosC, rosT, ptr >::convertFromROS() {
-    data_.convertFromROS();
-}
-
-template <template <typename Type> class T, typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
-void Port<T, innerT, rosC, rosT, ptr >::convertToROS() {
-    data_.convertToROS();
-}
-
-template <template <typename Type> class T, typename innerT, typename rosC, typename rosT, rosT rosC::*ptr>
-Port<T, innerT, rosC, rosT, ptr>::Port(RTT::TaskContext &tc, const std::string &port_name, rosC &container) :
-    container_(container),
-    data_(container)
-{
-    tc.ports()->addPort(port_name + " " + port_suffix_.str_, port_);
-}
-
-template <template <typename Type> class T, typename innerT, typename rosC, typename rosT, rosT rosC::*ptr>
-void Port<T, innerT, rosC, rosT, ptr>::writePorts() {
-    port_.write(data_.getDataRef());
-}
-
-template <template <typename Type> class T, typename innerT, typename rosC, typename rosT, rosT rosC::*ptr>
-void Port<T, innerT, rosC, rosT, ptr>::readPorts() {
-    port_.read(data_.getDataRef());
-}
 
 //
 // ArmCommand_Ports interface
@@ -321,15 +61,15 @@ ArmCommand_Ports<T >::ArmCommand_Ports(RTT::TaskContext &tc, const std::string &
 // read ports
 template <>
 void ArmCommand_Ports<RTT::InputPort >::readPorts() {
-    JointTorque_.readPorts();
-    KRLcmd_.readPorts();
+    JointTorque_.operation();
+    KRLcmd_.operation();
 }
 
 // write ports
 template <>
 void ArmCommand_Ports<RTT::OutputPort >::writePorts() {
-    JointTorque_.writePorts();
-    KRLcmd_.writePorts();
+    JointTorque_.operation();
+    KRLcmd_.operation();
 }
 
 
@@ -365,21 +105,21 @@ HandCommand_Ports<T>::HandCommand_Ports(RTT::TaskContext &tc, const std::string 
 // read ports
 template <>
 void HandCommand_Ports<RTT::InputPort >::readPorts() {
-    q_.readPorts();
-    dq_.readPorts();
-    hand_max_i_.readPorts();
-    hand_max_p_.readPorts();
-    hand_hold_.readPorts();
+    q_.operation();
+    dq_.operation();
+    hand_max_i_.operation();
+    hand_max_p_.operation();
+    hand_hold_.operation();
 }
 
 // write ports
 template <>
 void HandCommand_Ports<RTT::OutputPort >::writePorts() {
-    q_.writePorts();
-    dq_.writePorts();
-    hand_max_i_.writePorts();
-    hand_max_p_.writePorts();
-    hand_hold_.writePorts();
+    q_.operation();
+    dq_.operation();
+    hand_max_i_.operation();
+    hand_max_p_.operation();
+    hand_hold_.operation();
 }
 
 template <>
@@ -434,14 +174,14 @@ void VelmaCommand_Ports<RTT::InputPort >::readPorts() {
     lArm_.readPorts();
     rHand_.readPorts();
     lHand_.readPorts();
-    rHandTactile_cmd_.readPorts();
-    tMotor_i_.readPorts();
-    hpMotor_i_.readPorts();
-    htMotor_i_.readPorts();
-    hpMotor_q_.readPorts();
-    htMotor_q_.readPorts();
-    hpMotor_dq_.readPorts();
-    htMotor_dq_.readPorts();
+    rHandTactile_cmd_.operation();
+    tMotor_i_.operation();
+    hpMotor_i_.operation();
+    htMotor_i_.operation();
+    hpMotor_q_.operation();
+    htMotor_q_.operation();
+    hpMotor_dq_.operation();
+    htMotor_dq_.operation();
 }
 
 // write ports
@@ -451,14 +191,14 @@ void VelmaCommand_Ports<RTT::OutputPort >::writePorts() {
     lArm_.writePorts();
     rHand_.writePorts();
     lHand_.writePorts();
-    rHandTactile_cmd_.writePorts();
-    tMotor_i_.writePorts();
-    hpMotor_i_.writePorts();
-    htMotor_i_.writePorts();
-    hpMotor_q_.writePorts();
-    htMotor_q_.writePorts();
-    hpMotor_dq_.writePorts();
-    htMotor_dq_.writePorts();
+    rHandTactile_cmd_.operation();
+    tMotor_i_.operation();
+    hpMotor_i_.operation();
+    htMotor_i_.operation();
+    hpMotor_q_.operation();
+    htMotor_q_.operation();
+    hpMotor_dq_.operation();
+    htMotor_dq_.operation();
 }
 
 template <>
