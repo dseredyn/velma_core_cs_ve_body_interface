@@ -27,6 +27,7 @@
 
 #include "velma_lli_ports.h"
 #include "velma_low_level_interface_msgs/VelmaLowLevelCommand.h"
+#include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
 
 namespace velma_lli_types {
 
@@ -177,7 +178,6 @@ void PortOperation<RTT::OutputPort, innerT>::operation(innerT &data) {
 }
 
 
-
 using velma_low_level_interface_msgs::VelmaLowLevelCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandHand;
@@ -214,6 +214,11 @@ template class Port<RTT::OutputPort, double, VelmaLowLevelCommand, VelmaLowLevel
 template class Port<RTT::OutputPort, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_dq_type, &VelmaLowLevelCommand::hpMotor_dq>;
 template class Port<RTT::OutputPort, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_dq_type, &VelmaLowLevelCommand::htMotor_dq>;
 
+using velma_low_level_interface_msgs::VelmaLowLevelStatus;
+
+template class Port<RTT::InputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q>;
+
+template class Port<RTT::OutputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q>;
 
 };  // namespace velma_lli_types
 

@@ -31,7 +31,7 @@
 
 VelmaLLILoTx::VelmaLLILoTx(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
-    in_(*this)
+    in_(*this, status_out_)
 {
     this->ports()->addPort("status_OUTPORT", port_status_out_);
 //    port_status_out_.setDataSample(status_out_);
@@ -43,8 +43,6 @@ bool VelmaLLILoTx::configureHook() {
 
 bool VelmaLLILoTx::startHook() {
 //    RESTRICT_ALLOC;
-    status_out_.lHand_s = 0;
-
 //    UNRESTRICT_ALLOC;
     return true;
 }
@@ -58,7 +56,6 @@ void VelmaLLILoTx::updateHook() {
     // write outputs
 //    UNRESTRICT_ALLOC;
 //    status_out_.lHand_s++;
-    std::cout << "VelmaLLILoTx " << status_out_.lHand_s << std::endl;
     port_status_out_.write(status_out_);
 }
 

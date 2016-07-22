@@ -31,7 +31,7 @@
 
 VelmaLLIHiRx::VelmaLLIHiRx(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
-    out_(*this)
+    out_(*this, status_in_)
 {
     this->ports()->addEventPort("status_INPORT", port_status_in_);
 }
@@ -56,7 +56,6 @@ void VelmaLLIHiRx::updateHook() {
 //    UNRESTRICT_ALLOC;
     port_status_in_.read(status_in_);
     out_.writePorts(status_in_);
-    std::cout << "VelmaLLIHiRx " << status_in_.lHand_s << std::endl;
 
 //    this->getActivity()->trigger(); 
 }

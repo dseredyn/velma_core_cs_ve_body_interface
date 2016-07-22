@@ -76,6 +76,8 @@ class VelmaLLILoTest: public RTT::TaskContext {
     VelmaLLIStatusOutput out_;
 
     VelmaLLITestGenerator gen_;
+
+    std::string prev_cmd_gen_;
 };
 
 #endif  // VELMA_LLI_LO_TEST_H_

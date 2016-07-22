@@ -32,7 +32,7 @@
 VelmaLLILoTest::VelmaLLILoTest(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
     in_(*this, cmd_in_),
-    out_(*this)
+    out_(*this, status_out_)
 {
 }
 
@@ -52,8 +52,29 @@ void VelmaLLILoTest::stopHook() {
 
 void VelmaLLILoTest::updateHook() {
 //    RESTRICT_ALLOC;
+
     in_.readPorts(cmd_in_);
-    out_.writePorts(status_out_);
+
+    if (!prev_cmd_gen_.empty()) {
+        std::ostringstream os_recv;
+        os_recv << cmd_in_;
+        if (os_recv.str() != prev_cmd_gen_) {
+            std::cout << "VelmaLLILoTest ERROR" << std::endl;
+            stop();
+        }
+    }
+
+    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
+    velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+    gen_.generate(cmd_gen, status_gen);
+
+    std::ostringstream os_gen;
+
+    os_gen << cmd_gen;
+
+    prev_cmd_gen_ = os_gen.str();
+
+    out_.writePorts(status_gen);
     // write outputs
 //    UNRESTRICT_ALLOC;
 }

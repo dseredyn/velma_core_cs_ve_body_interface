@@ -31,7 +31,7 @@
 
 VelmaLLIHiTest::VelmaLLIHiTest(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
-    in_(*this),
+    in_(*this, status_in_),
     out_(*this, cmd_out_)
 {
 }
