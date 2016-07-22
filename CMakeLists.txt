@@ -36,7 +36,8 @@ ADD_DEFINITIONS(-DEIGEN_RUNTIME_NO_MALLOC)
 
 orocos_component(velma_low_level_interface src/velma_low_level_interface.cpp src/velma_lli_lo_rx.cpp
                     src/velma_lli_lo_tx.cpp src/velma_lli_hi_rx.cpp src/velma_lli_hi_tx.cpp
-                    src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp src/velma_lli_ports.cpp)
+                    src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp src/velma_lli_ports.cpp
+                    src/velma_lli_lo_test.cpp src/velma_lli_hi_test.cpp src/velma_lli_test_generator.cpp)
 
 #orocos_component(velma_low_level_interface src/velma_lli_command_ports.cpp src/velma_lli_ports.cpp)
 

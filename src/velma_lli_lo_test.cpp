@@ -25,47 +25,36 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef VELMA_LLI_HI_RX_H_
-#define VELMA_LLI_HI_RX_H_
+#include <rtt/Component.hpp>
 
-#include <cstring>
+#include "velma_lli_lo_test.h"
 
-#include <vector>
-#include <string>
+VelmaLLILoTest::VelmaLLILoTest(const std::string &name) :
+    RTT::TaskContext(name, PreOperational),
+    in_(*this, cmd_in_),
+    out_(*this)
+{
+}
 
-#include "rtt/RTT.hpp"
-#include "rtt/os/TimeService.hpp"
-#include "Eigen/Dense"
-#include "Eigen/LU"
+bool VelmaLLILoTest::configureHook() {
+    return true;
+}
 
-#include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
+bool VelmaLLILoTest::startHook() {
+//    RESTRICT_ALLOC;
 
-#include "eigen_conversions/eigen_msg.h"
+//    UNRESTRICT_ALLOC;
+    return true;
+}
 
-#include "velma_lli_status_ports.h"
+void VelmaLLILoTest::stopHook() {
+}
 
-class VelmaLLIHiRx: public RTT::TaskContext {
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-    explicit VelmaLLIHiRx(const std::string &name);
-
-    bool configureHook();
-
-    bool startHook();
-
-    void stopHook();
-
-    void updateHook();
-
-private:
-
-    RTT::InputPort<velma_low_level_interface_msgs::VelmaLowLevelStatus> port_status_in_;
-
-    velma_low_level_interface_msgs::VelmaLowLevelStatus status_in_;
-
-    VelmaLLIStatusOutput out_;
-};
-
-#endif  // VELMA_LLI_HI_RX_H_
+void VelmaLLILoTest::updateHook() {
+//    RESTRICT_ALLOC;
+    in_.readPorts(cmd_in_);
+    out_.writePorts(status_out_);
+    // write outputs
+//    UNRESTRICT_ALLOC;
+}
 

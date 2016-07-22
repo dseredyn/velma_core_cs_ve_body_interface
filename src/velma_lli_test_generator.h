@@ -25,47 +25,37 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef VELMA_LLI_HI_RX_H_
-#define VELMA_LLI_HI_RX_H_
+#ifndef VELMA_LLI_TEST_GENERATOR_H_
+#define VELMA_LLI_TEST_GENERATOR_H_
 
 #include <cstring>
 
 #include <vector>
 #include <string>
-
+/*
 #include "rtt/RTT.hpp"
 #include "rtt/os/TimeService.hpp"
 #include "Eigen/Dense"
 #include "Eigen/LU"
 
+#include <geometry_msgs/Wrench.h>
+#include <geometry_msgs/WrenchStamped.h>
 #include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
+#include <barrett_hand_controller_msgs/BHPressureState.h>
+
+#include <kuka_lwr_fri/friComm.h>
 
 #include "eigen_conversions/eigen_msg.h"
-
+*/
 #include "velma_lli_status_ports.h"
+#include "velma_lli_command_ports.h"
 
-class VelmaLLIHiRx: public RTT::TaskContext {
+class VelmaLLITestGenerator {
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    explicit VelmaLLITestGenerator();
 
-    explicit VelmaLLIHiRx(const std::string &name);
-
-    bool configureHook();
-
-    bool startHook();
-
-    void stopHook();
-
-    void updateHook();
-
-private:
-
-    RTT::InputPort<velma_low_level_interface_msgs::VelmaLowLevelStatus> port_status_in_;
-
-    velma_low_level_interface_msgs::VelmaLowLevelStatus status_in_;
-
-    VelmaLLIStatusOutput out_;
+    void generate(velma_low_level_interface_msgs::VelmaLowLevelCommand &cmd, velma_low_level_interface_msgs::VelmaLowLevelStatus &status);
 };
 
-#endif  // VELMA_LLI_HI_RX_H_
+#endif  // VELMA_LLI_TEST_GENERATOR_H_
 

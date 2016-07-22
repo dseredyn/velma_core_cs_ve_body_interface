@@ -25,47 +25,55 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef VELMA_LLI_HI_RX_H_
-#define VELMA_LLI_HI_RX_H_
+#include <rtt/Component.hpp>
 
-#include <cstring>
+#include "velma_lli_hi_test.h"
 
-#include <vector>
-#include <string>
+VelmaLLIHiTest::VelmaLLIHiTest(const std::string &name) :
+    RTT::TaskContext(name, PreOperational),
+    in_(*this),
+    out_(*this, cmd_out_)
+{
+}
 
-#include "rtt/RTT.hpp"
-#include "rtt/os/TimeService.hpp"
-#include "Eigen/Dense"
-#include "Eigen/LU"
+bool VelmaLLIHiTest::configureHook() {
+    return true;
+}
 
-#include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
+bool VelmaLLIHiTest::startHook() {
+//    RESTRICT_ALLOC;
 
-#include "eigen_conversions/eigen_msg.h"
+//    UNRESTRICT_ALLOC;
+    return true;
+}
 
-#include "velma_lli_status_ports.h"
+void VelmaLLIHiTest::stopHook() {
+}
 
-class VelmaLLIHiRx: public RTT::TaskContext {
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+void VelmaLLIHiTest::updateHook() {
 
-    explicit VelmaLLIHiRx(const std::string &name);
+    in_.readPorts(status_in_);
 
-    bool configureHook();
+    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
+    velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+    gen_.generate(cmd_gen, status_gen);
 
-    bool startHook();
+    std::ostringstream os_recv;
+    std::ostringstream os_gen;
 
-    void stopHook();
+    os_recv << status_in_;
+    os_gen << status_gen;
 
-    void updateHook();
+    if (os_recv.str() != os_gen.str()) {
+        std::cout << "VelmaLLIHiTest ERROR" << std::endl;
+        stop();
+    }
 
-private:
+    cmd_out_ = cmd_gen;
 
-    RTT::InputPort<velma_low_level_interface_msgs::VelmaLowLevelStatus> port_status_in_;
-
-    velma_low_level_interface_msgs::VelmaLowLevelStatus status_in_;
-
-    VelmaLLIStatusOutput out_;
-};
-
-#endif  // VELMA_LLI_HI_RX_H_
+//    RESTRICT_ALLOC;
+    out_.writePorts(cmd_out_);
+    // write outputs
+//    UNRESTRICT_ALLOC;
+}
 
