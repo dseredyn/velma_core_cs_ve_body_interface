@@ -151,7 +151,7 @@ FTSensorCommand_Ports<T >::FTSensorCommand_Ports(RTT::TaskContext &tc, const std
 //
 template <template <typename Type> class T>
 VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc, VelmaLowLevelStatus &ros) :
-    tMotor_q_(tc, "torsoMotorPosition", ros)
+    tMotor_q_(tc, "status_tMotor_q", ros)
 /*    rArm_(tc, "rArm", ros.rArm),
     lArm_(tc, "lArm", ros.lArm),
     rHand_(tc, "rHand", ros.rHand),

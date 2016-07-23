@@ -37,7 +37,6 @@
   }
 
   bool VelmaLLIHiTx::configureHook() {
-    cmd_out_.rHandTactile_cmd = 10000;
     return true;
   }
 
@@ -56,8 +55,7 @@
     // write outputs
 //    UNRESTRICT_ALLOC;
     in_.readPorts(cmd_out_);
-//    cmd_out_.rHandTactile_cmd--;
-    std::cout << "VelmaLLIHiTx " << cmd_out_.rHandTactile_cmd << std::endl;
+//    std::cout << "VelmaLLIHiTx" << std::endl;
     port_cmd_out_.write(cmd_out_);
   }
 

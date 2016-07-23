@@ -42,6 +42,15 @@ bool VelmaLLIHiTest::configureHook() {
 
 bool VelmaLLIHiTest::startHook() {
 //    RESTRICT_ALLOC;
+    no_rec_counter_ = 0;
+
+    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
+    velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+    gen_.generate(cmd_gen, status_gen);
+    prev_cmd_out_ = cmd_gen;
+    prev_status_in_ = status_gen;
+
+    std::cout << "VelmaLLIHiTest::startHook status_gen.tMotor_q " << status_gen.tMotor_q << std::endl;
 
 //    UNRESTRICT_ALLOC;
     return true;
@@ -54,26 +63,37 @@ void VelmaLLIHiTest::updateHook() {
 
     in_.readPorts(status_in_);
 
-    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
-    velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
-    gen_.generate(cmd_gen, status_gen);
+    // compare the received status data
+    // with generated status data
+    if (gen_.toStr(status_in_) == gen_.toStr(prev_status_in_)) {
 
-    std::ostringstream os_recv;
-    std::ostringstream os_gen;
+        // generate new data
+        velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
+        velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+        gen_.generate(cmd_gen, status_gen);
 
-    os_recv << status_in_;
-    os_gen << status_gen;
+        // send new command data
+        cmd_out_ = cmd_gen;
 
-    if (os_recv.str() != os_gen.str()) {
+        // save the generated command data
+        prev_cmd_out_ = cmd_gen;
+        prev_status_in_ = status_gen;
+
+        no_rec_counter_ = 0;
+        out_.writePorts(cmd_out_);
+    }
+    else {
+        ++no_rec_counter_;
+    }
+
+    if (no_rec_counter_ > 0) {
+        std::cout << "VelmaLLIHiTest no new data during " << no_rec_counter_ << " loops" << std::endl;
+    }
+
+    if (no_rec_counter_ > 20) {
         std::cout << "VelmaLLIHiTest ERROR" << std::endl;
         stop();
     }
-
-    cmd_out_ = cmd_gen;
-
-//    RESTRICT_ALLOC;
-    out_.writePorts(cmd_out_);
-    // write outputs
 //    UNRESTRICT_ALLOC;
 }
 

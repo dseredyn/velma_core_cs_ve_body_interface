@@ -77,7 +77,10 @@ class VelmaLLILoTest: public RTT::TaskContext {
 
     VelmaLLITestGenerator gen_;
 
-    std::string prev_cmd_gen_;
+    velma_low_level_interface_msgs::VelmaLowLevelCommand prev_cmd_in_;
+    velma_low_level_interface_msgs::VelmaLowLevelStatus prev_status_out_;
+
+    int no_rec_counter_;
 };
 
 #endif  // VELMA_LLI_LO_TEST_H_

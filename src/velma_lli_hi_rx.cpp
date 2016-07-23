@@ -54,9 +54,18 @@ void VelmaLLIHiRx::updateHook() {
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
-    port_status_in_.read(status_in_);
-    out_.writePorts(status_in_);
+    if (port_status_in_.read(status_in_) == RTT::NewData) {
 
-//    this->getActivity()->trigger(); 
+    out_.writePorts(status_in_);
+/*
+    RTT::TaskContext::PeerList l = this->getPeerList();
+    for (RTT::TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
+        std::cout << "VelmaLLIHiRx peer list: " << (*it) << " ";
+    }
+    std::cout << std::endl;
+*/
+
+    this->getPeer("scheme")->getActivity()->trigger();
+    }
 }
 

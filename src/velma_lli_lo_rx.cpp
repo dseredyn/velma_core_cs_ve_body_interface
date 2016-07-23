@@ -42,7 +42,6 @@
 
   bool VelmaLLILoRx::startHook() {
 //    RESTRICT_ALLOC;
-    cmd_in_.rHandTactile_cmd = 0;
 
 //    UNRESTRICT_ALLOC;
     return true;
@@ -51,12 +50,21 @@
   void VelmaLLILoRx::stopHook() {
   }
 
-  void VelmaLLILoRx::updateHook() {
+void VelmaLLILoRx::updateHook() {
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
-    port_cmd_in_.read(cmd_in_);
-    std::cout << "VelmaLLILoRx " << cmd_in_.rHandTactile_cmd << std::endl;
+    if (port_cmd_in_.read(cmd_in_) == RTT::NewData) {
     out_.writePorts(cmd_in_);
-  }
+/*
+    RTT::TaskContext::PeerList l = this->getPeerList();
+    for (RTT::TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
+        std::cout << "VelmaLLIHiRx peer list: " << (*it) << " ";
+    }
+    std::cout << std::endl;
+*/
+
+    this->getPeer("scheme")->getActivity()->trigger();
+    }
+}
 

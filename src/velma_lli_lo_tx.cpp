@@ -55,7 +55,7 @@ void VelmaLLILoTx::updateHook() {
     in_.readPorts(status_out_);
     // write outputs
 //    UNRESTRICT_ALLOC;
-//    status_out_.lHand_s++;
+//    std::cout << "VelmaLLILoTx" << std::endl;
     port_status_out_.write(status_out_);
 }
 

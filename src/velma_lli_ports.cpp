@@ -149,7 +149,9 @@ Port<T, innerT, rosC, rosT, ptr>::Port(RTT::TaskContext &tc, const std::string &
     container_(container),
     data_(container),
     po_(tc, port_name)
-{ }
+{
+    po_.setDataSample(data_.getDataRef());
+}
 
 
 template <template <typename Type> class T, typename innerT, typename rosC, typename rosT, rosT rosC::*ptr>
@@ -177,6 +179,15 @@ void PortOperation<RTT::OutputPort, innerT>::operation(innerT &data) {
     port_.write(data);
 }
 
+template <typename innerT >
+void PortOperation<RTT::InputPort, innerT>::setDataSample(innerT &data) {
+    // no operation for input port
+}
+
+template <typename innerT >
+void PortOperation<RTT::OutputPort, innerT>::setDataSample(innerT &data) {
+    port_.setDataSample(data);
+}
 
 using velma_low_level_interface_msgs::VelmaLowLevelCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
@@ -189,7 +200,7 @@ template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelCommandHand, V
 template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_i_type, &VelmaLowLevelCommandHand::max_i>;
 template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_p_type, &VelmaLowLevelCommandHand::max_p>;
 template class Port<RTT::InputPort, bool, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_hold_type, &VelmaLowLevelCommandHand::hold>;
-template class Port<RTT::InputPort, int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHandTactile_cmd_type, &VelmaLowLevelCommand::rHandTactile_cmd>;
+template class Port<RTT::InputPort, int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHand_tactileCmd_type, &VelmaLowLevelCommand::rHand_tactileCmd>;
 template class Port<RTT::InputPort, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_tMotor_i_type, &VelmaLowLevelCommand::tMotor_i>;
 template class Port<RTT::InputPort, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_i_type, &VelmaLowLevelCommand::hpMotor_i>;
 template class Port<RTT::InputPort, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_i_type, &VelmaLowLevelCommand::htMotor_i>;
@@ -205,7 +216,7 @@ template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelCommandHand, 
 template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_i_type, &VelmaLowLevelCommandHand::max_i>;
 template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_p_type, &VelmaLowLevelCommandHand::max_p>;
 template class Port<RTT::OutputPort, bool, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_hold_type, &VelmaLowLevelCommandHand::hold>;
-template class Port<RTT::OutputPort, int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHandTactile_cmd_type, &VelmaLowLevelCommand::rHandTactile_cmd>;
+template class Port<RTT::OutputPort, int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHand_tactileCmd_type, &VelmaLowLevelCommand::rHand_tactileCmd>;
 template class Port<RTT::OutputPort, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_tMotor_i_type, &VelmaLowLevelCommand::tMotor_i>;
 template class Port<RTT::OutputPort, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_i_type, &VelmaLowLevelCommand::hpMotor_i>;
 template class Port<RTT::OutputPort, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_i_type, &VelmaLowLevelCommand::htMotor_i>;

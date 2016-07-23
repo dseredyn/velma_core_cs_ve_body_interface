@@ -42,6 +42,20 @@ bool VelmaLLILoTest::configureHook() {
 
 bool VelmaLLILoTest::startHook() {
 //    RESTRICT_ALLOC;
+    no_rec_counter_ = 0;
+
+    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
+    velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+    gen_.generate(cmd_gen, status_gen);
+    status_out_ = status_gen;
+
+    gen_.generate(cmd_gen, status_gen);
+    prev_cmd_in_ = cmd_gen;
+    prev_status_out_ = status_gen;
+
+    out_.writePorts(status_out_);
+
+    std::cout << "VelmaLLILoTest::startHook status_gen.tMotor_q " << status_gen.tMotor_q << std::endl;
 
 //    UNRESTRICT_ALLOC;
     return true;
@@ -55,26 +69,37 @@ void VelmaLLILoTest::updateHook() {
 
     in_.readPorts(cmd_in_);
 
-    if (!prev_cmd_gen_.empty()) {
-        std::ostringstream os_recv;
-        os_recv << cmd_in_;
-        if (os_recv.str() != prev_cmd_gen_) {
-            std::cout << "VelmaLLILoTest ERROR" << std::endl;
-            stop();
-        }
+    // check if the data was generated and compare the received command data
+    // with generated command data
+    if (gen_.toStr(cmd_in_) == gen_.toStr(prev_cmd_in_)) {
+        // generate new data
+        velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
+        velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+        gen_.generate(cmd_gen, status_gen);
+
+        // send new status data
+        status_out_ = prev_status_out_;
+
+        // save the generated command data
+        prev_cmd_in_ = cmd_gen;
+        prev_status_out_ = status_gen;
+
+        no_rec_counter_ = 0;
+        out_.writePorts(status_out_);
+    }
+    else {
+        ++no_rec_counter_;
     }
 
-    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
-    velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
-    gen_.generate(cmd_gen, status_gen);
+    if (no_rec_counter_ > 0) {
+        std::cout << "VelmaLLILoTest no new data during " << no_rec_counter_ << " loops" << std::endl;
+    }
 
-    std::ostringstream os_gen;
+    if (no_rec_counter_ > 20) {
+        std::cout << "VelmaLLILoTest ERROR" << std::endl;
+        stop();
+    }
 
-    os_gen << cmd_gen;
-
-    prev_cmd_gen_ = os_gen.str();
-
-    out_.writePorts(status_gen);
     // write outputs
 //    UNRESTRICT_ALLOC;
 }

@@ -34,7 +34,7 @@ VelmaLLITestGenerator::VelmaLLITestGenerator() {
 void VelmaLLITestGenerator::generate(velma_low_level_interface_msgs::VelmaLowLevelCommand &cmd, velma_low_level_interface_msgs::VelmaLowLevelStatus &status) {
 
     // random command
-    cmd.rHandTactile_cmd = static_cast<int32_t >(rand());
+    cmd.rHand_tactileCmd = static_cast<int32_t >(rand());
     cmd.tMotor_i = static_cast<double >(rand());
     cmd.hpMotor_i = static_cast<double >(rand());
     cmd.htMotor_i = static_cast<double >(rand());
@@ -50,7 +50,7 @@ void VelmaLLITestGenerator::generate(velma_low_level_interface_msgs::VelmaLowLev
     cmd.lArm.cmd = static_cast<int32_t >(rand());
     cmd.rArm.cmd = static_cast<int32_t >(rand());
 
-    for (int i = 0; i < 7; ++i) {
+    for (int i = 0; i < 4; ++i) {
         cmd.lHand.q[i] = static_cast<double >(rand());
         cmd.lHand.dq[i] = static_cast<double >(rand());
         cmd.lHand.max_p[i] = static_cast<double >(rand());
@@ -86,10 +86,9 @@ barrett_hand_controller_msgs/BHPressureState rHand_p
 # LeftHandOptoforce.force_1_OUTPORT
 # LeftHandOptoforce.force_2_OUTPORT
 geometry_msgs/WrenchStamped[3] lHand_f
-
-# torsoMotorPosition
-float64 tMotor_q = static_cast<double >(rand());
-
+*/
+    status.tMotor_q = static_cast<double >(rand());
+/*
 # torsoMotorVelocity
 float64 tMotor_dq = static_cast<double >(rand());
 
@@ -159,5 +158,17 @@ geometry_msgs/Wrench rFTSensor_sfw
         status.lArm_tFriRobotState[i] = static_cast<uint8_t >(rand());
     }
 */
+}
+
+std::string VelmaLLITestGenerator::toStr(const velma_low_level_interface_msgs::VelmaLowLevelCommand &cmd) {
+    std::ostringstream os;
+    os << cmd;
+    return os.str();
+}
+
+std::string VelmaLLITestGenerator::toStr(const velma_low_level_interface_msgs::VelmaLowLevelStatus &status) {
+    std::ostringstream os;
+    os << status;
+    return os.str();
 }
 

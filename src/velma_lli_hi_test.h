@@ -76,6 +76,11 @@ class VelmaLLIHiTest: public RTT::TaskContext {
     VelmaLLIStatusInput in_;
 
     VelmaLLITestGenerator gen_;
+
+    velma_low_level_interface_msgs::VelmaLowLevelCommand prev_cmd_out_;
+    velma_low_level_interface_msgs::VelmaLowLevelStatus prev_status_in_;
+
+    int no_rec_counter_;
 };
 
 #endif  // VELMA_LLI_HI_TEST_H_

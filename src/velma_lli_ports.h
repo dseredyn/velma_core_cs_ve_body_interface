@@ -87,6 +87,7 @@ class PortOperation<RTT::InputPort, innerT> {
 public:
     PortOperation(RTT::TaskContext &tc, const std::string &port_name);
     void operation(innerT &data);
+    void setDataSample(innerT &data);
 
 protected:
     RTT::InputPort<innerT > port_;
@@ -97,6 +98,7 @@ class PortOperation<RTT::OutputPort, innerT> {
 public:
     PortOperation(RTT::TaskContext &tc, const std::string &port_name);
     void operation(innerT &data);
+    void setDataSample(innerT &data);
 
 protected:
     RTT::OutputPort<innerT > port_;
