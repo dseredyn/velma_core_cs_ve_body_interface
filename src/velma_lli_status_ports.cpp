@@ -47,41 +47,71 @@ void PortData<Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm:
     }
 }
 */
-/*
+
 //
-// ArmCommand_Ports interface
+// ArmStatus_Ports interface
 //
 template <template <typename Type> class T >
-ArmCommand_Ports<T >::ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandArm &ros) :
-    JointTorque_(tc, prefix + "_JointTorqueCommand", ros),
-    KRLcmd_(tc, prefix + "_KRLcmd", ros)
+ArmStatus_Ports<T >::ArmStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusArm &ros) :
+    q_(tc, prefix + "_q", ros),
+    dq_(tc, prefix + "_dq", ros),
+    t_(tc, prefix + "_t", ros),
+    gt_(tc, prefix + "_gt", ros),
+    w_(tc, prefix + "_w", ros),
+    mmx_(tc, prefix + "_mmx", ros),
+    friIntfState_(tc, prefix + "_friIntfState", ros),
+    friRobotState_(tc, prefix + "_friRobotState", ros)
 {}
 
 // read ports
 template <>
-void ArmCommand_Ports<RTT::InputPort >::readPorts() {
-    JointTorque_.operation();
-    KRLcmd_.operation();
+void ArmStatus_Ports<RTT::InputPort >::readPorts() {
+    q_.operation();
+    dq_.operation();
+    t_.operation();
+    gt_.operation();
+    w_.operation();
+    mmx_.operation();
+    friIntfState_.operation();
+    friRobotState_.operation();
 }
 
 // write ports
 template <>
-void ArmCommand_Ports<RTT::OutputPort >::writePorts() {
-    JointTorque_.operation();
-    KRLcmd_.operation();
+void ArmStatus_Ports<RTT::OutputPort >::writePorts() {
+    q_.operation();
+    dq_.operation();
+    t_.operation();
+    gt_.operation();
+    w_.operation();
+    mmx_.operation();
+    friIntfState_.operation();
+    friRobotState_.operation();
 }
 
 
 template <>
-void ArmCommand_Ports<RTT::OutputPort >::convertFromROS() {
-    JointTorque_.convertFromROS();
-    KRLcmd_.convertFromROS();
+void ArmStatus_Ports<RTT::OutputPort >::convertFromROS() {
+    q_.convertFromROS();
+    dq_.convertFromROS();
+    t_.convertFromROS();
+    gt_.convertFromROS();
+    w_.convertFromROS();
+    mmx_.convertFromROS();
+    friIntfState_.convertFromROS();
+    friRobotState_.convertFromROS();
 }
 
 template <>
-void ArmCommand_Ports<RTT::InputPort >::convertToROS() {
-    JointTorque_.convertToROS();
-    KRLcmd_.convertToROS();
+void ArmStatus_Ports<RTT::InputPort >::convertToROS() {
+    q_.convertToROS();
+    dq_.convertToROS();
+    t_.convertToROS();
+    gt_.convertToROS();
+    w_.convertToROS();
+    mmx_.convertToROS();
+    friIntfState_.convertToROS();
+    friRobotState_.convertToROS();
 }
 
 
@@ -89,56 +119,41 @@ void ArmCommand_Ports<RTT::InputPort >::convertToROS() {
 
 
 //
-// HandCommand_Ports interface
+// HandStatus_Ports interface
 //
 template <template <typename Type> class T >
-HandCommand_Ports<T>::HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandHand &ros) :
+HandStatus_Ports<T>::HandStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusHand &ros) :
     q_(tc, prefix + "_q", ros),
-    dq_(tc, prefix + "_dq", ros),
-    hand_max_i_(tc, prefix + "_max_i", ros),
-    hand_max_p_(tc, prefix + "_max_p", ros),
-    hand_hold_(tc, prefix + "_hold", ros)
+    s_(tc, prefix + "_s", ros)
 {
 }
 
 // read ports
 template <>
-void HandCommand_Ports<RTT::InputPort >::readPorts() {
+void HandStatus_Ports<RTT::InputPort >::readPorts() {
     q_.operation();
-    dq_.operation();
-    hand_max_i_.operation();
-    hand_max_p_.operation();
-    hand_hold_.operation();
+    s_.operation();
 }
 
 // write ports
 template <>
-void HandCommand_Ports<RTT::OutputPort >::writePorts() {
+void HandStatus_Ports<RTT::OutputPort >::writePorts() {
     q_.operation();
-    dq_.operation();
-    hand_max_i_.operation();
-    hand_max_p_.operation();
-    hand_hold_.operation();
+    s_.operation();
 }
 
 template <>
-void HandCommand_Ports<RTT::OutputPort >::convertFromROS() {
+void HandStatus_Ports<RTT::OutputPort >::convertFromROS() {
     q_.convertFromROS();
-    dq_.convertFromROS();
-    hand_max_i_.convertFromROS();
-    hand_max_p_.convertFromROS();
-    hand_hold_.convertFromROS();
+    s_.convertFromROS();
 }
 
 template <>
-void HandCommand_Ports<RTT::InputPort >::convertToROS() {
+void HandStatus_Ports<RTT::InputPort >::convertToROS() {
     q_.convertToROS();
-    dq_.convertToROS();
-    hand_max_i_.convertToROS();
-    hand_max_p_.convertToROS();
-    hand_hold_.convertToROS();
+    s_.convertToROS();
 }
-
+/*
 //
 // FTSensorCommand_Ports interface
 //
@@ -151,12 +166,12 @@ FTSensorCommand_Ports<T >::FTSensorCommand_Ports(RTT::TaskContext &tc, const std
 //
 template <template <typename Type> class T>
 VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc, VelmaLowLevelStatus &ros) :
-    tMotor_q_(tc, "status_tMotor_q", ros)
-/*    rArm_(tc, "rArm", ros.rArm),
-    lArm_(tc, "lArm", ros.lArm),
-    rHand_(tc, "rHand", ros.rHand),
-    lHand_(tc, "lHand", ros.lHand),
-    rHandTactile_cmd_(tc, "rHandTactile_cmd", ros),
+    tMotor_q_(tc, "status_tMotor_q", ros),
+    rArm_(tc, "status_rArm", ros.rArm),
+    lArm_(tc, "status_lArm", ros.lArm),
+    rHand_(tc, "status_rHand", ros.rHand),
+    lHand_(tc, "status_lHand", ros.lHand)
+/*    rHandTactile_cmd_(tc, "rHandTactile_cmd", ros),
     tMotor_i_(tc, "torsoMotorCurrentCommand", ros),
     hpMotor_i_(tc, "headPanMotorCurrentCommand", ros),
     htMotor_i_(tc, "headTiltMotorCurrentCommand", ros),
@@ -172,11 +187,11 @@ VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc, VelmaLowLevelStat
 template <>
 void VelmaStatus_Ports<RTT::InputPort >::readPorts() {
     tMotor_q_.operation();
-/*    rArm_.readPorts();
+    rArm_.readPorts();
     lArm_.readPorts();
     rHand_.readPorts();
     lHand_.readPorts();
-    rHandTactile_cmd_.operation();
+/*    rHandTactile_cmd_.operation();
     tMotor_i_.operation();
     hpMotor_i_.operation();
     htMotor_i_.operation();
@@ -191,11 +206,11 @@ void VelmaStatus_Ports<RTT::InputPort >::readPorts() {
 template <>
 void VelmaStatus_Ports<RTT::OutputPort >::writePorts() {
     tMotor_q_.operation();
-/*    rArm_.writePorts();
+    rArm_.writePorts();
     lArm_.writePorts();
     rHand_.writePorts();
     lHand_.writePorts();
-    rHandTactile_cmd_.operation();
+/*    rHandTactile_cmd_.operation();
     tMotor_i_.operation();
     hpMotor_i_.operation();
     htMotor_i_.operation();
@@ -209,12 +224,11 @@ void VelmaStatus_Ports<RTT::OutputPort >::writePorts() {
 template <>
 void VelmaStatus_Ports<RTT::OutputPort >::convertFromROS() {
     tMotor_q_.convertFromROS();
-
-/*    rArm_.convertFromROS();
+    rArm_.convertFromROS();
     lArm_.convertFromROS();
     rHand_.convertFromROS();
     lHand_.convertFromROS();
-    rHandTactile_cmd_.convertFromROS();
+/*    rHandTactile_cmd_.convertFromROS();
     tMotor_i_.convertFromROS();
     hpMotor_i_.convertFromROS();
     htMotor_i_.convertFromROS();
@@ -228,11 +242,11 @@ void VelmaStatus_Ports<RTT::OutputPort >::convertFromROS() {
 template <>
 void VelmaStatus_Ports<RTT::InputPort >::convertToROS() {
     tMotor_q_.convertToROS();
-/*    rArm_.convertToROS();
+    rArm_.convertToROS();
     lArm_.convertToROS();
     rHand_.convertToROS();
     lHand_.convertToROS();
-    rHandTactile_cmd_.convertToROS();
+/*    rHandTactile_cmd_.convertToROS();
     tMotor_i_.convertToROS();
     hpMotor_i_.convertToROS();
     htMotor_i_.convertToROS();
@@ -253,7 +267,7 @@ VelmaLLIStatusInput::VelmaLLIStatusInput(RTT::TaskContext &tc, VelmaLowLevelStat
 {
 }
 
-void VelmaLLIStatusInput::readPorts(velma_low_level_interface_msgs::VelmaLowLevelStatus &command) {
+void VelmaLLIStatusInput::readPorts(velma_low_level_interface_msgs::VelmaLowLevelStatus &status) {
     ports_in_.readPorts();
     ports_in_.convertToROS();
 }
@@ -268,7 +282,7 @@ VelmaLLIStatusOutput::VelmaLLIStatusOutput(RTT::TaskContext &tc, VelmaLowLevelSt
 {
 }
 
-void VelmaLLIStatusOutput::writePorts(const velma_low_level_interface_msgs::VelmaLowLevelStatus &command) {
+void VelmaLLIStatusOutput::writePorts(const velma_low_level_interface_msgs::VelmaLowLevelStatus &status) {
     ports_out_.convertFromROS();
     ports_out_.writePorts();
 }

@@ -88,6 +88,48 @@ barrett_hand_controller_msgs/BHPressureState rHand_p
 geometry_msgs/WrenchStamped[3] lHand_f
 */
     status.tMotor_q = static_cast<double >(rand());
+
+    for (int i = 0; i < 4; ++i) {
+        status.lHand.q[i] = static_cast<double >(rand());
+        status.lHand.s[i] = static_cast<int32_t >(rand());
+        status.rHand.q[i] = static_cast<double >(rand());
+        status.rHand.s[i] = static_cast<int32_t >(rand());
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        status.lArm.q[i] = static_cast<double >(rand());
+        status.lArm.dq[i] = static_cast<double >(rand());
+        status.lArm.t[i] = static_cast<double >(rand());
+        status.lArm.gt[i] = static_cast<double >(rand());
+        status.rArm.q[i] = static_cast<double >(rand());
+        status.rArm.dq[i] = static_cast<double >(rand());
+        status.rArm.t[i] = static_cast<double >(rand());
+        status.rArm.gt[i] = static_cast<double >(rand());
+    }
+
+    for (int i = 0; i < 28; ++i) {
+        status.lArm.mmx[i] = static_cast<double >(rand());
+        status.rArm.mmx[i] = static_cast<double >(rand());
+    }
+
+    for (int i = 0; i < 40; ++i) {
+        status.lArm.friIntfState[i] = static_cast<uint8_t >(rand());
+        status.rArm.friIntfState[i] = static_cast<uint8_t >(rand());
+    }
+
+    for (int i = 0; i < 36; ++i) {
+        status.lArm.friRobotState[i] = static_cast<uint8_t >(rand());
+        status.rArm.friRobotState[i] = static_cast<uint8_t >(rand());
+    }
+
+    status.lArm.w.force.x = static_cast<double >(rand());
+    status.lArm.w.force.y = static_cast<double >(rand());
+    status.lArm.w.force.z = static_cast<double >(rand());
+    status.lArm.w.torque.x = static_cast<double >(rand());
+    status.lArm.w.torque.y = static_cast<double >(rand());
+    status.lArm.w.torque.z = static_cast<double >(rand());
+
+
 /*
 # torsoMotorVelocity
 float64 tMotor_dq = static_cast<double >(rand());

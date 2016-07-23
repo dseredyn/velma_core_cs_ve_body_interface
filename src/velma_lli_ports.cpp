@@ -45,6 +45,18 @@ PortRawData<Eigen::VectorXd, boost::array<double, 7ul> >::PortRawData() : data_(
 template < >
 PortRawData<Eigen::VectorXd, boost::array<double, 4ul> >::PortRawData() : data_(4) {}
 
+template < >
+PortRawData<Eigen::VectorXi, boost::array<int32_t, 4ul> >::PortRawData() : data_(4) {}
+
+template < >
+PortRawData<Eigen::VectorXi, boost::array<uint8_t, 40ul> >::PortRawData() : data_(40) {}
+
+template < >
+PortRawData<Eigen::VectorXi, boost::array<uint8_t, 36ul> >::PortRawData() : data_(36) {}
+
+template < >
+PortRawData<Eigen::VectorXd, boost::array<double, 28ul> >::PortRawData() : data_(28) {}
+
 //
 // data conversion
 //
@@ -85,6 +97,67 @@ template <>
 void PortRawData<Eigen::VectorXd, boost::array<double, 4ul> >::convertToROS(boost::array<double, 4ul> &ros) {
     for (int i = 0; i < 4; ++i) {
         ros[i] = data_(i);
+    }
+}
+
+template <>
+void PortRawData<Eigen::VectorXi, boost::array<int32_t, 4ul> >::convertFromROS(const boost::array<int32_t, 4ul> &ros) {
+    for (int i = 0; i < 4; ++i) {
+        data_(i) = ros[i];
+    }
+}
+
+template <>
+void PortRawData<Eigen::VectorXi, boost::array<int32_t, 4ul> >::convertToROS(boost::array<int32_t, 4ul> &ros) {
+    for (int i = 0; i < 4; ++i) {
+        ros[i] = data_(i);
+    }
+}
+
+template <>
+void PortRawData<Eigen::VectorXi, boost::array<uint8_t, 40ul> >::convertFromROS(const boost::array<uint8_t, 40ul> &ros) {
+    for (int i = 0; i < 40; ++i) {
+        data_(i) = ros[i];
+    }
+}
+
+template <>
+void PortRawData<Eigen::VectorXi, boost::array<uint8_t, 40ul> >::convertToROS(boost::array<uint8_t, 40ul> &ros) {
+    for (int i = 0; i < 40; ++i) {
+        ros[i] = data_(i);
+    }
+}
+
+template <>
+void PortRawData<Eigen::VectorXi, boost::array<uint8_t, 36ul> >::convertFromROS(const boost::array<uint8_t, 36ul> &ros) {
+    for (int i = 0; i < 36; ++i) {
+        data_(i) = ros[i];
+    }
+}
+
+template <>
+void PortRawData<Eigen::VectorXi, boost::array<uint8_t, 36ul> >::convertToROS(boost::array<uint8_t, 36ul> &ros) {
+    for (int i = 0; i < 36; ++i) {
+        ros[i] = data_(i);
+    }
+}
+
+// 7x7 mass matrix
+template <>
+void PortRawData<Eigen::Matrix<double, 7, 7>, boost::array<double, 28ul> >::convertFromROS(const boost::array<double, 28ul> &ros) {
+    for (int i = 0, idx = 0; i < 7; ++i) {
+        for (int j = i; j < 7; ++j) {
+            data_(i,j) = data_(j,i) = ros[idx++];
+        }
+    }
+}
+
+template <>
+void PortRawData<Eigen::Matrix<double, 7, 7>, boost::array<double, 28ul> >::convertToROS(boost::array<double, 28ul> &ros) {
+    for (int i = 0, idx = 0; i < 7; ++i) {
+        for (int j = i; j < 7; ++j) {
+            ros[idx++] = data_(i,j);
+        }
     }
 }
 
@@ -226,10 +299,32 @@ template class Port<RTT::OutputPort, double, VelmaLowLevelCommand, VelmaLowLevel
 template class Port<RTT::OutputPort, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_dq_type, &VelmaLowLevelCommand::htMotor_dq>;
 
 using velma_low_level_interface_msgs::VelmaLowLevelStatus;
+using velma_low_level_interface_msgs::VelmaLowLevelStatusArm;
+using velma_low_level_interface_msgs::VelmaLowLevelStatusHand;
 
 template class Port<RTT::InputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q>;
+template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_q_type, &VelmaLowLevelStatusArm::q>;
+template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_dq_type, &VelmaLowLevelStatusArm::dq>;
+template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_t_type, &VelmaLowLevelStatusArm::t>;
+template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_gt_type, &VelmaLowLevelStatusArm::gt>;
+template class Port<RTT::InputPort, geometry_msgs::Wrench, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_w_type, &VelmaLowLevelStatusArm::w>;
+template class Port<RTT::InputPort, Eigen::Matrix<double, 7, 7>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx>;
+template class Port<RTT::InputPort, Eigen::VectorXi, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friIntfState_type, &VelmaLowLevelStatusArm::friIntfState>;
+template class Port<RTT::InputPort, Eigen::VectorXi, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friRobotState_type, &VelmaLowLevelStatusArm::friRobotState>;
+template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q>;
+template class Port<RTT::InputPort, Eigen::VectorXi, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s>;
 
 template class Port<RTT::OutputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q>;
+template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_q_type, &VelmaLowLevelStatusArm::q>;
+template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_dq_type, &VelmaLowLevelStatusArm::dq>;
+template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_t_type, &VelmaLowLevelStatusArm::t>;
+template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_gt_type, &VelmaLowLevelStatusArm::gt>;
+template class Port<RTT::OutputPort, geometry_msgs::Wrench, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_w_type, &VelmaLowLevelStatusArm::w>;
+template class Port<RTT::OutputPort, Eigen::Matrix<double, 7, 7>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx>;
+template class Port<RTT::OutputPort, Eigen::VectorXi, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friIntfState_type, &VelmaLowLevelStatusArm::friIntfState>;
+template class Port<RTT::OutputPort, Eigen::VectorXi, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friRobotState_type, &VelmaLowLevelStatusArm::friRobotState>;
+template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q>;
+template class Port<RTT::OutputPort, Eigen::VectorXi, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s>;
 
 };  // namespace velma_lli_types
 

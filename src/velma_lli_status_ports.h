@@ -43,6 +43,8 @@
 #include <geometry_msgs/WrenchStamped.h>
 #include <diagnostic_msgs/DiagnosticArray.h>
 #include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
+#include "velma_low_level_interface_msgs/VelmaLowLevelStatusArm.h"
+#include "velma_low_level_interface_msgs/VelmaLowLevelStatusHand.h"
 
 #include <kuka_lwr_fri/friComm.h>
 
@@ -51,44 +53,49 @@
 #include "velma_lli_ports.h"
 
 using velma_low_level_interface_msgs::VelmaLowLevelStatus;
+using velma_low_level_interface_msgs::VelmaLowLevelStatusArm;
+using velma_low_level_interface_msgs::VelmaLowLevelStatusHand;
 
 namespace velma_lli_types {
+
+template <template <typename Type> class T>
+class ArmStatus_Ports {
+public:
+    ArmStatus_Ports();
+    ArmStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusArm &ros);
+
+    void readPorts();
+    void writePorts();
+
+    void convertFromROS();
+    void convertToROS();
+
+    Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_q_type, &VelmaLowLevelStatusArm::q> q_;
+    Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_dq_type, &VelmaLowLevelStatusArm::dq> dq_;
+    Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_t_type, &VelmaLowLevelStatusArm::t> t_;
+    Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_gt_type, &VelmaLowLevelStatusArm::gt> gt_;
+    Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_w_type, &VelmaLowLevelStatusArm::w> w_;
+    Port<T, Eigen::Matrix<double, 7, 7>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx> mmx_;
+    Port<T, Eigen::VectorXi, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friIntfState_type, &VelmaLowLevelStatusArm::friIntfState> friIntfState_;
+    Port<T, Eigen::VectorXi, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friRobotState_type, &VelmaLowLevelStatusArm::friRobotState> friRobotState_;
+};
+
+template <template <typename Type> class T>
+class HandStatus_Ports {
+public:
+    HandStatus_Ports();
+    HandStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusHand &ros);
+
+    void readPorts();
+    void writePorts();
+
+    void convertFromROS();
+    void convertToROS();
+
+    Port<T, Eigen::VectorXd, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q> q_;
+    Port<T, Eigen::VectorXi, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s> s_;
+};
 /*
-template <template <typename Type> class T>
-class ArmCommand_Ports {
-public:
-    ArmCommand_Ports();
-    ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandArm &ros);
-
-    void readPorts();
-    void writePorts();
-
-    void convertFromROS();
-    void convertToROS();
-
-    Port<T, Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type, &VelmaLowLevelCommandArm::t> JointTorque_;
-    Port<T, int32_t, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_cmd_type, &VelmaLowLevelCommandArm::cmd> KRLcmd_;
-};
-
-template <template <typename Type> class T>
-class HandCommand_Ports {
-public:
-    HandCommand_Ports();
-    HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandHand &ros);
-
-    void readPorts();
-    void writePorts();
-
-    void convertFromROS();
-    void convertToROS();
-
-    Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_q_type, &VelmaLowLevelCommandHand::q> q_;
-    Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_dq_type, &VelmaLowLevelCommandHand::dq> dq_;
-    Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_i_type, &VelmaLowLevelCommandHand::max_i> hand_max_i_;
-    Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_p_type, &VelmaLowLevelCommandHand::max_p> hand_max_p_;
-    Port<T, bool, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_hold_type, &VelmaLowLevelCommandHand::hold> hand_hold_;
-};
-
 template <template <typename Type> class T>
 class FTSensorCommand_Ports {
 public:
@@ -114,18 +121,19 @@ public:
     // torsoMotorPosition
     Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q> tMotor_q_;
 
-/*
     // right LWR
-    ArmCommand_Ports<T > rArm_;
+    ArmStatus_Ports<T > rArm_;
 
     // left LWR
-    ArmCommand_Ports<T > lArm_;
+    ArmStatus_Ports<T > lArm_;
 
     // right BarrettHand
-    HandCommand_Ports<T > rHand_;
+    HandStatus_Ports<T > rHand_;
 
     // left BarrettHand
-    HandCommand_Ports<T > lHand_;
+    HandStatus_Ports<T > lHand_;
+
+/*
 
     // BarrettHand tactile sensors
     Port<T, int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHandTactile_cmd_type, &VelmaLowLevelCommand::rHandTactile_cmd> rHandTactile_cmd_;
