@@ -87,8 +87,6 @@ barrett_hand_controller_msgs/BHPressureState rHand_p
 # LeftHandOptoforce.force_2_OUTPORT
 geometry_msgs/WrenchStamped[3] lHand_f
 */
-    status.tMotor_q = static_cast<double >(rand());
-
     for (int i = 0; i < 4; ++i) {
         status.lHand.q[i] = static_cast<double >(rand());
         status.lHand.s[i] = static_cast<int32_t >(rand());
@@ -129,7 +127,42 @@ geometry_msgs/WrenchStamped[3] lHand_f
     status.lArm.w.torque.y = static_cast<double >(rand());
     status.lArm.w.torque.z = static_cast<double >(rand());
 
+    status.tMotor_q = static_cast<double >(rand());
+    status.tMotor_dq = static_cast<double >(rand());
+    status.hpMotor_q = static_cast<double >(rand());
+    status.hpMotor_dq = static_cast<double >(rand());
+    status.htMotor_q = static_cast<double >(rand());
+    status.htMotor_dq = static_cast<double >(rand());
 
+    for (int i = 0; i < 24; ++i) {
+        status.rHand_p.finger1_tip[i] = static_cast<int16_t >(rand());
+        status.rHand_p.finger2_tip[i] = static_cast<int16_t >(rand());
+        status.rHand_p.finger3_tip[i] = static_cast<int16_t >(rand());
+        status.rHand_p.palm_tip[i] = static_cast<int16_t >(rand());
+    }
+
+    for (int i = 0; i < 3; ++i) {
+        status.lHand_f[i].wrench.force.x = static_cast<double >(rand());
+        status.lHand_f[i].wrench.force.y = static_cast<double >(rand());
+        status.lHand_f[i].wrench.force.z = static_cast<double >(rand());
+        status.lHand_f[i].wrench.torque.x = static_cast<double >(rand());
+        status.lHand_f[i].wrench.torque.y = static_cast<double >(rand());
+        status.lHand_f[i].wrench.torque.z = static_cast<double >(rand());
+    }
+
+    status.rFt.rw.force.x = static_cast<double >(rand());
+    status.rFt.rw.force.y = static_cast<double >(rand());
+    status.rFt.rw.force.z = static_cast<double >(rand());
+    status.rFt.rw.torque.x = static_cast<double >(rand());
+    status.rFt.rw.torque.y = static_cast<double >(rand());
+    status.rFt.rw.torque.z = static_cast<double >(rand());
+
+    status.lFt.rw.force.x = static_cast<double >(rand());
+    status.lFt.rw.force.y = static_cast<double >(rand());
+    status.lFt.rw.force.z = static_cast<double >(rand());
+    status.lFt.rw.torque.x = static_cast<double >(rand());
+    status.lFt.rw.torque.y = static_cast<double >(rand());
+    status.lFt.rw.torque.z = static_cast<double >(rand());
 /*
 # torsoMotorVelocity
 float64 tMotor_dq = static_cast<double >(rand());

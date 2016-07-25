@@ -301,8 +301,8 @@ template class Port<RTT::OutputPort, double, VelmaLowLevelCommand, VelmaLowLevel
 using velma_low_level_interface_msgs::VelmaLowLevelStatus;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusArm;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusHand;
+using velma_low_level_interface_msgs::VelmaLowLevelStatusFT;
 
-template class Port<RTT::InputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q>;
 template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_q_type, &VelmaLowLevelStatusArm::q>;
 template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_dq_type, &VelmaLowLevelStatusArm::dq>;
 template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_t_type, &VelmaLowLevelStatusArm::t>;
@@ -313,8 +313,18 @@ template class Port<RTT::InputPort, Eigen::VectorXi, VelmaLowLevelStatusArm, Vel
 template class Port<RTT::InputPort, Eigen::VectorXi, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friRobotState_type, &VelmaLowLevelStatusArm::friRobotState>;
 template class Port<RTT::InputPort, Eigen::VectorXd, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q>;
 template class Port<RTT::InputPort, Eigen::VectorXi, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s>;
+template class Port<RTT::InputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q>;
+template class Port<RTT::InputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_dq_type, &VelmaLowLevelStatus::tMotor_dq>;
+template class Port<RTT::InputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_hpMotor_q_type, &VelmaLowLevelStatus::hpMotor_q>;
+template class Port<RTT::InputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_hpMotor_dq_type, &VelmaLowLevelStatus::hpMotor_dq>;
+template class Port<RTT::InputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_htMotor_q_type, &VelmaLowLevelStatus::htMotor_q>;
+template class Port<RTT::InputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_htMotor_dq_type, &VelmaLowLevelStatus::htMotor_dq>;
+template class Port<RTT::InputPort, barrett_hand_controller_msgs::BHPressureState, VelmaLowLevelStatus, VelmaLowLevelStatus::_rHand_p_type, &VelmaLowLevelStatus::rHand_p>;
+template class Port<RTT::InputPort, VelmaLowLevelStatus::_lHand_f_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_lHand_f_type, &VelmaLowLevelStatus::lHand_f>;
+template class Port<RTT::InputPort, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_rw_type, &VelmaLowLevelStatusFT::rw>;
+template class Port<RTT::InputPort, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_ffw_type, &VelmaLowLevelStatusFT::ffw>;
+template class Port<RTT::InputPort, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_sfw_type, &VelmaLowLevelStatusFT::sfw>;
 
-template class Port<RTT::OutputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q>;
 template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_q_type, &VelmaLowLevelStatusArm::q>;
 template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_dq_type, &VelmaLowLevelStatusArm::dq>;
 template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_t_type, &VelmaLowLevelStatusArm::t>;
@@ -325,6 +335,17 @@ template class Port<RTT::OutputPort, Eigen::VectorXi, VelmaLowLevelStatusArm, Ve
 template class Port<RTT::OutputPort, Eigen::VectorXi, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friRobotState_type, &VelmaLowLevelStatusArm::friRobotState>;
 template class Port<RTT::OutputPort, Eigen::VectorXd, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q>;
 template class Port<RTT::OutputPort, Eigen::VectorXi, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s>;
+template class Port<RTT::OutputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q>;
+template class Port<RTT::OutputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_dq_type, &VelmaLowLevelStatus::tMotor_dq>;
+template class Port<RTT::OutputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_hpMotor_q_type, &VelmaLowLevelStatus::hpMotor_q>;
+template class Port<RTT::OutputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_hpMotor_dq_type, &VelmaLowLevelStatus::hpMotor_dq>;
+template class Port<RTT::OutputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_htMotor_q_type, &VelmaLowLevelStatus::htMotor_q>;
+template class Port<RTT::OutputPort, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_htMotor_dq_type, &VelmaLowLevelStatus::htMotor_dq>;
+template class Port<RTT::OutputPort, barrett_hand_controller_msgs::BHPressureState, VelmaLowLevelStatus, VelmaLowLevelStatus::_rHand_p_type, &VelmaLowLevelStatus::rHand_p>;
+template class Port<RTT::OutputPort, VelmaLowLevelStatus::_lHand_f_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_lHand_f_type, &VelmaLowLevelStatus::lHand_f>;
+template class Port<RTT::OutputPort, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_rw_type, &VelmaLowLevelStatusFT::rw>;
+template class Port<RTT::OutputPort, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_ffw_type, &VelmaLowLevelStatusFT::ffw>;
+template class Port<RTT::OutputPort, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_sfw_type, &VelmaLowLevelStatusFT::sfw>;
 
 };  // namespace velma_lli_types
 

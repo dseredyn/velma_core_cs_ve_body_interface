@@ -45,6 +45,8 @@
 #include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
 #include "velma_low_level_interface_msgs/VelmaLowLevelStatusArm.h"
 #include "velma_low_level_interface_msgs/VelmaLowLevelStatusHand.h"
+#include "velma_low_level_interface_msgs/VelmaLowLevelStatusFT.h"
+#include "barrett_hand_controller_msgs/BHPressureState.h"
 
 #include <kuka_lwr_fri/friComm.h>
 
@@ -55,6 +57,7 @@
 using velma_low_level_interface_msgs::VelmaLowLevelStatus;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusArm;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusHand;
+using velma_low_level_interface_msgs::VelmaLowLevelStatusFT;
 
 namespace velma_lli_types {
 
@@ -95,17 +98,24 @@ public:
     Port<T, Eigen::VectorXd, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q> q_;
     Port<T, Eigen::VectorXi, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s> s_;
 };
-/*
+
 template <template <typename Type> class T>
-class FTSensorCommand_Ports {
+class FTSensorStatus_Ports {
 public:
-    FTSensorCommand_Ports();
-    FTSensorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
+    FTSensorStatus_Ports();
+    FTSensorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusFT &ros);
 
     void readPorts();
     void writePorts();
+
+    void convertFromROS();
+    void convertToROS();
+
+    Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_rw_type, &VelmaLowLevelStatusFT::rw> rw_;
+    Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_ffw_type, &VelmaLowLevelStatusFT::ffw> ffw_;
+    Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_sfw_type, &VelmaLowLevelStatusFT::sfw> sfw_;
 };
-*/
+
 template <template <typename Type> class T>
 class VelmaStatus_Ports{
 public:
@@ -117,9 +127,6 @@ public:
 
     void convertFromROS();
     void convertToROS();
-
-    // torsoMotorPosition
-    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q> tMotor_q_;
 
     // right LWR
     ArmStatus_Ports<T > rArm_;
@@ -133,32 +140,33 @@ public:
     // left BarrettHand
     HandStatus_Ports<T > lHand_;
 
-/*
+    // right FT sensor
+    FTSensorStatus_Ports<T > rFt_;
 
-    // BarrettHand tactile sensors
-    Port<T, int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHandTactile_cmd_type, &VelmaLowLevelCommand::rHandTactile_cmd> rHandTactile_cmd_;
+    // left FT sensor
+    FTSensorStatus_Ports<T > lFt_;
 
-    // torsoMotorCurrentCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_tMotor_i_type, &VelmaLowLevelCommand::tMotor_i> tMotor_i_;
+    // torsoMotorPosition
+    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q> tMotor_q_;
 
-    // headPanMotorCurrentCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_i_type, &VelmaLowLevelCommand::hpMotor_i> hpMotor_i_;
+    // torsoMotorVelocity
+    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_dq_type, &VelmaLowLevelStatus::tMotor_dq> tMotor_dq_;
 
-    // headTiltMotorCurrentCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_i_type, &VelmaLowLevelCommand::htMotor_i> htMotor_i_;
+    // headPanMotorPosition
+    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_hpMotor_q_type, &VelmaLowLevelStatus::hpMotor_q> hpMotor_q_;
 
-    // headPanMotorPositionCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_q_type, &VelmaLowLevelCommand::hpMotor_q> hpMotor_q_;
+    // headPanMotorVelocity
+    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_hpMotor_dq_type, &VelmaLowLevelStatus::hpMotor_dq> hpMotor_dq_;
 
-    // headTiltMotorPositionCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_q_type, &VelmaLowLevelCommand::htMotor_q> htMotor_q_;
+    // headTiltMotorPosition
+    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_htMotor_q_type, &VelmaLowLevelStatus::htMotor_q> htMotor_q_;
 
-    // headPanMotorVelocityCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_dq_type, &VelmaLowLevelCommand::hpMotor_dq> hpMotor_dq_;
+    // headTiltMotorVelocity
+    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_htMotor_dq_type, &VelmaLowLevelStatus::htMotor_dq> htMotor_dq_;
 
-    // headTiltMotorVelocityCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_dq_type, &VelmaLowLevelCommand::htMotor_dq> htMotor_dq_;
-*/
+    Port<T, barrett_hand_controller_msgs::BHPressureState, VelmaLowLevelStatus, VelmaLowLevelStatus::_rHand_p_type, &VelmaLowLevelStatus::rHand_p> rHand_p_;
+
+    Port<T, VelmaLowLevelStatus::_lHand_f_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_lHand_f_type, &VelmaLowLevelStatus::lHand_f> lHand_f_;
 };
 
 };  // namespace velma_lli_types

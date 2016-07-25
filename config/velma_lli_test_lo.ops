@@ -75,8 +75,6 @@ connect("lli_lo_rx.cmd_hpMotor_dq_OUTPORT",         "lli_lo_test.cmd_hpMotor_dq_
 connect("lli_lo_rx.cmd_htMotor_dq_OUTPORT",         "lli_lo_test.cmd_htMotor_dq_INPORT", ConnPolicy())
 
 # status
-connect("lli_lo_test.status_tMotor_q_OUTPORT", "lli_lo_tx.status_tMotor_q_INPORT", ConnPolicy())
-
 connect("lli_lo_test.status_rArm_q_OUTPORT",              "lli_lo_tx.status_rArm_q_INPORT", ConnPolicy())
 connect("lli_lo_test.status_rArm_dq_OUTPORT",             "lli_lo_tx.status_rArm_dq_INPORT", ConnPolicy())
 connect("lli_lo_test.status_rArm_t_OUTPORT",              "lli_lo_tx.status_rArm_t_INPORT", ConnPolicy())
@@ -98,6 +96,22 @@ connect("lli_lo_test.status_lArm_friIntfState_OUTPORT",   "lli_lo_tx.status_lArm
 connect("lli_lo_test.status_lArm_friRobotState_OUTPORT",  "lli_lo_tx.status_lArm_friRobotState_INPORT", ConnPolicy())
 connect("lli_lo_test.status_lHand_q_OUTPORT",             "lli_lo_tx.status_lHand_q_INPORT", ConnPolicy())
 connect("lli_lo_test.status_lHand_s_OUTPORT",             "lli_lo_tx.status_lHand_s_INPORT", ConnPolicy())
+
+connect("lli_lo_test.status_tMotor_q_OUTPORT",            "lli_lo_tx.status_tMotor_q_INPORT", ConnPolicy())
+connect("lli_lo_test.status_tMotor_dq_OUTPORT",           "lli_lo_tx.status_tMotor_dq_INPORT", ConnPolicy())
+connect("lli_lo_test.status_hpMotor_q_OUTPORT",           "lli_lo_tx.status_hpMotor_q_INPORT", ConnPolicy())
+connect("lli_lo_test.status_hpMotor_dq_OUTPORT",          "lli_lo_tx.status_hpMotor_dq_INPORT", ConnPolicy())
+connect("lli_lo_test.status_htMotor_q_OUTPORT",           "lli_lo_tx.status_htMotor_q_INPORT", ConnPolicy())
+connect("lli_lo_test.status_htMotor_dq_OUTPORT",          "lli_lo_tx.status_htMotor_dq_INPORT", ConnPolicy())
+connect("lli_lo_test.status_rHand_p_OUTPORT",             "lli_lo_tx.status_rHand_p_INPORT", ConnPolicy())
+connect("lli_lo_test.status_lHand_f_OUTPORT",             "lli_lo_tx.status_lHand_f_INPORT", ConnPolicy())
+
+connect("lli_lo_test.status_rFt_rw_OUTPORT",              "lli_lo_tx.status_rFt_rw_INPORT", ConnPolicy())
+connect("lli_lo_test.status_rFt_ffw_OUTPORT",             "lli_lo_tx.status_rFt_ffw_INPORT", ConnPolicy())
+connect("lli_lo_test.status_rFt_sfw_OUTPORT",             "lli_lo_tx.status_rFt_sfw_INPORT", ConnPolicy())
+connect("lli_lo_test.status_lFt_rw_OUTPORT",              "lli_lo_tx.status_lFt_rw_INPORT", ConnPolicy())
+connect("lli_lo_test.status_lFt_ffw_OUTPORT",             "lli_lo_tx.status_lFt_ffw_INPORT", ConnPolicy())
+connect("lli_lo_test.status_lFt_sfw_OUTPORT",             "lli_lo_tx.status_lFt_sfw_INPORT", ConnPolicy())
 
 //------------------------------------------------------------------------------
 //-- Controller manager
