@@ -79,8 +79,8 @@ public:
     Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_gt_type, &VelmaLowLevelStatusArm::gt> gt_;
     Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_w_type, &VelmaLowLevelStatusArm::w> w_;
     Port<T, Eigen::Matrix<double, 7, 7>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx> mmx_;
-    Port<T, Eigen::VectorXi, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friIntfState_type, &VelmaLowLevelStatusArm::friIntfState> friIntfState_;
-    Port<T, Eigen::VectorXi, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friRobotState_type, &VelmaLowLevelStatusArm::friRobotState> friRobotState_;
+    Port<T, tFriIntfState, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friIntfState_type, &VelmaLowLevelStatusArm::friIntfState> friIntfState_;
+    Port<T, tFriRobotState, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friRobotState_type, &VelmaLowLevelStatusArm::friRobotState> friRobotState_;
 };
 
 template <template <typename Type> class T>
@@ -96,7 +96,7 @@ public:
     void convertToROS();
 
     Port<T, Eigen::VectorXd, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q> q_;
-    Port<T, Eigen::VectorXi, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s> s_;
+    Port<T, uint32_t, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s> s_;
 };
 
 template <template <typename Type> class T>

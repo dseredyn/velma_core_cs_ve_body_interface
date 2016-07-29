@@ -47,8 +47,8 @@ void VelmaLLITestGenerator::generate(velma_low_level_interface_msgs::VelmaLowLev
         cmd.lArm.t[i] = static_cast<double >(rand());
         cmd.rArm.t[i] = static_cast<double >(rand());
     }
-    cmd.lArm.cmd = static_cast<int32_t >(rand());
-    cmd.rArm.cmd = static_cast<int32_t >(rand());
+    cmd.lArm.cmd.data = static_cast<int32_t >(rand());
+    cmd.rArm.cmd.data = static_cast<int32_t >(rand());
 
     for (int i = 0; i < 4; ++i) {
         cmd.lHand.q[i] = static_cast<double >(rand());
@@ -89,10 +89,10 @@ geometry_msgs/WrenchStamped[3] lHand_f
 */
     for (int i = 0; i < 4; ++i) {
         status.lHand.q[i] = static_cast<double >(rand());
-        status.lHand.s[i] = static_cast<int32_t >(rand());
         status.rHand.q[i] = static_cast<double >(rand());
-        status.rHand.s[i] = static_cast<int32_t >(rand());
     }
+    status.lHand.s = static_cast<uint32_t >(rand());
+    status.rHand.s = static_cast<uint32_t >(rand());
 
     for (int i = 0; i < 7; ++i) {
         status.lArm.q[i] = static_cast<double >(rand());

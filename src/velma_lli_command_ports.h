@@ -70,7 +70,7 @@ public:
     void convertToROS();
 
     Port<T, Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type, &VelmaLowLevelCommandArm::t> t_;
-    Port<T, int32_t, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_cmd_type, &VelmaLowLevelCommandArm::cmd> cmd_;
+    Port<T, std_msgs::Int32, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_cmd_type, &VelmaLowLevelCommandArm::cmd> cmd_;
 };
 
 template <template <typename Type> class T>

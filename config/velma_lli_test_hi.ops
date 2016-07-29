@@ -119,10 +119,8 @@ scheme.configure();
 
 addPeer("lli_hi_rx", "scheme");
 
-#addPeer("scheme", "lli_hi_rx");
 addPeer("scheme", "lli_hi_tx");
 addPeer("scheme", "lli_hi_test");
-#scheme.addBlock("lli_hi_rx");
 scheme.addBlock("lli_hi_tx");
 scheme.addBlock("lli_hi_test");
 

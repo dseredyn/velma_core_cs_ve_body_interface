@@ -123,11 +123,7 @@ scheme.configure();
 
 addPeer("lli_lo_rx", "scheme");
 
-#addPeer("scheme", "lli_lo_rx");
-#addPeer("scheme", "lli_lo_tx");
 addPeer("scheme", "lli_lo_test");
-#scheme.addBlock("lli_lo_rx");
-#scheme.addBlock("lli_lo_tx");
 scheme.addBlock("lli_lo_test");
 
 scheme.start();
