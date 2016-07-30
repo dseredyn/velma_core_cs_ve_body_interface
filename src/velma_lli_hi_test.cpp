@@ -44,13 +44,13 @@ bool VelmaLLIHiTest::startHook() {
 //    RESTRICT_ALLOC;
     no_rec_counter_ = 0;
 
-    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
-    velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
-    gen_.generate(cmd_gen, status_gen);
-    prev_cmd_out_ = cmd_gen;
-    prev_status_in_ = status_gen;
+//    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
+//    velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+//    gen_.generate(cmd_gen, status_gen);
+//    prev_cmd_out_ = cmd_gen;
+//    prev_status_in_ = status_gen;
 
-    std::cout << "VelmaLLIHiTest::startHook status_gen.tMotor_q " << status_gen.tMotor_q << std::endl;
+//    std::cout << "VelmaLLIHiTest::startHook status_gen.tMotor_q " << status_gen.tMotor_q << std::endl;
 
 //    UNRESTRICT_ALLOC;
     return true;
@@ -63,31 +63,39 @@ void VelmaLLIHiTest::updateHook() {
 
     in_.readPorts(status_in_);
 
+    int rand_seed = status_in_.test;
+    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
+    velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+    gen_.generate(rand_seed, cmd_gen, status_gen);
+
+//    std::cout << "VelmaLLIHiTest received: " << status_in_.test << std::endl;
     // compare the received status data
     // with generated status data
-    if (gen_.toStr(status_in_) == gen_.toStr(prev_status_in_)) {
+    if (gen_.toStr(status_in_) == gen_.toStr(status_gen)) {
 
         // generate new data
-        velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
-        velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
-        gen_.generate(cmd_gen, status_gen);
+//        velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
+//        velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+//        gen_.generate(cmd_gen, status_gen);
 
         // send new command data
         cmd_out_ = cmd_gen;
 
         // save the generated command data
-        prev_cmd_out_ = cmd_gen;
-        prev_status_in_ = status_gen;
+//        prev_cmd_out_ = cmd_gen;
+//        prev_status_in_ = status_gen;
 
         no_rec_counter_ = 0;
         out_.writePorts(cmd_out_);
+//        std::cout << "VelmaLLIHiTest send: " << cmd_out_.test << std::endl;
     }
     else {
         ++no_rec_counter_;
     }
 
     if (no_rec_counter_ > 0) {
-        std::cout << "VelmaLLIHiTest no new data during " << no_rec_counter_ << " loops" << std::endl;
+        std::cout << "VelmaLLIHiTest no new data during " << no_rec_counter_ << " loops, status_in.tMotor_q: " << status_in_.tMotor_q <<
+            "   status_gen.tMotor_q: " << status_gen.tMotor_q << std::endl;
     }
 
     if (no_rec_counter_ > 20) {

@@ -114,6 +114,7 @@ public:
     void convertFromROS();
     void convertToROS();
 
+    Port<T, uint32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_test_type, &VelmaLowLevelCommand::test> test_;
 
     // right LWR
     ArmCommand_Ports<T > rArm_;

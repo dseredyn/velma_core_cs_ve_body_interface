@@ -25,49 +25,51 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <rtt/Component.hpp>
+#ifndef VELMA_LLI_MONITOR_H_
+#define VELMA_LLI_MONITOR_H_
 
-#include "velma_lli_lo_rx.h"
+#include <cstring>
 
-  VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
-    RTT::TaskContext(name, PreOperational),
-    out_(*this, cmd_in_)
-  {
-    this->ports()->addEventPort("command_INPORT", port_cmd_in_);
-    this->ports()->addPort("comm_status_OUTPORT", port_comm_status_out_);
-  }
+#include <vector>
+#include <string>
 
-  bool VelmaLLILoRx::configureHook() {
-    return true;
-  }
+#include "rtt/RTT.hpp"
+#include "rtt/os/TimeService.hpp"
+#include "Eigen/Dense"
+#include "Eigen/LU"
 
-  bool VelmaLLILoRx::startHook() {
-//    RESTRICT_ALLOC;
+#include "velma_low_level_interface_msgs/VelmaLowLevelCommand.h"
 
-//    UNRESTRICT_ALLOC;
-    return true;
-  }
+#include "eigen_conversions/eigen_msg.h"
 
-  void VelmaLLILoRx::stopHook() {
-  }
+#include "velma_lli_command_ports.h"
 
-void VelmaLLILoRx::updateHook() {
-//    RESTRICT_ALLOC;
-    // write outputs
-//    UNRESTRICT_ALLOC;
-    if (port_cmd_in_.read(cmd_in_) == RTT::NewData) {
-        uint32_t comm_status_out = 0;
-        port_comm_status_out_.write(comm_status_out);
+class VelmaLLIMonitor: public RTT::TaskContext {
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        out_.writePorts(cmd_in_);
+    explicit VelmaLLIMonitor(const std::string &name);
 
-        RTT::TaskContext::PeerList l = this->getPeerList();
-        for (RTT::TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
-            this->getPeer( *it )->getActivity()->trigger();
-//            std::cout << "VelmaLLIHiRx peer list: " << (*it) << " ";
-        }
-//        std::cout << std::endl;
-//        this->getPeer("scheme")->getActivity()->trigger();
-    }
-}
+    bool configureHook();
+
+    bool startHook();
+
+    void stopHook();
+
+    void updateHook();
+
+private:
+
+//    RTT::InputPort<velma_low_level_interface_msgs::VelmaLowLevelCommand> port_cmd_in_;
+//    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_in_;
+
+    RTT::InputPort<uint32_t> port_comm_status_in_;
+
+    int no_new_data_;
+    bool connecting_;
+    int connecting_counter_;
+
+};
+
+#endif  // VELMA_LLI_MONITOR_H_
 

@@ -81,6 +81,8 @@ class VelmaLLILoTest: public RTT::TaskContext {
     velma_low_level_interface_msgs::VelmaLowLevelStatus prev_status_out_;
 
     int no_rec_counter_;
+
+    uint32_t rand_seed_;
 };
 
 #endif  // VELMA_LLI_LO_TEST_H_

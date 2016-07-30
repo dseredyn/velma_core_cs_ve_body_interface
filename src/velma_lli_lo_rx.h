@@ -65,6 +65,8 @@ class VelmaLLILoRx: public RTT::TaskContext {
     velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_in_;
 
     VelmaLLICommandOutput out_;
+
+    RTT::OutputPort<uint32_t> port_comm_status_out_;
 };
 
 #endif  // VELMA_LLI_LO_RX_H_

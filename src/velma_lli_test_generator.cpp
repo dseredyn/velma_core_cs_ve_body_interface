@@ -31,7 +31,11 @@ VelmaLLITestGenerator::VelmaLLITestGenerator() {
     srand(0);
 }
 
-void VelmaLLITestGenerator::generate(velma_low_level_interface_msgs::VelmaLowLevelCommand &cmd, velma_low_level_interface_msgs::VelmaLowLevelStatus &status) {
+void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_msgs::VelmaLowLevelCommand &cmd, velma_low_level_interface_msgs::VelmaLowLevelStatus &status) {
+
+    srand(seed);
+
+    cmd.test = seed;
 
     // random command
     cmd.rHand_tactileCmd = static_cast<int32_t >(rand());
@@ -65,28 +69,8 @@ void VelmaLLITestGenerator::generate(velma_low_level_interface_msgs::VelmaLowLev
     cmd.rHand.hold = static_cast<bool >(rand()%2);
 
     // random status
-// TODO
-/*
-status
+    status.test = seed;
 
-# leftHandStatus
-# rightHandStatus
-int32 lHand_s
-int32 rHand_s
-
-# leftHandJointPosition
-# rightHandJointPosition
-float64 lHand_q
-float64 rHand_q
-
-# RightHandTactile.BHPressureState_OUTPORT
-barrett_hand_controller_msgs/BHPressureState rHand_p
-
-# LeftHandOptoforce.force_0_OUTPORT
-# LeftHandOptoforce.force_1_OUTPORT
-# LeftHandOptoforce.force_2_OUTPORT
-geometry_msgs/WrenchStamped[3] lHand_f
-*/
     for (int i = 0; i < 4; ++i) {
         status.lHand.q[i] = static_cast<double >(rand());
         status.rHand.q[i] = static_cast<double >(rand());
@@ -163,76 +147,6 @@ geometry_msgs/WrenchStamped[3] lHand_f
     status.lFt.rw.torque.x = static_cast<double >(rand());
     status.lFt.rw.torque.y = static_cast<double >(rand());
     status.lFt.rw.torque.z = static_cast<double >(rand());
-/*
-# torsoMotorVelocity
-float64 tMotor_dq = static_cast<double >(rand());
-
-# headPanMotorPosition
-float64 hpMotor_q = static_cast<double >(rand());
-
-# headPanMotorVelocity
-float64 hpMotor_dq = static_cast<double >(rand());
-
-# headTiltMotorPosition
-float64 htMotor_q = static_cast<double >(rand());
-
-# headTiltMotorVelocity
-float64 htMotor_dq = static_cast<double >(rand());
-
-# leftArmJointPosition
-# rightArmJointPosition
-float64[7] lArm_q
-float64[7] rArm_q
-
-# leftArmJointVelocity
-# rightArmJointVelocity
-float64[7] lArm_dq
-float64[7] rArm_dq
-
-# leftArmJointTorque
-# rightArmJointTorque
-float64[7] lArm_t
-float64[7] rArm_t
-
-# leftArmWrench
-# rightArmWrench
-geometry_msgs/Wrench lArm_w
-geometry_msgs/Wrench rArm_w
-
-# leftArmMassMatrix
-# rightArmMassMatrix
-float64[28] lArm_mm
-float64[28] rArm_mm
-
-# leftArmGravityTorque
-# rightArmGravityTorque
-float64[7] lArm_gt
-float64[7] rArm_gt
-
-# leftFtSensorRawWrench
-# rightFtSensorRawWrench
-geometry_msgs/Wrench lFTSensor_rw
-geometry_msgs/Wrench rFTSensor_rw
-
-# leftFtSensorFastFilteredWrench
-# rightFtSensorFastFilteredWrench
-geometry_msgs/Wrench lFTSensor_ffw
-geometry_msgs/Wrench rFTSensor_ffw
-
-# leftFtSensorSlowFilteredWrench
-# rightFtSensorSlowFilteredWrench
-geometry_msgs/Wrench lFTSensor_sfw
-geometry_msgs/Wrench rFTSensor_sfw
-
-    for (int i = 0; i < 40; ++i) {
-        status.rArm_tFriIntfState[i] = static_cast<uint8_t >(rand());
-        status.lArm_tFriIntfState[i] = static_cast<uint8_t >(rand());
-    }
-    for (int i = 0; i < 36; ++i) {
-        status.rArm_tFriRobotState[i] = static_cast<uint8_t >(rand());
-        status.lArm_tFriRobotState[i] = static_cast<uint8_t >(rand());
-    }
-*/
 }
 
 std::string VelmaLLITestGenerator::toStr(const velma_low_level_interface_msgs::VelmaLowLevelCommand &cmd) {

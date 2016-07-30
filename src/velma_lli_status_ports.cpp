@@ -213,7 +213,8 @@ VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc, VelmaLowLevelStat
     htMotor_q_(tc, "status_htMotor_q", ros),
     htMotor_dq_(tc, "status_htMotor_dq", ros),
     rHand_p_(tc, "status_rHand_p", ros),
-    lHand_f_(tc, "status_lHand_f", ros)
+    lHand_f_(tc, "status_lHand_f", ros),
+    test_(tc, "status_test", ros)
 {
 }
 
@@ -234,6 +235,7 @@ void VelmaStatus_Ports<RTT::InputPort >::readPorts() {
     htMotor_dq_.operation();
     rHand_p_.operation();
     lHand_f_.operation();
+    test_.operation();
 }
 
 // write ports
@@ -253,6 +255,7 @@ void VelmaStatus_Ports<RTT::OutputPort >::writePorts() {
     htMotor_dq_.operation();
     rHand_p_.operation();
     lHand_f_.operation();
+    test_.operation();
 }
 
 template <>
@@ -271,6 +274,7 @@ void VelmaStatus_Ports<RTT::OutputPort >::convertFromROS() {
     htMotor_dq_.convertFromROS();
     rHand_p_.convertFromROS();
     lHand_f_.convertFromROS();
+    test_.convertFromROS();
 }
 
 template <>
@@ -289,6 +293,7 @@ void VelmaStatus_Ports<RTT::InputPort >::convertToROS() {
     htMotor_dq_.convertToROS();
     rHand_p_.convertToROS();
     lHand_f_.convertToROS();
+    test_.convertToROS();
 }
 
 };

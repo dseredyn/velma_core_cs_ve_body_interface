@@ -35,6 +35,8 @@
 #include "velma_lli_hi_test.h"
 #include "velma_lli_lo_test.h"
 
+#include "velma_lli_monitor.h"
+
 ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
 
 ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
@@ -46,6 +48,8 @@ ORO_LIST_COMPONENT_TYPE(VelmaLLILoTx)
 ORO_LIST_COMPONENT_TYPE(VelmaLLILoTest)
 
 ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTest)
+
+ORO_LIST_COMPONENT_TYPE(VelmaLLIMonitor)
 
 ORO_CREATE_COMPONENT_LIBRARY()
 

@@ -40,7 +40,7 @@ class VelmaLLITestGenerator {
 public:
     explicit VelmaLLITestGenerator();
 
-    void generate(velma_low_level_interface_msgs::VelmaLowLevelCommand &cmd, velma_low_level_interface_msgs::VelmaLowLevelStatus &status);
+    void generate(uint32_t seed, velma_low_level_interface_msgs::VelmaLowLevelCommand &cmd, velma_low_level_interface_msgs::VelmaLowLevelStatus &status);
 
     std::string toStr(const velma_low_level_interface_msgs::VelmaLowLevelCommand &cmd);
     std::string toStr(const velma_low_level_interface_msgs::VelmaLowLevelStatus &status);

@@ -38,17 +38,17 @@ cpRx.name_id   = "/lli_command";    # the connection id
 loadComponent("lli_lo_rx","VelmaLLILoRx")
 setActivity("lli_lo_rx", 0, 1, ORO_SCHED_RT);
 lli_lo_rx.configure();
-stream("lli_lo_rx.command_INPORT", cpRx);
+#stream("lli_lo_rx.command_INPORT", cpRx);
 
 #
 # the connection monitor component
 #
-#loadComponent("lli_monitor","VelmaLLIMonitor")
-#setActivity("lli_monitor", 0.001, 1, ORO_SCHED_RT);
-#lli_monitor.configure();
-#addPeer("lli_monitor", "lli_lo_rx");
+loadComponent("lli_monitor","VelmaLLIMonitor")
+setActivity("lli_monitor", 0.001, 1, ORO_SCHED_RT);
+lli_monitor.configure();
+addPeer("lli_monitor", "lli_lo_rx");
 
-#connect("lli_lo_rx.comm_status_OUTPORT",        "lli_monitor.comm_status_INPORT", ConnPolicy())
+connect("lli_lo_rx.comm_status_OUTPORT",        "lli_monitor.comm_status_INPORT", ConnPolicy())
 
 #
 # the actual testing component
@@ -143,6 +143,6 @@ lli_lo_tx.start();
 lli_lo_rx.start();
 lli_lo_test.start();
 
-#lli_monitor.start();
+lli_monitor.start();
 
 

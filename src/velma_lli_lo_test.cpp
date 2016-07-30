@@ -44,18 +44,17 @@ bool VelmaLLILoTest::startHook() {
 //    RESTRICT_ALLOC;
     no_rec_counter_ = 0;
 
+    rand_seed_ = 1;
+
     velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
     velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
-    gen_.generate(cmd_gen, status_gen);
+    gen_.generate(rand_seed_, cmd_gen, status_gen);
     status_out_ = status_gen;
-
-    gen_.generate(cmd_gen, status_gen);
     prev_cmd_in_ = cmd_gen;
-    prev_status_out_ = status_gen;
-
     out_.writePorts(status_out_);
+    std::cout << "VelmaLLILoTest::startHook send " << status_out_.test << std::endl;
 
-    std::cout << "VelmaLLILoTest::startHook status_gen.tMotor_q " << status_gen.tMotor_q << std::endl;
+//    std::cout << "VelmaLLILoTest::startHook status_out_.tMotor_q " << status_out_.tMotor_q << std::endl;
 
 //    UNRESTRICT_ALLOC;
     return true;
@@ -69,23 +68,27 @@ void VelmaLLILoTest::updateHook() {
 
     in_.readPorts(cmd_in_);
 
+//    std::cout << "VelmaLLILoTest received: " << cmd_in_.test << "  should be " << prev_cmd_in_.test << std::endl;
+
     // check if the data was generated and compare the received command data
     // with generated command data
     if (gen_.toStr(cmd_in_) == gen_.toStr(prev_cmd_in_)) {
         // generate new data
+        ++rand_seed_;
         velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
         velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
-        gen_.generate(cmd_gen, status_gen);
-
+//        std::cout << "VelmaLLILoTest: generate " << rand_seed_ << std::endl;
+        gen_.generate(rand_seed_, cmd_gen, status_gen);
         // send new status data
-        status_out_ = prev_status_out_;
+        status_out_ = status_gen;
 
         // save the generated command data
         prev_cmd_in_ = cmd_gen;
-        prev_status_out_ = status_gen;
+//        prev_status_out_ = status_gen;
 
         no_rec_counter_ = 0;
         out_.writePorts(status_out_);
+//        std::cout << "VelmaLLILoTest: send " << status_out_.test << std::endl;
     }
     else {
         ++no_rec_counter_;

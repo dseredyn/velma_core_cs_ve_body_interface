@@ -163,7 +163,8 @@ VelmaCommand_Ports<T >::VelmaCommand_Ports(RTT::TaskContext &tc, VelmaLowLevelCo
     hpMotor_q_(tc, "cmd_hpMotor_q", ros),
     htMotor_q_(tc, "cmd_htMotor_q", ros),
     hpMotor_dq_(tc, "cmd_hpMotor_dq", ros),
-    htMotor_dq_(tc, "cmd_htMotor_dq", ros)
+    htMotor_dq_(tc, "cmd_htMotor_dq", ros),
+    test_(tc, "cmd_test", ros)
 {
 }
 
@@ -182,6 +183,7 @@ void VelmaCommand_Ports<RTT::InputPort >::readPorts() {
     htMotor_q_.operation();
     hpMotor_dq_.operation();
     htMotor_dq_.operation();
+    test_.operation();
 }
 
 // write ports
@@ -199,6 +201,7 @@ void VelmaCommand_Ports<RTT::OutputPort >::writePorts() {
     htMotor_q_.operation();
     hpMotor_dq_.operation();
     htMotor_dq_.operation();
+    test_.operation();
 }
 
 template <>
@@ -215,6 +218,7 @@ void VelmaCommand_Ports<RTT::OutputPort >::convertFromROS() {
     htMotor_q_.convertFromROS();
     hpMotor_dq_.convertFromROS();
     htMotor_dq_.convertFromROS();
+    test_.convertFromROS();
 
 }
 
@@ -232,6 +236,7 @@ void VelmaCommand_Ports<RTT::InputPort >::convertToROS() {
     htMotor_q_.convertToROS();
     hpMotor_dq_.convertToROS();
     htMotor_dq_.convertToROS();
+    test_.convertToROS();
 }
 
 };

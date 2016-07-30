@@ -128,6 +128,8 @@ public:
     void convertFromROS();
     void convertToROS();
 
+    Port<T, uint32_t, VelmaLowLevelStatus, VelmaLowLevelStatus::_test_type, &VelmaLowLevelStatus::test> test_;
+
     // right LWR
     ArmStatus_Ports<T > rArm_;
 
