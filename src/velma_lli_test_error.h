@@ -25,37 +25,48 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <rtt/Component.hpp>
+#ifndef VELMA_LLI_TEST_ERROR_H_
+#define VELMA_LLI_TEST_ERROR_H_
 
-#include "velma_lli_hi_tx.h"
+#include <cstring>
 
-  VelmaLLIHiTx::VelmaLLIHiTx(const std::string &name) :
-    RTT::TaskContext(name, PreOperational),
-    in_(*this)
-  {
-    this->ports()->addPort("command_OUTPORT", port_cmd_out_);
-  }
+#include <vector>
+#include <string>
 
-  bool VelmaLLIHiTx::configureHook() {
-    return true;
-  }
+#include "rtt/RTT.hpp"
+#include "rtt/os/TimeService.hpp"
+#include "Eigen/Dense"
+#include "Eigen/LU"
 
-  bool VelmaLLIHiTx::startHook() {
-//    RESTRICT_ALLOC;
+#include "velma_low_level_interface_msgs/VelmaLowLevelCommand.h"
 
-//    UNRESTRICT_ALLOC;
-    return true;
-  }
+#include "eigen_conversions/eigen_msg.h"
 
-  void VelmaLLIHiTx::stopHook() {
-  }
+#include "velma_lli_command_ports.h"
 
-  void VelmaLLIHiTx::updateHook() {
-//    RESTRICT_ALLOC;
-    // write outputs
-//    UNRESTRICT_ALLOC;
-    in_.readPorts(cmd_out_);
-//    std::cout << "VelmaLLIHiTx" << std::endl;
-    port_cmd_out_.write(cmd_out_);
-  }
+class VelmaTestError: public RTT::TaskContext {
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    explicit VelmaTestError(const std::string &name);
+
+    bool configureHook();
+
+    bool startHook();
+
+    void stopHook();
+
+    void updateHook();
+
+private:
+
+    RTT::InputPort<uint32_t> port_comm_status_in_;
+
+    int no_new_data_;
+    bool connecting_;
+    int connecting_counter_;
+
+};
+
+#endif  // VELMA_LLI_TEST_ERROR_H_
 

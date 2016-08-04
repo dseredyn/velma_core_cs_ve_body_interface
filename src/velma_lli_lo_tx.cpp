@@ -31,7 +31,7 @@
 
 VelmaLLILoTx::VelmaLLILoTx(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
-    in_(*this, status_out_)
+    in_(*this)
 {
     this->ports()->addPort("status_OUTPORT", port_status_out_);
 //    port_status_out_.setDataSample(status_out_);

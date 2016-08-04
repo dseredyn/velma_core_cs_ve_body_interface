@@ -37,17 +37,14 @@ ADD_DEFINITIONS(-DEIGEN_RUNTIME_NO_MALLOC)
 orocos_component(velma_low_level_interface src/velma_low_level_interface.cpp src/velma_lli_lo_rx.cpp
                     src/velma_lli_lo_tx.cpp src/velma_lli_hi_rx.cpp src/velma_lli_hi_tx.cpp
                     src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp
-                    src/velma_lli_lo_test.cpp src/velma_lli_hi_test.cpp src/velma_lli_test_generator.cpp src/velma_lli_monitor.cpp)
-
-#orocos_component(velma_low_level_interface src/velma_lli_command_ports.cpp src/velma_lli_ports.cpp)
+                    src/velma_lli_lo_test.cpp src/velma_lli_hi_test.cpp src/velma_lli_test_generator.cpp
+                    src/velma_lli_monitor.cpp src/shm_comm.c)
 
 target_link_libraries(velma_low_level_interface
     ${catkin_LIBRARIES}
     ${USE_OROCOS_LIBRARIES}
     ${orocos_kdl_LIBRARIES}
     ${OROCOS-RTT_LIBRARIES})
-
-#add_dependencies(velma_lli_low_tx ${PROJECT_NAME}_gencpp)
 
 ### Orocos Package Exports and Install Targets ###
 

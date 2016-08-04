@@ -31,7 +31,7 @@
 
 VelmaLLIHiRx::VelmaLLIHiRx(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
-    out_(*this, status_in_)
+    out_(*this)
 {
     this->ports()->addEventPort("status_INPORT", port_status_in_);
 }

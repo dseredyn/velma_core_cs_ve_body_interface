@@ -60,14 +60,13 @@ namespace velma_lli_types {
 template <template <typename Type> class T>
 class ArmCommand_Ports {
 public:
-    ArmCommand_Ports();
-    ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandArm &ros);
+    ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
     void readPorts();
     void writePorts();
 
-    void convertFromROS();
-    void convertToROS();
+    void convertFromROS(const VelmaLowLevelCommandArm &ros);
+    void convertToROS(VelmaLowLevelCommandArm &ros);
 
     Port<T, Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type, &VelmaLowLevelCommandArm::t> t_;
     Port<T, std_msgs::Int32, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_cmd_type, &VelmaLowLevelCommandArm::cmd> cmd_;
@@ -76,14 +75,13 @@ public:
 template <template <typename Type> class T>
 class HandCommand_Ports {
 public:
-    HandCommand_Ports();
-    HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandHand &ros);
+    HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
     void readPorts();
     void writePorts();
 
-    void convertFromROS();
-    void convertToROS();
+    void convertFromROS(const VelmaLowLevelCommandHand &ros);
+    void convertToROS(VelmaLowLevelCommandHand &ros);
 
     Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_q_type, &VelmaLowLevelCommandHand::q> q_;
     Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_dq_type, &VelmaLowLevelCommandHand::dq> dq_;
@@ -95,7 +93,6 @@ public:
 template <template <typename Type> class T>
 class FTSensorCommand_Ports {
 public:
-    FTSensorCommand_Ports();
     FTSensorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
     void readPorts();
@@ -105,14 +102,13 @@ public:
 template <template <typename Type> class T>
 class VelmaCommand_Ports{
 public:
-    VelmaCommand_Ports();
-    VelmaCommand_Ports(RTT::TaskContext &tc, VelmaLowLevelCommand &ros);
+    VelmaCommand_Ports(RTT::TaskContext &tc);
 
     void readPorts();
     void writePorts();
 
-    void convertFromROS();
-    void convertToROS();
+    void convertFromROS(const VelmaLowLevelCommand &ros);
+    void convertToROS(VelmaLowLevelCommand &ros);
 
     Port<T, uint32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_test_type, &VelmaLowLevelCommand::test> test_;
 
@@ -157,7 +153,7 @@ public:
 
 class VelmaLLICommandInput {
 public:
-    VelmaLLICommandInput(RTT::TaskContext &tc, VelmaLowLevelCommand &ros);
+    VelmaLLICommandInput(RTT::TaskContext &tc);
 
     void readPorts(velma_low_level_interface_msgs::VelmaLowLevelCommand &command);
 
@@ -167,7 +163,7 @@ protected:
 
 class VelmaLLICommandOutput {
 public:
-    VelmaLLICommandOutput(RTT::TaskContext &tc, VelmaLowLevelCommand &ros);
+    VelmaLLICommandOutput(RTT::TaskContext &tc);
 
     void writePorts(const velma_low_level_interface_msgs::VelmaLowLevelCommand &command);
 

@@ -54,16 +54,14 @@ namespace velma_lli_types {
 template <typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
 class PortData {
 public:
-    PortData(rosC &container) :
-        container_(container)
-    {}
+    PortData() {}
 
-    void convertFromROS() {
-        data_.convertFromROS(container_.*ptr);
+    void convertFromROS(const rosC &container) {
+        data_.convertFromROS(container.*ptr);
     }
 
-    void convertToROS() {
-        data_.convertToROS(container_.*ptr);
+    void convertToROS(rosC &container) {
+        data_.convertToROS(container.*ptr);
     }
 
     innerT& getDataRef() {
@@ -71,7 +69,6 @@ public:
     }
 
 protected:
-    rosC &container_;
     PortRawData<innerT, rosT > data_;
 };
 
@@ -120,20 +117,18 @@ protected:
 template <template <typename Type> class T, typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
 class Port {
 public:
-    Port(RTT::TaskContext &tc, const std::string &port_name, rosC &container) :
-        container_(container),
-        data_(container),
+    Port(RTT::TaskContext &tc, const std::string &port_name) :
         po_(tc, port_name)
     {
         po_.setDataSample(data_.getDataRef());
     }
 
-    void convertFromROS() {
-        data_.convertFromROS();
+    void convertFromROS(const rosC &container) {
+        data_.convertFromROS(container);
     }
 
-    void convertToROS() {
-        data_.convertToROS();
+    void convertToROS(rosC &container) {
+        data_.convertToROS(container);
     }
 
     void operation() {
@@ -141,8 +136,6 @@ public:
     }
 
 protected:
-
-    rosC &container_;
 
     PortOperation<T, innerT> po_;
 

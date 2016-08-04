@@ -31,8 +31,8 @@
 
 VelmaLLILoTest::VelmaLLILoTest(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
-    in_(*this, cmd_in_),
-    out_(*this, status_out_)
+    in_(*this),
+    out_(*this)
 {
 }
 

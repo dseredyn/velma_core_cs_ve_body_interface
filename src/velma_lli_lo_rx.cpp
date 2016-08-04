@@ -31,7 +31,7 @@
 
   VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
-    out_(*this, cmd_in_)
+    out_(*this)
   {
 //    this->ports()->addEventPort("command_INPORT", port_cmd_in_);
     this->ports()->addPort("command_INPORT", port_cmd_in_);
