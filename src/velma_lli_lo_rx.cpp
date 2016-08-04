@@ -33,7 +33,8 @@
     RTT::TaskContext(name, PreOperational),
     out_(*this, cmd_in_)
   {
-    this->ports()->addEventPort("command_INPORT", port_cmd_in_);
+//    this->ports()->addEventPort("command_INPORT", port_cmd_in_);
+    this->ports()->addPort("command_INPORT", port_cmd_in_);
     this->ports()->addPort("comm_status_OUTPORT", port_comm_status_out_);
   }
 
@@ -56,7 +57,7 @@ void VelmaLLILoRx::updateHook() {
     // write outputs
 //    UNRESTRICT_ALLOC;
     if (port_cmd_in_.read(cmd_in_) == RTT::NewData) {
-        uint32_t comm_status_out = 0;
+        uint32_t comm_status_out = 1;
         port_comm_status_out_.write(comm_status_out);
 
         out_.writePorts(cmd_in_);
@@ -68,6 +69,10 @@ void VelmaLLILoRx::updateHook() {
         }
 //        std::cout << std::endl;
 //        this->getPeer("scheme")->getActivity()->trigger();
+    }
+    else {
+        uint32_t comm_status_out = 0;
+        port_comm_status_out_.write(comm_status_out);
     }
 }
 

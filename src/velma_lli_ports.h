@@ -47,36 +47,32 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
+#include "velma_lli_port_data.h"
+
 namespace velma_lli_types {
-
-typedef Eigen::Matrix<double, 7, 7> Matrix77d;
-
-template <typename innerT, typename rosT >
-class PortRawData {
-public:
-    PortRawData();
-    void convertFromROS(const rosT &ros);
-    void convertToROS(rosT &ros);
-    innerT data_;
-};
 
 template <typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
 class PortData {
 public:
-    PortData(rosC &container);
-    void convertFromROS();
-    void convertToROS();
-    innerT& getDataRef();
+    PortData(rosC &container) :
+        container_(container)
+    {}
+
+    void convertFromROS() {
+        data_.convertFromROS(container_.*ptr);
+    }
+
+    void convertToROS() {
+        data_.convertToROS(container_.*ptr);
+    }
+
+    innerT& getDataRef() {
+        return data_.data_;
+    }
+
 protected:
     rosC &container_;
     PortRawData<innerT, rosT > data_;
-};
-
-template <template <typename Type> class T >
-class PortSuffix {
-public:
-    PortSuffix();
-    std::string str_;
 };
 
 template <template <typename Type> class T, typename innerT >
@@ -85,9 +81,17 @@ class PortOperation { };
 template <typename innerT >
 class PortOperation<RTT::InputPort, innerT> {
 public:
-    PortOperation(RTT::TaskContext &tc, const std::string &port_name);
-    void operation(innerT &data);
-    void setDataSample(innerT &data);
+    PortOperation(RTT::TaskContext &tc, const std::string &port_name) {
+        tc.ports()->addPort(port_name + "_INPORT", port_);
+    }
+
+    void operation(innerT &data) {
+        port_.read(data);
+    }
+
+    void setDataSample(innerT &data) {
+        // no operation for input port
+    }
 
 protected:
     RTT::InputPort<innerT > port_;
@@ -96,9 +100,17 @@ protected:
 template <typename innerT >
 class PortOperation<RTT::OutputPort, innerT> {
 public:
-    PortOperation(RTT::TaskContext &tc, const std::string &port_name);
-    void operation(innerT &data);
-    void setDataSample(innerT &data);
+    PortOperation(RTT::TaskContext &tc, const std::string &port_name) {
+        tc.ports()->addPort(port_name + "_OUTPORT", port_);
+    }
+
+    void operation(innerT &data) {
+        port_.write(data);
+    }
+
+    void setDataSample(innerT &data) {
+        port_.setDataSample(data);
+    }
 
 protected:
     RTT::OutputPort<innerT > port_;
@@ -108,10 +120,25 @@ protected:
 template <template <typename Type> class T, typename innerT, typename rosC, typename rosT, rosT rosC::*ptr >
 class Port {
 public:
-    Port(RTT::TaskContext &tc, const std::string &port_name, rosC &container);
-    void convertFromROS();
-    void convertToROS();
-    void operation();
+    Port(RTT::TaskContext &tc, const std::string &port_name, rosC &container) :
+        container_(container),
+        data_(container),
+        po_(tc, port_name)
+    {
+        po_.setDataSample(data_.getDataRef());
+    }
+
+    void convertFromROS() {
+        data_.convertFromROS();
+    }
+
+    void convertToROS() {
+        data_.convertToROS();
+    }
+
+    void operation() {
+        po_.operation(data_.getDataRef());
+    }
 
 protected:
 
@@ -119,7 +146,6 @@ protected:
 
     PortOperation<T, innerT> po_;
 
-    PortSuffix<T > port_suffix_;
     PortData<innerT, rosC, rosT, ptr > data_;
 };
 
