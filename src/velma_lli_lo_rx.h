@@ -28,6 +28,8 @@
 #ifndef VELMA_LLI_LO_RX_H_
 #define VELMA_LLI_LO_RX_H_
 
+#include "shm_comm.h"
+
 #include <cstring>
 
 #include <vector>
@@ -44,23 +46,30 @@
 
 #include "velma_lli_command_ports.h"
 
+
 class VelmaLLILoRx: public RTT::TaskContext {
- public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  explicit VelmaLLILoRx(const std::string &name);
+    explicit VelmaLLILoRx(const std::string &name);
 
-  bool configureHook();
+    bool configureHook();
 
-  bool startHook();
+    void cleanupHook();
 
-  void stopHook();
+    bool startHook();
 
-  void updateHook();
+    void stopHook();
 
- private:
+    void updateHook();
 
-    RTT::InputPort<velma_low_level_interface_msgs::VelmaLowLevelCommand> port_cmd_in_;
+private:
+
+    const char *shm_name_;
+    int shm_fd_;
+    channel_t chan_;
+    reader_t re_;
+    VelmaLowLevelCommand *buf_prev_;
 
     velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_in_;
 

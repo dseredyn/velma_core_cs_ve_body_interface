@@ -95,6 +95,7 @@ void VelmaLLILoTest::updateHook() {
 //        std::cout << "VelmaLLILoTest: send " << status_out_.test << std::endl;
     }
     else if (gen_.toStr(cmd_in_) == str_cmd_nocomm_) {
+        no_rec_counter_ = 0;
     }
     else {
         ++no_rec_counter_;

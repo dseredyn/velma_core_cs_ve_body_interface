@@ -25,12 +25,24 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef SHM_COMM_H_
+#define SHM_COMM_H_
+
+#ifdef __cplusplus
+#include <atomic>
+using namespace std;
+#else
 #include <stdatomic.h>
+#endif
 
 #define FALSE 0
 #define TRUE 1
 
 #define CHANNEL_DATA_SIZE(S, R) (sizeof(channel_hdr_t) + (R) * sizeof(int) + (R) * sizeof(int) + ((R) + 2) * (S))
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
     atomic_int latest; // index of latest written buffer
@@ -74,4 +86,10 @@ int create_reader(channel_t *, reader_t *);
 void release_reader(reader_t *);
 
 void *reader_buffer_get(reader_t *);
+
+#ifdef __cplusplus
+};  // extern "C"
+#endif
+
+#endif  // SHM_COMM_H_
 

@@ -27,35 +27,109 @@
 
 #include <rtt/Component.hpp>
 
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+
 #include "velma_lli_hi_tx.h"
 
-  VelmaLLIHiTx::VelmaLLIHiTx(const std::string &name) :
+using namespace velma_low_level_interface_msgs;
+
+VelmaLLIHiTx::VelmaLLIHiTx(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
     in_(*this)
-  {
-    this->ports()->addPort("command_OUTPORT", port_cmd_out_);
-  }
+{
+}
 
-  bool VelmaLLIHiTx::configureHook() {
+bool VelmaLLIHiTx::configureHook() {
+    int shm_fd;
+    channel_hdr_t *shm_hdr;
+    const char *shm_name = "velma_lli_cmd";
+
+    shm_fd = shm_open(shm_name, O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+    if (shm_fd < 0) {
+        std::string err_str(strerror(errno));
+        std::cout << "VelmaLLIHiTx shm_open failed: " << err_str << std::endl;
+        return false;
+    }
+
+    struct stat sb;
+    fstat(shm_fd, &sb);
+
+    shm_hdr = reinterpret_cast<channel_hdr_t*>( mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0) );
+
+    if (shm_hdr == MAP_FAILED) {
+        std::string err_str(strerror(errno));
+        std::cout << "VelmaLLIHiTx mmap failed failed: " << err_str << std::endl;
+        return false;
+    }
+
+    if (CHANNEL_DATA_SIZE(shm_hdr->size, shm_hdr->max_readers) != sb.st_size) {
+        std::cout << "VelmaLLIHiTx error data" << std::endl;
+        return false;
+    }
+
+    init_channel(shm_hdr, &chan_);
+
+    int ret = create_writer(&chan_, &wr_);
+
+    if (ret != 0) {
+
+        if (ret == -1) {
+            std::cout << "invalid writer_t pointer" << std::endl;
+        }
+
+        if (ret == -2) {
+            std::cout << "no writers slots avalible" << std::endl;
+        }
+        return false;
+    }
+
     return true;
-  }
+}
 
-  bool VelmaLLIHiTx::startHook() {
+void VelmaLLIHiTx::cleanupHook() {
+    const size_t size = CHANNEL_DATA_SIZE(chan_.hdr->size, chan_.hdr->max_readers);
+
+    release_writer(&wr_);
+
+    munmap(chan_.hdr, size);
+    chan_.reader_ids = NULL;
+    chan_.reading = NULL;
+    free(chan_.buffer);
+    chan_.buffer = NULL;
+    chan_.hdr = NULL;
+}
+
+bool VelmaLLIHiTx::startHook() {
 //    RESTRICT_ALLOC;
 
 //    UNRESTRICT_ALLOC;
     return true;
-  }
+}
 
-  void VelmaLLIHiTx::stopHook() {
-  }
+void VelmaLLIHiTx::stopHook() {
+}
 
-  void VelmaLLIHiTx::updateHook() {
+void VelmaLLIHiTx::updateHook() {
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
     in_.readPorts(cmd_out_);
 //    std::cout << "VelmaLLIHiTx" << std::endl;
-    port_cmd_out_.write(cmd_out_);
-  }
+
+    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( writer_buffer_get(&wr_) );
+
+    if (buf == NULL) {
+        std::cout << "writer get NULL buffer" << std::endl;
+    }
+    *buf = cmd_out_;
+    writer_buffer_write(&wr_);
+}
 

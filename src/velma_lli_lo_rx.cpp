@@ -27,30 +27,101 @@
 
 #include <rtt/Component.hpp>
 
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+
 #include "velma_lli_lo_rx.h"
 
-  VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
+using namespace velma_low_level_interface_msgs;
+
+VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
-    out_(*this)
-  {
-//    this->ports()->addEventPort("command_INPORT", port_cmd_in_);
-    this->ports()->addPort("command_INPORT", port_cmd_in_);
+    out_(*this),
+    shm_name_("velma_lli_cmd")
+{
     this->ports()->addPort("comm_status_OUTPORT", port_comm_status_out_);
-  }
+}
 
-  bool VelmaLLILoRx::configureHook() {
+bool VelmaLLILoRx::configureHook() {
+    const size_t size = sizeof(VelmaLowLevelCommand);
+    const uint32_t readers = 1;
+
+    channel_hdr_t *shm_hdr_;
+
+//    shm_fd_ = shm_open(shm_name_, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+    shm_fd_ = shm_open(shm_name_, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+    if (shm_fd_ < 0) {
+        std::string err_str(strerror(errno));
+        std::cout << "VelmaLLILoRx shm_open failed: " << err_str << std::endl;
+        return false;
+    }
+
+    if (ftruncate(shm_fd_, CHANNEL_DATA_SIZE(size, readers)) != 0) {
+        std::cout << "VelmaLLILoRx ftruncate failed" << std::endl;
+        shm_unlink(shm_name_);
+        return false;
+    }
+
+    shm_hdr_ = reinterpret_cast<channel_hdr_t*>( mmap(NULL, CHANNEL_DATA_SIZE(size, readers), PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd_, 0) );
+
+    if (shm_hdr_ == MAP_FAILED) {
+        std::string err_str(strerror(errno));
+        std::cout << "VelmaLLILoRx mmap failed: " << err_str << std::endl;
+        shm_unlink(shm_name_);
+        return false;
+    }
+
+    init_channel_hdr(size, readers, shm_hdr_);
+
+    init_channel(shm_hdr_, &chan_);
+
+    int ret = create_reader(&chan_, &re_);
+
+    if (ret != 0) {
+
+        if (ret == -1)
+            printf("invalid reader_t pointer\n");
+
+        if (ret == -2)
+            printf("no reader slots avalible\n");
+        return 0;
+    }
+
     return true;
-  }
+}
 
-  bool VelmaLLILoRx::startHook() {
+void VelmaLLILoRx::cleanupHook() {
+    const size_t size = CHANNEL_DATA_SIZE(chan_.hdr->size, chan_.hdr->max_readers);
+
+    release_reader(&re_);
+
+    munmap(chan_.hdr, size);
+    chan_.reader_ids = NULL;
+    chan_.reading = NULL;
+    free(chan_.buffer);
+    chan_.buffer = NULL;
+    chan_.hdr = NULL;
+
+    close(shm_fd_);
+    shm_unlink(shm_name_);
+}
+
+bool VelmaLLILoRx::startHook() {
 //    RESTRICT_ALLOC;
 
 //    UNRESTRICT_ALLOC;
     return true;
-  }
+}
 
-  void VelmaLLILoRx::stopHook() {
-  }
+void VelmaLLILoRx::stopHook() {
+}
 
 void VelmaLLILoRx::updateHook() {
 //    RESTRICT_ALLOC;
@@ -58,18 +129,19 @@ void VelmaLLILoRx::updateHook() {
 //    UNRESTRICT_ALLOC;
     uint32_t comm_status_out = 0;
 
-    if (port_cmd_in_.read(cmd_in_) == RTT::NewData) {
+    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
+
+    if (buf == NULL) {
+        std::cout << "VelmaLLILoRx reader got NULL buffer" << std::endl;
+    }
+
+    if (buf != buf_prev_) {
+        buf_prev_ = buf;
+
         comm_status_out = 1;
 
+        cmd_in_ = *buf;
         out_.writePorts(cmd_in_);
-
-        RTT::TaskContext::PeerList l = this->getPeerList();
-        for (RTT::TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
-            this->getPeer( *it )->getActivity()->trigger();
-//            std::cout << "VelmaLLIHiRx peer list: " << (*it) << " ";
-        }
-//        std::cout << std::endl;
-//        this->getPeer("scheme")->getActivity()->trigger();
     }
     else {
         comm_status_out = 0;
