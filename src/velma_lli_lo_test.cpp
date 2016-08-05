@@ -44,10 +44,14 @@ bool VelmaLLILoTest::startHook() {
 //    RESTRICT_ALLOC;
     no_rec_counter_ = 0;
 
-    rand_seed_ = 1;
-
     velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_gen;
     velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+
+    gen_.generate(0, cmd_gen, status_gen);
+    str_cmd_nocomm_ = gen_.toStr(cmd_gen);
+
+    rand_seed_ = 1;
+
     gen_.generate(rand_seed_, cmd_gen, status_gen);
     status_out_ = status_gen;
     prev_cmd_in_ = cmd_gen;
@@ -89,6 +93,8 @@ void VelmaLLILoTest::updateHook() {
         no_rec_counter_ = 0;
         out_.writePorts(status_out_);
 //        std::cout << "VelmaLLILoTest: send " << status_out_.test << std::endl;
+    }
+    else if (gen_.toStr(cmd_in_) == str_cmd_nocomm_) {
     }
     else {
         ++no_rec_counter_;

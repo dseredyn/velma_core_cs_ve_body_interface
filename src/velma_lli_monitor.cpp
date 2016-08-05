@@ -76,7 +76,7 @@ void VelmaLLIMonitor::updateHook() {
     if (pi != NULL) {
         if (pi->connected()) {
             uint32_t comm_status_in = 0;
-            if (port_comm_status_in_.read(comm_status_in) == RTT::NewData) {
+            if (port_comm_status_in_.read(comm_status_in) == RTT::NewData && comm_status_in == 1) {
                 no_new_data_ = 0;
             }
             else {

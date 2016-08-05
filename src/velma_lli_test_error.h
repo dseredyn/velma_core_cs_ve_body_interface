@@ -60,6 +60,10 @@ public:
 
 private:
 
+    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_out_;
+
+    VelmaLLICommandOutput out_;
+
     RTT::InputPort<uint32_t> port_comm_status_in_;
 
     int no_new_data_;

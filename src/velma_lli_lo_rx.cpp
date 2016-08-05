@@ -56,9 +56,10 @@ void VelmaLLILoRx::updateHook() {
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
+    uint32_t comm_status_out = 0;
+
     if (port_cmd_in_.read(cmd_in_) == RTT::NewData) {
-        uint32_t comm_status_out = 1;
-        port_comm_status_out_.write(comm_status_out);
+        comm_status_out = 1;
 
         out_.writePorts(cmd_in_);
 
@@ -71,8 +72,9 @@ void VelmaLLILoRx::updateHook() {
 //        this->getPeer("scheme")->getActivity()->trigger();
     }
     else {
-        uint32_t comm_status_out = 0;
-        port_comm_status_out_.write(comm_status_out);
+        comm_status_out = 0;
     }
+
+    port_comm_status_out_.write(comm_status_out);
 }
 

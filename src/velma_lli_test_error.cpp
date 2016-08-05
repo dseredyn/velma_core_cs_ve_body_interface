@@ -30,11 +30,11 @@
 #include <rtt/base/PortInterface.hpp>
 
 #include "velma_lli_test_error.h"
-
-#include <rtt/transports/mqueue/MQLib.hpp>
+#include "velma_lli_test_generator.h"
 
 VelmaTestError::VelmaTestError(const std::string &name) :
-    RTT::TaskContext(name, PreOperational)
+    RTT::TaskContext(name, PreOperational),
+    out_(*this)
 {
 //    this->ports()->addPort("command_INPORT", port_cmd_in_);
     this->ports()->addPort("comm_status_INPORT", port_comm_status_in_);
@@ -59,78 +59,20 @@ void VelmaTestError::stopHook() {
 
 void VelmaTestError::updateHook() {
 //    RESTRICT_ALLOC;
-    // write outputs
-//    UNRESTRICT_ALLOC;
 
-//    bool initialized = false;
-    RTT::TaskContext *peer = this->getPeer("lli_lo_rx");
-    RTT::base::PortInterface *pi = NULL;
-    if (peer != NULL) {
-        RTT::Service::shared_ptr srv = peer->provides();
-        if (srv != NULL) {
-//            initialized = true;
-            pi = srv->getPort("command_INPORT");
-        }
-    }
-
-    if (pi != NULL) {
-        if (pi->connected()) {
-            uint32_t comm_status_in = 0;
-            if (port_comm_status_in_.read(comm_status_in) == RTT::NewData) {
-                no_new_data_ = 0;
-            }
-            else {
-                ++no_new_data_;
-                if ((!connecting_ && no_new_data_ > 15) || no_new_data_ > 150) {
-                    std::cout << "VelmaLLIMonitor: no new data - disconnecting" << std::endl;
-                    pi->disconnect();
-//                    port_cmd_in_.disconnect();
-                    no_new_data_ = 0;
-                }
-            }
-
-        }
-        else {  // if (pi->connected())
-            // try to create a stream
-            RTT::ConnPolicy conn;
-            conn.transport = ORO_MQUEUE_PROTOCOL_ID;                 // the MQueue protocol id
-            conn.name_id   = "/lli_command";    // the connection id
-            if (pi->createStream(conn)) {
-/*                if (!port_cmd_in_.createStream(conn)) {
-                    pi->disconnect();
-                    std::cout << "VelmaLLIMonitor: could not stream port_cmd_in_" << std::endl;
-                }
-                else {
-                    std::cout << "VelmaLLIMonitor: successfuly streamed" << std::endl;
-                }
-*/
-                connecting_ = true;
-                connecting_counter_ = 0;
-                std::cout << "VelmaLLIMonitor: successfuly streamed" << std::endl;
-            }
-            else {
-                std::cout << "VelmaLLIMonitor: could not stream pi" << std::endl;
-            }
+    uint32_t comm_status_in = 0;
+    if (port_comm_status_in_.read(comm_status_in) == RTT::NewData) {
+        if (comm_status_in == 0) {
+            velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+            VelmaLLITestGenerator gen_;
+            gen_.generate(0, cmd_out_, status_gen);
+            out_.writePorts(cmd_out_);
         }
     }
     else {
-        std::cout << "VelmaLLIMonitor: port is not created" << std::endl;
+        std::cout << "VelmaTestError error: no comm status data" << std::endl;
     }
 
-    if (connecting_ && connecting_counter_ > 1000) {
-        connecting_ = false;
-    }
-    else {
-        ++connecting_counter_;
-    }
 
-/*
-        RTT::TaskContext::PeerList l = this->getPeerList();
-        for (RTT::TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
-            RTT::Service::shared_ptr srv = this->getPeer( *it )->provides();
-            srv->getPort("");
-//            std::cout << "VelmaLLIHiRx peer list: " << (*it) << " ";
-        }
-*/
 }
 

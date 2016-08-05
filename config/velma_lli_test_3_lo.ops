@@ -114,6 +114,52 @@ connect("lli_lo_test.status_lFt_ffw_OUTPORT",             "lli_lo_tx.status_lFt_
 connect("lli_lo_test.status_lFt_sfw_OUTPORT",             "lli_lo_tx.status_lFt_sfw_INPORT", ConnPolicy())
 connect("lli_lo_test.status_test_OUTPORT",                "lli_lo_tx.status_test_INPORT", ConnPolicy())
 
+#
+# the connection monitor component
+#
+loadComponent("lli_monitor","VelmaLLIMonitor")
+setActivity("lli_monitor", 0.001, 1, ORO_SCHED_RT);
+lli_monitor.configure();
+addPeer("lli_monitor", "lli_lo_rx");
+
+connect("lli_lo_rx.comm_status_OUTPORT",        "lli_monitor.comm_status_INPORT", ConnPolicy())
+
+#
+# the emergency command component
+#
+loadComponent("lli_test_error","VelmaTestError")
+setActivity("lli_test_error", 0, 1, ORO_SCHED_RT);
+lli_test_error.configure();
+
+connect("lli_lo_rx.comm_status_OUTPORT",        "lli_test_error.comm_status_INPORT", ConnPolicy())
+
+# command
+connect("lli_test_error.cmd_rArm_t_OUTPORT",            "lli_lo_test.cmd_rArm_t_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_rArm_cmd_OUTPORT",          "lli_lo_test.cmd_rArm_cmd_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_rHand_q_OUTPORT",           "lli_lo_test.cmd_rHand_q_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_rHand_dq_OUTPORT",          "lli_lo_test.cmd_rHand_dq_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_rHand_max_p_OUTPORT",       "lli_lo_test.cmd_rHand_max_p_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_rHand_max_i_OUTPORT",       "lli_lo_test.cmd_rHand_max_i_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_rHand_hold_OUTPORT",        "lli_lo_test.cmd_rHand_hold_INPORT", ConnPolicy())
+
+connect("lli_test_error.cmd_lArm_t_OUTPORT",            "lli_lo_test.cmd_lArm_t_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_lArm_cmd_OUTPORT",          "lli_lo_test.cmd_lArm_cmd_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_lHand_q_OUTPORT",           "lli_lo_test.cmd_lHand_q_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_lHand_dq_OUTPORT",          "lli_lo_test.cmd_lHand_dq_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_lHand_max_p_OUTPORT",       "lli_lo_test.cmd_lHand_max_p_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_lHand_max_i_OUTPORT",       "lli_lo_test.cmd_lHand_max_i_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_lHand_hold_OUTPORT",        "lli_lo_test.cmd_lHand_hold_INPORT", ConnPolicy())
+
+connect("lli_test_error.cmd_rHand_tactileCmd_OUTPORT",  "lli_lo_test.cmd_rHand_tactileCmd_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_tMotor_i_OUTPORT",          "lli_lo_test.cmd_tMotor_i_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_hpMotor_i_OUTPORT",         "lli_lo_test.cmd_hpMotor_i_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_htMotor_i_OUTPORT",         "lli_lo_test.cmd_htMotor_i_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_hpMotor_q_OUTPORT",         "lli_lo_test.cmd_hpMotor_q_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_htMotor_q_OUTPORT",         "lli_lo_test.cmd_htMotor_q_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_hpMotor_dq_OUTPORT",        "lli_lo_test.cmd_hpMotor_dq_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_htMotor_dq_OUTPORT",        "lli_lo_test.cmd_htMotor_dq_INPORT", ConnPolicy())
+connect("lli_test_error.cmd_test_OUTPORT",              "lli_lo_test.cmd_test_INPORT", ConnPolicy())
+
 //------------------------------------------------------------------------------
 //-- Controller manager
 //------------------------------------------------------------------------------
@@ -125,14 +171,19 @@ scheme.configure();
 addPeer("scheme", "lli_lo_test");
 addPeer("scheme", "lli_lo_rx");
 addPeer("scheme", "lli_lo_tx");
+addPeer("scheme", "lli_test_error");
 scheme.addBlock("lli_lo_test");
 scheme.addBlock("lli_lo_rx");
 scheme.addBlock("lli_lo_tx");
+scheme.addBlock("lli_test_error");
 
 lli_lo_tx.start();
 lli_lo_rx.start();
 lli_lo_test.start();
+lli_test_error.start();
 
 scheme.start();
+
+lli_monitor.start();
 
 
