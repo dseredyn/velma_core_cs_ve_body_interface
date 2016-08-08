@@ -25,38 +25,49 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <rtt/Component.hpp>
+#ifndef VELMA_LLI_TEST_TIME_H_
+#define VELMA_LLI_TEST_TIME_H_
 
-#include "velma_lli_hi_rx.h"
-#include "velma_lli_hi_tx.h"
-#include "velma_lli_lo_rx.h"
-#include "velma_lli_lo_tx.h"
+#include "shm_comm.h"
 
-#include "velma_lli_hi_test.h"
-#include "velma_lli_lo_test.h"
+#include <cstring>
 
-#include "velma_lli_monitor.h"
+#include <vector>
+#include <string>
 
-#include "velma_lli_test_error.h"
-#include "velma_lli_test_time.h"
+#include "rtt/RTT.hpp"
+#include "rtt/os/TimeService.hpp"
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
+#include "velma_low_level_interface_msgs/VelmaLowLevelCommand.h"
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
+class VelmaTestTime: public RTT::TaskContext {
+public:
+    explicit VelmaTestTime(const std::string &name);
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoRx)
+    bool configureHook();
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoTx)
+    void cleanupHook();
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoTest)
+    bool startHook();
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTest)
+    void stopHook();
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIMonitor)
+    void increaseTime();
 
-ORO_LIST_COMPONENT_TYPE(VelmaTestError)
+    void updateHook();
 
-ORO_LIST_COMPONENT_TYPE(VelmaTestTime)
+private:
 
-ORO_CREATE_COMPONENT_LIBRARY()
+    channel_t chan_;
+    reader_t re_;
+    void *buf_prev_;
+    ros::Time prev_time_;
+
+    uint32_t ros_sec_;
+    uint32_t ros_nsec_;
+
+    bool lost_comm_;
+};
+
+#endif  // VELMA_LLI_TEST_TIME_H_
 
