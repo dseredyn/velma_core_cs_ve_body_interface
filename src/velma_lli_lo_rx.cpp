@@ -53,6 +53,8 @@ bool VelmaLLILoRx::configureHook() {
     const size_t size = sizeof(VelmaLowLevelCommand);
     const uint32_t readers = 3;
 
+    shm_unlink(shm_name_);
+
     channel_hdr_t *shm_hdr_;
 
 //    shm_fd_ = shm_open(shm_name_, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);

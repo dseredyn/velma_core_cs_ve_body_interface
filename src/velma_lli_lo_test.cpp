@@ -96,9 +96,11 @@ void VelmaLLILoTest::updateHook() {
     }
     else if (gen_.toStr(cmd_in_) == str_cmd_nocomm_) {
         no_rec_counter_ = 0;
+//        std::cout << "VelmaLLILoTest: emergency " << std::endl;
     }
     else {
         ++no_rec_counter_;
+//        std::cout << "VelmaLLILoTest: no response " << std::endl;
     }
 
     if (no_rec_counter_ > 0) {

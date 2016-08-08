@@ -109,6 +109,7 @@ void VelmaLLIHiTx::cleanupHook() {
 
 bool VelmaLLIHiTx::startHook() {
 //    RESTRICT_ALLOC;
+    buf_ = reinterpret_cast<VelmaLowLevelCommand*>( writer_buffer_get(&wr_) );
 
 //    UNRESTRICT_ALLOC;
     return true;
@@ -124,12 +125,11 @@ void VelmaLLIHiTx::updateHook() {
     in_.readPorts(cmd_out_);
 //    std::cout << "VelmaLLIHiTx" << std::endl;
 
-    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( writer_buffer_get(&wr_) );
-
-    if (buf == NULL) {
+    if (buf_ == NULL) {
         std::cout << "writer get NULL buffer" << std::endl;
     }
-    *buf = cmd_out_;
+    *buf_ = cmd_out_;
     writer_buffer_write(&wr_);
+    buf_ = reinterpret_cast<VelmaLowLevelCommand*>( writer_buffer_get(&wr_) );
 }
 

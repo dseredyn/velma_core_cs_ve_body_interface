@@ -70,6 +70,8 @@ private:
     velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_out_;
 
     VelmaLLICommandInput in_;
+
+    VelmaLowLevelCommand *buf_;
 };
 
 #endif  // VELMA_LLI_HI_TX_H_

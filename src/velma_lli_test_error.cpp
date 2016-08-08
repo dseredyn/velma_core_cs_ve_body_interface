@@ -64,12 +64,14 @@ void VelmaTestError::updateHook() {
             VelmaLLITestGenerator gen_;
             gen_.generate(0, cmd_out_, status_gen);
             out_.writePorts(cmd_out_);
+//            std::cout << "VelmaTestError: sending emergency data..." << std::endl;
             if (!emergency_) {
                 emergency_ = true;
                 std::cout << "VelmaTestError: sending emergency data..." << std::endl;
             }
         }
         else {
+//            std::cout << "VelmaTestError: sending valid data..." << std::endl;
             if (emergency_) {
                 emergency_ = false;
                 std::cout << "VelmaTestError: sending valid data..." << std::endl;
