@@ -110,6 +110,12 @@ void VelmaLLILoTest::updateHook() {
         stop();
     }
 
+    // run the simulation
+    RTT::TaskContext::PeerList l = this->getPeerList();
+    for (RTT::TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
+        this->getPeer( (*it) )->getActivity()->trigger();
+    }
+
     // write outputs
 //    UNRESTRICT_ALLOC;
 }

@@ -48,7 +48,7 @@ VelmaTestTime::VelmaTestTime(const std::string &name) :
 }
 
 bool VelmaTestTime::configureHook() {
-    int shm_fd;
+/*    int shm_fd;
     channel_hdr_t *shm_hdr;
     const char *shm_name = "velma_lli_cmd";
 
@@ -88,7 +88,7 @@ bool VelmaTestTime::configureHook() {
             printf("no reader slots avalible\n");
         return 0;
     }
-
+*/
     // Initialize and enable the simulation clock
     rtt_rosclock::use_manual_clock();
     rtt_rosclock::enable_sim();
@@ -97,7 +97,7 @@ bool VelmaTestTime::configureHook() {
 }
 
 void VelmaTestTime::cleanupHook() {
-    const size_t size = CHANNEL_DATA_SIZE(chan_.hdr->size, chan_.hdr->max_readers);
+/*    const size_t size = CHANNEL_DATA_SIZE(chan_.hdr->size, chan_.hdr->max_readers);
 
     release_reader(&re_);
 
@@ -107,6 +107,7 @@ void VelmaTestTime::cleanupHook() {
     free(chan_.buffer);
     chan_.buffer = NULL;
     chan_.hdr = NULL;
+*/
 }
 
 bool VelmaTestTime::startHook() {
@@ -128,30 +129,16 @@ void VelmaTestTime::increaseTime() {
 
 void VelmaTestTime::updateHook() {
 
-    void *buf = reader_buffer_get(&re_);
+//    void *buf = reader_buffer_get(&re_);
 
-    ros::Time time = ros::Time::now();
+//    ros::Time time = ros::Time::now();
+    ros::Duration(0.001).sleep();
 
-    if (buf != buf_prev_) {
-        lost_comm_ = false;
-        prev_time_ = time;
-        std::cout << "new data: time: " << ros_sec_ << " " << ros_nsec_ << std::endl;
-        buf_prev_ = buf;
-        increaseTime();
-        rtt_rosclock::update_sim_clock(ros::Time(ros_sec_, ros_nsec_));
+    uint32_t sec = ros_sec_;
+    increaseTime();
+    if (sec != ros_sec_) {
+        std::cout << "time: " << ros_sec_ << std::endl;
     }
-    else if (lost_comm_) {
-        increaseTime();
-        std::cout << "no data:  time: " << ros_sec_ << " " << ros_nsec_ << std::endl;
-        rtt_rosclock::update_sim_clock(ros::Time(ros_sec_, ros_nsec_));
-    }
-    else {
-        if ((time - prev_time_).toSec() > 0.1) {
-            lost_comm_ = true;
-            std::cout << "data out:  time: " << ros_sec_ << " " << ros_nsec_ << std::endl;
-            increaseTime();
-            rtt_rosclock::update_sim_clock(ros::Time(ros_sec_, ros_nsec_));
-        }
-    }
+    rtt_rosclock::update_sim_clock(ros::Time(ros_sec_, ros_nsec_));
 }
 

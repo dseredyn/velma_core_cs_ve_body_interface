@@ -27,6 +27,8 @@
 
 #include <rtt/Component.hpp>
 
+#include <rtt/types/TypeInfo.hpp>
+
 #include "velma_lli_lo_tx.h"
 
 VelmaLLILoTx::VelmaLLILoTx(const std::string &name) :

@@ -47,9 +47,6 @@ bool VelmaTestError::configureHook() {
 bool VelmaTestError::startHook() {
 //    RESTRICT_ALLOC;
 
-    no_new_data_ = 0;
-    connecting_ = false;
-
 //    UNRESTRICT_ALLOC;
     return true;
 }
@@ -67,6 +64,16 @@ void VelmaTestError::updateHook() {
             VelmaLLITestGenerator gen_;
             gen_.generate(0, cmd_out_, status_gen);
             out_.writePorts(cmd_out_);
+            if (!emergency_) {
+                emergency_ = true;
+                std::cout << "VelmaTestError: sending emergency data..." << std::endl;
+            }
+        }
+        else {
+            if (emergency_) {
+                emergency_ = false;
+                std::cout << "VelmaTestError: sending valid data..." << std::endl;
+            }
         }
     }
     else {

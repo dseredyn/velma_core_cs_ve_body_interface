@@ -66,9 +66,10 @@ private:
 
     RTT::InputPort<uint32_t> port_comm_status_in_;
 
-    int no_new_data_;
-    bool connecting_;
-    int connecting_counter_;
+    bool emergency_;
+//    int no_new_data_;
+//    bool connecting_;
+//    int connecting_counter_;
 
 };
 

@@ -7,6 +7,7 @@ ros.import("rtt_rosclock");
 ros.import("rtt_rospack")
 ros.import("rtt_actionlib");
 ros.import("rtt_barrett_hand_controller_msgs");
+ros.import("rtt_geometry_msgs");
 ros.import("rtt_velma_low_level_interface_msgs");
 ros.import("velma_low_level_interface");
 
@@ -27,7 +28,7 @@ cpTx.name_id   = "/lli_status";     # the connection id
 
 loadComponent("lli_lo_tx","VelmaLLILoTx")
 setActivity("lli_lo_tx", 0, 1, ORO_SCHED_RT);
-#lli_lo_tx.loadService("sim_clock_activity")
+#lli_lo_tx.loadService("sim_clock_activity");
 lli_lo_tx.configure();
 stream("lli_lo_tx.status_OUTPORT", cpTx);
 
@@ -39,7 +40,7 @@ cpRx.name_id   = "/lli_command";    # the connection id
 
 loadComponent("lli_lo_rx","VelmaLLILoRx")
 setActivity("lli_lo_rx", 0, 1, ORO_SCHED_RT);
-#lli_lo_rx.loadService("sim_clock_activity")
+#lli_lo_rx.loadService("sim_clock_activity");
 lli_lo_rx.configure();
 #stream("lli_lo_rx.command_INPORT", cpRx);
 
@@ -48,7 +49,7 @@ lli_lo_rx.configure();
 #
 loadComponent("lli_lo_test","VelmaLLILoTest")
 setActivity("lli_lo_test", 0, 1, ORO_SCHED_RT);
-#lli_lo_test.loadService("sim_clock_activity")
+#lli_lo_test.loadService("sim_clock_activity");
 lli_lo_test.configure();
 
 # command
@@ -123,10 +124,10 @@ connect("lli_lo_test.status_test_OUTPORT",                "lli_lo_tx.status_test
 #
 loadComponent("lli_test_error","VelmaTestError")
 setActivity("lli_test_error", 0, 1, ORO_SCHED_RT);
-#lli_test_error.loadService("sim_clock_activity")
+#lli_test_error.loadService("sim_clock_activity");
 lli_test_error.configure();
 
-connect("lli_lo_rx.comm_status_OUTPORT",        "lli_test_error.comm_status_INPORT", ConnPolicy())
+connect("lli_lo_rx.comm_status_OUTPORT",        "lli_test_error.comm_status_INPORT", ConnPolicy());
 
 # command
 connect("lli_test_error.cmd_rArm_t_OUTPORT",            "lli_lo_test.cmd_rArm_t_INPORT", ConnPolicy())
@@ -158,34 +159,37 @@ connect("lli_test_error.cmd_test_OUTPORT",              "lli_lo_test.cmd_test_IN
 #
 # the sim time component
 #
-#loadComponent("lli_test_time","VelmaTestTime")
-#setActivity("lli_test_time", 0.001, 1, ORO_SCHED_RT);
-#lli_test_time.configure();
+loadComponent("lli_test_time","VelmaTestTime")
+setActivity("lli_test_time", 0, 1, ORO_SCHED_RT);
+lli_test_time.configure();
+
+addPeer("lli_lo_test", "lli_test_time");
 
 //------------------------------------------------------------------------------
 //-- Controller manager
 //------------------------------------------------------------------------------
 loadComponent("scheme", "conman::Scheme");
 setActivity("scheme", 0.001, 5, ORO_SCHED_RT);
-#scheme.loadService("sim_clock_activity")
 scheme.loadService("conman_ros");
 scheme.configure();
 
-#addPeer("scheme", "lli_lo_test");
-#addPeer("scheme", "lli_lo_rx");
-#addPeer("scheme", "lli_lo_tx");
-#addPeer("scheme", "lli_test_error");
-#scheme.addBlock("lli_lo_test");
-#scheme.addBlock("lli_lo_rx");
-#scheme.addBlock("lli_lo_tx");
-#scheme.addBlock("lli_test_error");
+addPeer("scheme", "lli_lo_test");
+addPeer("scheme", "lli_lo_rx");
+addPeer("scheme", "lli_lo_tx");
+addPeer("scheme", "lli_test_error");
+scheme.addBlock("lli_lo_test");
+scheme.addBlock("lli_lo_rx");
+scheme.addBlock("lli_lo_tx");
+scheme.addBlock("lli_test_error");
 
-#lli_test_time.start()
+lli_test_time.start();
 
-#lli_lo_tx.start();
-#lli_lo_rx.start();
-#lli_lo_test.start();
-#lli_test_error.start();
+lli_lo_tx.start();
+lli_lo_rx.start();
+lli_lo_test.start();
+lli_test_error.start();
 
 scheme.start();
+
+scheme.loadService("sim_clock_activity");
 
