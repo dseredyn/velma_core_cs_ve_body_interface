@@ -52,36 +52,6 @@ VelmaLLIHiTx::VelmaLLIHiTx(const std::string &name) :
 bool VelmaLLIHiTx::configureHook() {
     Logger::In in("VelmaLLIHiTx::configureHook");
 
-/*    int shm_fd;
-    channel_hdr_t *shm_hdr;
-    const char *shm_name = "velma_lli_cmd";
-
-    shm_fd = shm_open(shm_name, O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-    if (shm_fd < 0) {
-        std::string err_str(strerror(errno));
-        std::cout << "VelmaLLIHiTx shm_open failed: " << err_str << std::endl;
-        return false;
-    }
-
-    struct stat sb;
-    fstat(shm_fd, &sb);
-
-    shm_hdr = reinterpret_cast<channel_hdr_t*>( mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0) );
-
-    if (shm_hdr == MAP_FAILED) {
-        std::string err_str(strerror(errno));
-        std::cout << "VelmaLLIHiTx mmap failed failed: " << err_str << std::endl;
-        return false;
-    }
-
-    if (CHANNEL_DATA_SIZE(shm_hdr->size, shm_hdr->max_readers) != sb.st_size) {
-        std::cout << "VelmaLLIHiTx error data" << std::endl;
-        return false;
-    }
-
-    init_channel(shm_hdr, &chan_);
-*/
-
     if (connect_channel("velma_lli_cmd", &chan_) != 0) {
         Logger::log() << Logger::Error << "connect_channel failed" << Logger::endl;
     }
@@ -107,7 +77,6 @@ bool VelmaLLIHiTx::configureHook() {
 }
 
 void VelmaLLIHiTx::cleanupHook() {
-//    const size_t size = CHANNEL_DATA_SIZE(chan_.hdr->size, chan_.hdr->max_readers);
     Logger::In in("VelmaLLIHiTx::cleanupHook");
 
     Logger::log() << Logger::Info << "releasing writer" << Logger::endl;
@@ -116,23 +85,12 @@ void VelmaLLIHiTx::cleanupHook() {
 
     Logger::log() << Logger::Info << "disconnecting channel" << Logger::endl;
     disconnect_channel(&chan_);
-
-/*    munmap(chan_.hdr, size);
-    chan_.reader_ids = NULL;
-    chan_.reading = NULL;
-    free(chan_.buffer);
-    chan_.buffer = NULL;
-    chan_.hdr = NULL;
-*/
 }
 
 bool VelmaLLIHiTx::startHook() {
-//    RESTRICT_ALLOC;
     void *pbuf = NULL;
     writer_buffer_get(&wr_, &pbuf);
     buf_ = reinterpret_cast<VelmaLowLevelCommand*>(pbuf);
-
-//    UNRESTRICT_ALLOC;
     return true;
 }
 
@@ -145,7 +103,6 @@ void VelmaLLIHiTx::updateHook() {
     // write outputs
 //    UNRESTRICT_ALLOC;
     in_.readPorts(cmd_out_);
-//    std::cout << "VelmaLLIHiTx" << std::endl;
 
     if (buf_ == NULL) {
         Logger::log() << Logger::Error << "writer get NULL buffer" << Logger::endl;
