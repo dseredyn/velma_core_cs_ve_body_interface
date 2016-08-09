@@ -152,8 +152,6 @@ loadComponent("lli_test_time","VelmaTestTime")
 setActivity("lli_test_time", 0.001, 1, ORO_SCHED_RT);
 lli_test_time.configure();
 
-#addPeer("lli_lo_test", "lli_test_time");
-
 //------------------------------------------------------------------------------
 //-- Controller manager
 //------------------------------------------------------------------------------
