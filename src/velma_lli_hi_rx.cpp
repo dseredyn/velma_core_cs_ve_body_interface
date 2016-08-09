@@ -26,11 +26,14 @@
 */
 
 #include <rtt/Component.hpp>
+#include <rtt/Logger.hpp>
 
 #include "velma_lli_hi_rx.h"
 
+using namespace RTT;
+
 VelmaLLIHiRx::VelmaLLIHiRx(const std::string &name) :
-    RTT::TaskContext(name, PreOperational),
+    TaskContext(name, PreOperational),
     out_(*this)
 {
     this->ports()->addEventPort("status_INPORT", port_status_in_);
@@ -51,21 +54,21 @@ void VelmaLLIHiRx::stopHook() {
 }
 
 void VelmaLLIHiRx::updateHook() {
+    Logger::In in("VelmaLLIHiRx::updateHook");
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
-    if (port_status_in_.read(status_in_) == RTT::NewData) {
+    if (port_status_in_.read(status_in_) == NewData) {
 
-    out_.writePorts(status_in_);
-/*
-    RTT::TaskContext::PeerList l = this->getPeerList();
-    for (RTT::TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
-        std::cout << "VelmaLLIHiRx peer list: " << (*it) << " ";
+        out_.writePorts(status_in_);
+
+        TaskContext::PeerList l = this->getPeerList();
+        for (TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
+            this->getPeer( (*it) )->getActivity()->execute();
+        }
     }
-    std::cout << std::endl;
-*/
-
-    this->getPeer("scheme")->getActivity()->trigger();
+    else {
+        Logger::log() << Logger::Info << "received old data" << Logger::endl;
     }
 }
 

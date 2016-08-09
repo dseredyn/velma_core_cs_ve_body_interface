@@ -26,17 +26,18 @@
 */
 
 #include <rtt/Component.hpp>
-
+#include <rtt/Logger.hpp>
 #include <rtt/base/PortInterface.hpp>
 
 #include "velma_lli_test_error.h"
 #include "velma_lli_test_generator.h"
 
+using namespace RTT;
+
 VelmaTestError::VelmaTestError(const std::string &name) :
-    RTT::TaskContext(name, PreOperational),
+    TaskContext(name, PreOperational),
     out_(*this)
 {
-//    this->ports()->addPort("command_INPORT", port_cmd_in_);
     this->ports()->addPort("comm_status_INPORT", port_comm_status_in_);
 }
 
@@ -55,33 +56,36 @@ void VelmaTestError::stopHook() {
 }
 
 void VelmaTestError::updateHook() {
+    Logger::In in("VelmaTestError::updateHook");
 //    RESTRICT_ALLOC;
 
     uint32_t comm_status_in = 0;
-    if (port_comm_status_in_.read(comm_status_in) == RTT::NewData) {
+    if (port_comm_status_in_.read(comm_status_in) == NewData) {
         if (comm_status_in == 0) {
             velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
             VelmaLLITestGenerator gen_;
             gen_.generate(0, cmd_out_, status_gen);
             out_.writePorts(cmd_out_);
-//            std::cout << "VelmaTestError: sending emergency data..." << std::endl;
             if (!emergency_) {
                 emergency_ = true;
-                std::cout << "VelmaTestError: sending emergency data..." << std::endl;
+                Logger::log() << Logger::Info << "sending emergency data..." << Logger::endl;
+            }
+            else {
+                Logger::log() << Logger::Debug << "sending emergency data" << Logger::endl;
             }
         }
         else {
-//            std::cout << "VelmaTestError: sending valid data..." << std::endl;
             if (emergency_) {
                 emergency_ = false;
-                std::cout << "VelmaTestError: sending valid data..." << std::endl;
+                Logger::log() << Logger::Info << "sending valid data..." << Logger::endl;
+            }
+            else {
+                Logger::log() << Logger::Debug << "sending valid data..." << Logger::endl;
             }
         }
     }
     else {
-        std::cout << "VelmaTestError error: no comm status data" << std::endl;
+        Logger::log() << Logger::Error << "no comm status data" << Logger::endl;
     }
-
-
 }
 

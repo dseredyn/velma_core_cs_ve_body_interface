@@ -27,6 +27,7 @@
 
 #include <rtt/Component.hpp>
 #include <rtt_rosclock/rtt_rosclock.h>
+#include <rtt/Logger.hpp>
 
 #include <stdlib.h>
 #include <string.h>
@@ -40,14 +41,17 @@
 
 #include "velma_lli_test_time.h"
 
+using namespace RTT;
+
 VelmaTestTime::VelmaTestTime(const std::string &name) :
-    RTT::TaskContext(name, PreOperational),
+    TaskContext(name, PreOperational),
     ros_sec_(0),
     ros_nsec_(0)
 {
 }
 
 bool VelmaTestTime::configureHook() {
+    Logger::In in("VelmaTestTime::configureHook");
     int shm_fd;
     channel_hdr_t *shm_hdr;
     const char *shm_name = "velma_lli_cmd";
@@ -55,7 +59,7 @@ bool VelmaTestTime::configureHook() {
     shm_fd = shm_open(shm_name, O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
     if (shm_fd < 0) {
         std::string err_str(strerror(errno));
-        std::cout << "VelmaTestTime shm_open failed: " << err_str << std::endl;
+        Logger::log() << Logger::Error << "shm_open failed: " << err_str << Logger::endl;
         return false;
     }
 
@@ -66,12 +70,12 @@ bool VelmaTestTime::configureHook() {
 
     if (shm_hdr == MAP_FAILED) {
         std::string err_str(strerror(errno));
-        std::cout << "VelmaTestTime mmap failed failed: " << err_str << std::endl;
+        Logger::log() << Logger::Error << "mmap failed: " << err_str << Logger::endl;
         return false;
     }
 
     if (CHANNEL_DATA_SIZE(shm_hdr->size, shm_hdr->max_readers) != sb.st_size) {
-        std::cout << "VelmaTestTime error data" << std::endl;
+        Logger::log() << Logger::Error << "wrong data size" << Logger::endl;
         return false;
     }
 
@@ -80,12 +84,12 @@ bool VelmaTestTime::configureHook() {
     int ret = create_reader(&chan_, &re_);
 
     if (ret != 0) {
-
-        if (ret == -1)
-            printf("invalid reader_t pointer\n");
-
-        if (ret == -2)
-            printf("no reader slots avalible\n");
+        if (ret == -1) {
+            Logger::log() << Logger::Error << "invalid reader_t pointer" << Logger::endl;
+        }
+        if (ret == -2) {
+            Logger::log() << Logger::Error << "no reader slots avalible" << Logger::endl;
+        }
         return 0;
     }
 
@@ -127,6 +131,7 @@ void VelmaTestTime::increaseTime() {
 }
 
 void VelmaTestTime::updateHook() {
+    Logger::In in("VelmaTestTime::updateHook");
 
     void *buf = reader_buffer_get(&re_);
 
@@ -134,24 +139,23 @@ void VelmaTestTime::updateHook() {
 
     if (buf != buf_prev_) {
         if (lost_comm_) {
-            std::cout << "new data: time: " << ros_sec_ << " " << ros_nsec_ << std::endl;
+            Logger::log() << Logger::Info << "new data: time: " << ros_sec_ << " " << (static_cast<double>(ros_nsec_)/1000000000.0) << Logger::endl;
+        }
+        else {
+            Logger::log() << Logger::Debug << "new data: time: " << ros_sec_ << " " << (static_cast<double>(ros_nsec_)/1000000000.0) << Logger::endl;
         }
         lost_comm_ = false;
         prev_time_ = time;
         buf_prev_ = buf;
         uint32_t sec = ros_sec_;
         increaseTime();
-//        if (sec != ros_sec_) {
-//        std::cout << "VelmaTestTime: new data: time: " << ros_sec_ << " " << ros_nsec_ << std::endl;
-//        }
         rtt_rosclock::update_sim_clock(ros::Time(ros_sec_, ros_nsec_));
     }
     else if (lost_comm_) {
         uint32_t sec = ros_sec_;
         increaseTime();
-//        if (sec != ros_sec_) {
-//        std::cout << "VelmaTestTime: no data:  time: " << ros_sec_ << " " << ros_nsec_ << std::endl;
-//        }
+
+        Logger::log() << Logger::Debug << "no communication: time: " << ros_sec_ << " " << (static_cast<double>(ros_nsec_)/1000000000.0) << Logger::endl;
         rtt_rosclock::update_sim_clock(ros::Time(ros_sec_, ros_nsec_));
     }
     else {
@@ -159,20 +163,9 @@ void VelmaTestTime::updateHook() {
             lost_comm_ = true;
             uint32_t sec = ros_sec_;
             increaseTime();
-            std::cout << "VelmaTestTime: data out:  time: " << ros_sec_ << " " << ros_nsec_ << std::endl;
+            Logger::log() << Logger::Info << "lost communication: time: " << ros_sec_ << " " << (static_cast<double>(ros_nsec_)/1000000000.0) << Logger::endl;
             rtt_rosclock::update_sim_clock(ros::Time(ros_sec_, ros_nsec_));
         }
     }
-
-/*
-    ros::Duration(0.001).sleep();
-
-    uint32_t sec = ros_sec_;
-    increaseTime();
-    if (sec != ros_sec_) {
-        std::cout << "time: " << ros_sec_ << std::endl;
-    }
-    rtt_rosclock::update_sim_clock(ros::Time(ros_sec_, ros_nsec_));
-*/
 }
 

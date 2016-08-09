@@ -26,6 +26,7 @@
 */
 
 #include <rtt/Component.hpp>
+#include <rtt/Logger.hpp>
 
 #include <stdlib.h>
 #include <string.h>
@@ -41,15 +42,20 @@
 
 using namespace velma_low_level_interface_msgs;
 
+using namespace RTT;
+
 VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
-    RTT::TaskContext(name, PreOperational),
+    TaskContext(name, PreOperational),
     out_(*this),
-    shm_name_("velma_lli_cmd")
+    shm_name_("velma_lli_cmd"),
+    buf_prev_(NULL)
 {
     this->ports()->addPort("comm_status_OUTPORT", port_comm_status_out_);
 }
 
 bool VelmaLLILoRx::configureHook() {
+    Logger::In in("VelmaLLILoRx::configureHook");
+
     const size_t size = sizeof(VelmaLowLevelCommand);
     const uint32_t readers = 3;
 
@@ -57,17 +63,25 @@ bool VelmaLLILoRx::configureHook() {
 
     channel_hdr_t *shm_hdr_;
 
-//    shm_fd_ = shm_open(shm_name_, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-    shm_fd_ = shm_open(shm_name_, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+    shm_fd_ = shm_open(shm_name_, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
     if (shm_fd_ < 0) {
         std::string err_str(strerror(errno));
-        std::cout << "VelmaLLILoRx shm_open failed: " << err_str << std::endl;
+        Logger::log() << Logger::Error << "shm_open (O_EXCL) failed: " << err_str << Logger::endl;
         return false;
     }
 
     if (ftruncate(shm_fd_, CHANNEL_DATA_SIZE(size, readers)) != 0) {
-        std::cout << "VelmaLLILoRx ftruncate failed" << std::endl;
+        Logger::log() << Logger::Error << "ftruncate failed" << Logger::endl;
         shm_unlink(shm_name_);
+        return false;
+    }
+
+    close(shm_fd_);
+
+    shm_fd_ = shm_open(shm_name_, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+    if (shm_fd_ < 0) {
+        std::string err_str(strerror(errno));
+        Logger::log() << Logger::Error << "shm_open failed: " << err_str << Logger::endl;
         return false;
     }
 
@@ -75,7 +89,7 @@ bool VelmaLLILoRx::configureHook() {
 
     if (shm_hdr_ == MAP_FAILED) {
         std::string err_str(strerror(errno));
-        std::cout << "VelmaLLILoRx mmap failed: " << err_str << std::endl;
+        Logger::log() << Logger::Error << "mmap failed: " << err_str << Logger::endl;
         shm_unlink(shm_name_);
         return false;
     }
@@ -88,11 +102,13 @@ bool VelmaLLILoRx::configureHook() {
 
     if (ret != 0) {
 
-        if (ret == -1)
-            printf("invalid reader_t pointer\n");
+        if (ret == -1) {
+            Logger::log() << Logger::Error << "invalid reader_t pointer" << Logger::endl;
+        }
 
-        if (ret == -2)
-            printf("no reader slots avalible\n");
+        if (ret == -2) {
+            Logger::log() << Logger::Error << "no reader slots avalible" << Logger::endl;
+        }
         return 0;
     }
 
@@ -117,6 +133,7 @@ void VelmaLLILoRx::cleanupHook() {
 
 bool VelmaLLILoRx::startHook() {
 //    RESTRICT_ALLOC;
+    buf_prev_ = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
 
 //    UNRESTRICT_ALLOC;
     return true;
@@ -126,6 +143,7 @@ void VelmaLLILoRx::stopHook() {
 }
 
 void VelmaLLILoRx::updateHook() {
+    Logger::In in("VelmaLLILoRx::updateHook");
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
@@ -134,21 +152,23 @@ void VelmaLLILoRx::updateHook() {
     VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
 
     if (buf == NULL) {
-        std::cout << "VelmaLLILoRx reader got NULL buffer" << std::endl;
-    }
-
-    if (buf != buf_prev_) {
-        buf_prev_ = buf;
-
-        comm_status_out = 1;
-
-        cmd_in_ = *buf;
-        out_.writePorts(cmd_in_);
+        Logger::log() << Logger::Error << "reader got NULL buffer" << Logger::endl;
     }
     else {
-        comm_status_out = 0;
-    }
+        if (buf != buf_prev_) {
+            buf_prev_ = buf;
 
+            comm_status_out = 1;
+
+            Logger::log() << Logger::Debug << "received new data" << Logger::endl;
+
+            cmd_in_ = *buf;
+            out_.writePorts(cmd_in_);
+        }
+        else {
+            Logger::log() << Logger::Debug << "could not receive data" << Logger::endl;
+        }
+    }
     port_comm_status_out_.write(comm_status_out);
 }
 

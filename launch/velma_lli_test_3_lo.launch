@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="LOG_LEVEL" default="error"/>
+  <arg name="LOG_LEVEL" default="Info"/>
   <arg name="DEBUG" default="false"/>
 
   <!-- Orocos target (gnulinux, xenomai, etc) -->
