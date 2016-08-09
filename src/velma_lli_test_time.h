@@ -28,7 +28,7 @@
 #ifndef VELMA_LLI_TEST_TIME_H_
 #define VELMA_LLI_TEST_TIME_H_
 
-#include "shm_comm.h"
+#include "shm_comm_api.h"
 
 #include <cstring>
 

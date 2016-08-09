@@ -56,9 +56,20 @@ VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
 bool VelmaLLILoRx::configureHook() {
     Logger::In in("VelmaLLILoRx::configureHook");
 
-    const size_t size = sizeof(VelmaLowLevelCommand);
-    const uint32_t readers = 3;
+//    const size_t size = sizeof(VelmaLowLevelCommand);
+//    const uint32_t readers = 3;
 
+    if (create_shm_object(shm_name_, sizeof(VelmaLowLevelCommand), 1) != 0) {
+        Logger::log() << Logger::Error << "create_shm_object failed" << Logger::endl;
+        return false;
+    }
+
+    if (connect_channel(shm_name_, &chan_) != 0) {
+        Logger::log() << Logger::Error << "connect_channel failed" << Logger::endl;
+        return false;
+    }
+
+/*
     shm_unlink(shm_name_);
 
     channel_hdr_t *shm_hdr_;
@@ -94,10 +105,10 @@ bool VelmaLLILoRx::configureHook() {
         return false;
     }
 
-    init_channel_hdr(size, readers, shm_hdr_);
+    init_channel_hdr(size, readers, SHM_SHARED, shm_hdr_);
 
     init_channel(shm_hdr_, &chan_);
-
+*/
     int ret = create_reader(&chan_, &re_);
 
     if (ret != 0) {
@@ -109,7 +120,7 @@ bool VelmaLLILoRx::configureHook() {
         if (ret == -2) {
             Logger::log() << Logger::Error << "no reader slots avalible" << Logger::endl;
         }
-        return 0;
+        return false;
     }
 
     return true;
@@ -120,15 +131,19 @@ void VelmaLLILoRx::cleanupHook() {
 
     release_reader(&re_);
 
-    munmap(chan_.hdr, size);
+    disconnect_channel(&chan_);
+
+    delete_shm_object(shm_name_);
+
+/*    munmap(chan_.hdr, size);
     chan_.reader_ids = NULL;
     chan_.reading = NULL;
     free(chan_.buffer);
     chan_.buffer = NULL;
     chan_.hdr = NULL;
-
-    close(shm_fd_);
-    shm_unlink(shm_name_);
+*/
+//    close(shm_fd_);
+//    shm_unlink(shm_name_);
 }
 
 bool VelmaLLILoRx::startHook() {
@@ -149,10 +164,12 @@ void VelmaLLILoRx::updateHook() {
 //    UNRESTRICT_ALLOC;
     uint32_t comm_status_out = 0;
 
-    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
+    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_timedwait(&re_, 1, 0) );
+//    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
 
     if (buf == NULL) {
-        Logger::log() << Logger::Error << "reader got NULL buffer" << Logger::endl;
+//        Logger::log() << Logger::Error << "reader got NULL buffer" << Logger::endl;
+        Logger::log() << Logger::Debug << "could not receive data (NULL buffer)" << Logger::endl;
     }
     else {
         if (buf != buf_prev_) {

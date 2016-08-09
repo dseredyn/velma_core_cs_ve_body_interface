@@ -52,9 +52,11 @@ VelmaTestTime::VelmaTestTime(const std::string &name) :
 
 bool VelmaTestTime::configureHook() {
     Logger::In in("VelmaTestTime::configureHook");
-    int shm_fd;
+
+/*    int shm_fd;
     channel_hdr_t *shm_hdr;
     const char *shm_name = "velma_lli_cmd";
+
 
     shm_fd = shm_open(shm_name, O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
     if (shm_fd < 0) {
@@ -80,6 +82,9 @@ bool VelmaTestTime::configureHook() {
     }
 
     init_channel(shm_hdr, &chan_);
+*/
+
+    connect_channel("velma_lli_cmd", &chan_);
 
     int ret = create_reader(&chan_, &re_);
 
@@ -101,16 +106,20 @@ bool VelmaTestTime::configureHook() {
 }
 
 void VelmaTestTime::cleanupHook() {
-    const size_t size = CHANNEL_DATA_SIZE(chan_.hdr->size, chan_.hdr->max_readers);
+//    const size_t size = CHANNEL_DATA_SIZE(chan_.hdr->size, chan_.hdr->max_readers);
 
     release_reader(&re_);
 
+    disconnect_channel(&chan_);
+
+/*
     munmap(chan_.hdr, size);
     chan_.reader_ids = NULL;
     chan_.reading = NULL;
     free(chan_.buffer);
     chan_.buffer = NULL;
     chan_.hdr = NULL;
+*/
 }
 
 bool VelmaTestTime::startHook() {

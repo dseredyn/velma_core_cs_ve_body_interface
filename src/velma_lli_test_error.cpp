@@ -48,6 +48,7 @@ bool VelmaTestError::configureHook() {
 bool VelmaTestError::startHook() {
 //    RESTRICT_ALLOC;
 
+    emergency_ = false;
 //    UNRESTRICT_ALLOC;
     return true;
 }

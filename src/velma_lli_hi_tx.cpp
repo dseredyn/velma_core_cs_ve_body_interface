@@ -26,6 +26,7 @@
 */
 
 #include <rtt/Component.hpp>
+#include <rtt/Logger.hpp>
 
 #include <stdlib.h>
 #include <string.h>
@@ -40,15 +41,18 @@
 #include "velma_lli_hi_tx.h"
 
 using namespace velma_low_level_interface_msgs;
+using namespace RTT;
 
 VelmaLLIHiTx::VelmaLLIHiTx(const std::string &name) :
-    RTT::TaskContext(name, PreOperational),
+    TaskContext(name, PreOperational),
     in_(*this)
 {
 }
 
 bool VelmaLLIHiTx::configureHook() {
-    int shm_fd;
+    Logger::In in("VelmaLLIHiTx::configureHook");
+
+/*    int shm_fd;
     channel_hdr_t *shm_hdr;
     const char *shm_name = "velma_lli_cmd";
 
@@ -76,17 +80,25 @@ bool VelmaLLIHiTx::configureHook() {
     }
 
     init_channel(shm_hdr, &chan_);
+*/
+
+    if (connect_channel("velma_lli_cmd", &chan_) != 0) {
+        Logger::log() << Logger::Error << "connect_channel failed" << Logger::endl;
+    }
 
     int ret = create_writer(&chan_, &wr_);
+
+    Logger::log() << Logger::Info << "created writer, max_readers: " << chan_.hdr->max_readers << Logger::endl;
+    Logger::log() << Logger::Info << "wr_.inuse: " << (size_t)(wr_.inuse) << Logger::endl;
 
     if (ret != 0) {
 
         if (ret == -1) {
-            std::cout << "invalid writer_t pointer" << std::endl;
+            Logger::log() << Logger::Error << "invalid writer_t pointer" << Logger::endl;
         }
 
         if (ret == -2) {
-            std::cout << "no writers slots avalible" << std::endl;
+            Logger::log() << Logger::Error << "no writers slots avalible" << Logger::endl;
         }
         return false;
     }
@@ -95,21 +107,30 @@ bool VelmaLLIHiTx::configureHook() {
 }
 
 void VelmaLLIHiTx::cleanupHook() {
-    const size_t size = CHANNEL_DATA_SIZE(chan_.hdr->size, chan_.hdr->max_readers);
+//    const size_t size = CHANNEL_DATA_SIZE(chan_.hdr->size, chan_.hdr->max_readers);
+    Logger::In in("VelmaLLIHiTx::cleanupHook");
 
-    release_writer(&wr_);
+    Logger::log() << Logger::Info << "releasing writer" << Logger::endl;
+    Logger::log() << Logger::Info << "wr_.inuse: " << (size_t)(wr_.inuse) << Logger::endl;
+    release_writer(&wr_);     // this segfaults
 
-    munmap(chan_.hdr, size);
+    Logger::log() << Logger::Info << "disconnecting channel" << Logger::endl;
+    disconnect_channel(&chan_);
+
+/*    munmap(chan_.hdr, size);
     chan_.reader_ids = NULL;
     chan_.reading = NULL;
     free(chan_.buffer);
     chan_.buffer = NULL;
     chan_.hdr = NULL;
+*/
 }
 
 bool VelmaLLIHiTx::startHook() {
 //    RESTRICT_ALLOC;
-    buf_ = reinterpret_cast<VelmaLowLevelCommand*>( writer_buffer_get(&wr_) );
+    void *pbuf = NULL;
+    writer_buffer_get(&wr_, &pbuf);
+    buf_ = reinterpret_cast<VelmaLowLevelCommand*>(pbuf);
 
 //    UNRESTRICT_ALLOC;
     return true;
@@ -119,6 +140,7 @@ void VelmaLLIHiTx::stopHook() {
 }
 
 void VelmaLLIHiTx::updateHook() {
+    Logger::In in("VelmaLLIHiTx::updateHook");
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
@@ -126,10 +148,14 @@ void VelmaLLIHiTx::updateHook() {
 //    std::cout << "VelmaLLIHiTx" << std::endl;
 
     if (buf_ == NULL) {
-        std::cout << "writer get NULL buffer" << std::endl;
+        Logger::log() << Logger::Error << "writer get NULL buffer" << Logger::endl;
     }
-    *buf_ = cmd_out_;
-    writer_buffer_write(&wr_);
-    buf_ = reinterpret_cast<VelmaLowLevelCommand*>( writer_buffer_get(&wr_) );
+    else {
+        *buf_ = cmd_out_;
+        writer_buffer_write(&wr_);
+    }
+    void *pbuf = NULL;
+    writer_buffer_get(&wr_, &pbuf);
+    buf_ = reinterpret_cast<VelmaLowLevelCommand*>(pbuf);
 }
 

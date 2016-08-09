@@ -148,9 +148,9 @@ connect("lli_test_error.cmd_test_OUTPORT",              "lli_lo_test.cmd_test_IN
 #
 # the sim time component
 #
-loadComponent("lli_test_time","VelmaTestTime")
-setActivity("lli_test_time", 0.001, 1, ORO_SCHED_RT);
-lli_test_time.configure();
+#loadComponent("lli_test_time","VelmaTestTime")
+#setActivity("lli_test_time", 0.001, 1, ORO_SCHED_RT);
+#lli_test_time.configure();
 
 //------------------------------------------------------------------------------
 //-- Controller manager
@@ -169,14 +169,14 @@ scheme.addBlock("lli_lo_rx");
 scheme.addBlock("lli_lo_tx");
 scheme.addBlock("lli_test_error");
 
-lli_test_time.start();
+#lli_test_time.start();
 
 lli_lo_tx.start();
 lli_lo_rx.start();
 lli_lo_test.start();
 lli_test_error.start();
 
-scheme.loadService("sim_clock_activity");
+#scheme.loadService("sim_clock_activity");
 
 scheme.start();
 

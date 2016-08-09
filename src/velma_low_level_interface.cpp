@@ -36,7 +36,6 @@
 #include "velma_lli_lo_test.h"
 
 #include "velma_lli_test_error.h"
-#include "velma_lli_test_time.h"
 
 ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
 
@@ -51,8 +50,6 @@ ORO_LIST_COMPONENT_TYPE(VelmaLLILoTest)
 ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTest)
 
 ORO_LIST_COMPONENT_TYPE(VelmaTestError)
-
-ORO_LIST_COMPONENT_TYPE(VelmaTestTime)
 
 ORO_CREATE_COMPONENT_LIBRARY()
 

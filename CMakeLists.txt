@@ -38,7 +38,7 @@ orocos_component(velma_low_level_interface src/velma_low_level_interface.cpp src
                     src/velma_lli_lo_tx.cpp src/velma_lli_hi_rx.cpp src/velma_lli_hi_tx.cpp
                     src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp
                     src/velma_lli_lo_test.cpp src/velma_lli_hi_test.cpp src/velma_lli_test_generator.cpp
-                    src/velma_lli_test_error.cpp src/shm_comm.c src/velma_lli_test_time.cpp)
+                    src/velma_lli_test_error.cpp src/shm_comm_locking.c src/shm_comm_api.c)
 
 target_link_libraries(velma_low_level_interface
     ${catkin_LIBRARIES}
