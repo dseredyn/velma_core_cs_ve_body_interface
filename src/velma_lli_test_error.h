@@ -43,7 +43,7 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
-#include "velma_lli_command_ports.h"
+#include "velma_low_level_interface/velma_lli_command_ports.h"
 
 class VelmaTestError: public RTT::TaskContext {
 public:

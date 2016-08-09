@@ -25,8 +25,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef VELMA_LLI_COMMAND_PORTS_H_
-#define VELMA_LLI_COMMAND_PORTS_H_
+#ifndef __VELMA_LLI_COMMAND_PORTS_H__
+#define __VELMA_LLI_COMMAND_PORTS_H__
 
 #include <cstring>
 
@@ -49,7 +49,7 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
-#include "velma_lli_ports.h"
+#include "velma_low_level_interface/velma_lli_ports.h"
 
 using velma_low_level_interface_msgs::VelmaLowLevelCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
@@ -171,5 +171,5 @@ protected:
     velma_lli_types::VelmaCommand_Ports<RTT::OutputPort > ports_out_;
 };
 
-#endif  // VELMA_LLI_COMMAND_PORTS_H_
+#endif  // __VELMA_LLI_COMMAND_PORTS_H__
 

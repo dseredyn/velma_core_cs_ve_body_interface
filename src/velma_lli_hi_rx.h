@@ -42,7 +42,7 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
-#include "velma_lli_status_ports.h"
+#include "velma_low_level_interface/velma_lli_status_ports.h"
 
 class VelmaLLIHiRx: public RTT::TaskContext {
 public:

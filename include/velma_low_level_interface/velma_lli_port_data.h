@@ -25,8 +25,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef VELMA_LLI_PORT_DATA_H_
-#define VELMA_LLI_PORT_DATA_H_
+#ifndef __VELMA_LLI_PORT_DATA_H__
+#define __VELMA_LLI_PORT_DATA_H__
 
 #include <cstring>
 
@@ -190,5 +190,5 @@ public:
 
 };  // namespace velma_lli_types
 
-#endif  // VELMA_LLI_PORT_DATA_H_
+#endif  // __VELMA_LLI_PORT_DATA_H__
 

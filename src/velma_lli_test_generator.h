@@ -33,8 +33,8 @@
 #include <vector>
 #include <string>
 
-#include "velma_lli_status_ports.h"
-#include "velma_lli_command_ports.h"
+#include "velma_low_level_interface/velma_lli_status_ports.h"
+#include "velma_low_level_interface/velma_lli_command_ports.h"
 
 class VelmaLLITestGenerator {
 public:

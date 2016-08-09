@@ -34,23 +34,30 @@ include_directories(${USE_OROCOS_INCLUDE_DIRS} include)
 ADD_DEFINITIONS(-DEIGEN_RUNTIME_NO_MALLOC)
 ### Orocos Targets ###
 
-orocos_component(velma_low_level_interface src/velma_low_level_interface.cpp src/velma_lli_lo_rx.cpp
+orocos_component(velma_low_level_components src/velma_low_level_interface.cpp src/velma_lli_lo_rx.cpp
                     src/velma_lli_lo_tx.cpp src/velma_lli_hi_rx.cpp src/velma_lli_hi_tx.cpp
                     src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp
                     src/velma_lli_lo_test.cpp src/velma_lli_hi_test.cpp src/velma_lli_test_generator.cpp
                     src/velma_lli_test_error.cpp src/shm_comm_locking.c src/shm_comm_api.c)
 
-target_link_libraries(velma_low_level_interface
+target_link_libraries(velma_low_level_components
     ${catkin_LIBRARIES}
     ${USE_OROCOS_LIBRARIES}
     ${orocos_kdl_LIBRARIES}
     ${OROCOS-RTT_LIBRARIES})
+
+
+add_library(velma_low_level_interface src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp)
+
+target_link_libraries(velma_low_level_interface ${catkin_LIBRARIES})
+#add_dependencies(velma_low_level_interface ${PROJECT_NAME}_gencpp)
 
 ### Orocos Package Exports and Install Targets ###
 
 # Export package information (replaces catkin_package() macro) 
 orocos_generate_package(
   INCLUDE_DIRS include
+  LIBRARIES velma_low_level_interface
   DEPENDS rtt_ros geometry_msgs std_msgs message_runtime rtt_roscomm
 )
 
