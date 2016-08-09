@@ -36,7 +36,6 @@ VelmaLLILoTx::VelmaLLILoTx(const std::string &name) :
     in_(*this)
 {
     this->ports()->addPort("status_OUTPORT", port_status_out_);
-//    port_status_out_.setDataSample(status_out_);
 }
 
 bool VelmaLLILoTx::configureHook() {
@@ -57,7 +56,6 @@ void VelmaLLILoTx::updateHook() {
     in_.readPorts(status_out_);
     // write outputs
 //    UNRESTRICT_ALLOC;
-//    std::cout << "VelmaLLILoTx" << std::endl;
     port_status_out_.write(status_out_);
 }
 

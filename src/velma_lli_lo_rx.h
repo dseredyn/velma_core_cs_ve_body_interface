@@ -66,16 +66,11 @@ public:
 private:
 
     const char *shm_name_;
-//    int shm_fd_;
     channel_t chan_;
     reader_t re_;
     VelmaLowLevelCommand *buf_prev_;
 
-    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_in_;
-
-    VelmaLLICommandOutput out_;
-
-    RTT::OutputPort<uint32_t> port_comm_status_out_;
+    RTT::OutputPort<velma_low_level_interface_msgs::VelmaLowLevelCommand> port_command_out_;
 };
 
 #endif  // VELMA_LLI_LO_RX_H_

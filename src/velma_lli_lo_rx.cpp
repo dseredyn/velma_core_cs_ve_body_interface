@@ -46,11 +46,10 @@ using namespace RTT;
 
 VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
     TaskContext(name, PreOperational),
-    out_(*this),
     shm_name_("velma_lli_cmd"),
     buf_prev_(NULL)
 {
-    this->ports()->addPort("comm_status_OUTPORT", port_comm_status_out_);
+    this->ports()->addPort("command_OUTPORT", port_command_out_);
 }
 
 bool VelmaLLILoRx::configureHook() {
@@ -109,7 +108,6 @@ void VelmaLLILoRx::updateHook() {
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
-    uint32_t comm_status_out = 0;
 
     VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_timedwait(&re_, 1, 0) );
 //    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
@@ -120,18 +118,12 @@ void VelmaLLILoRx::updateHook() {
     else {
         if (buf != buf_prev_) {
             buf_prev_ = buf;
-
-            comm_status_out = 1;
-
+            port_command_out_.write(*buf);
             Logger::log() << Logger::Debug << "received new data" << Logger::endl;
-
-            cmd_in_ = *buf;
-            out_.writePorts(cmd_in_);
         }
         else {
             Logger::log() << Logger::Debug << "could not receive data" << Logger::endl;
         }
     }
-    port_comm_status_out_.write(comm_status_out);
 }
 

@@ -39,6 +39,7 @@
 #include "Eigen/LU"
 
 #include "velma_low_level_interface_msgs/VelmaLowLevelCommand.h"
+#include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
 
 #include "eigen_conversions/eigen_msg.h"
 
@@ -61,15 +62,15 @@ public:
 private:
 
     velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_out_;
+    velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_in_;
+    velma_low_level_interface_msgs::VelmaLowLevelStatus status_in_;
 
     VelmaLLICommandOutput out_;
 
-    RTT::InputPort<uint32_t> port_comm_status_in_;
+    RTT::InputPort<velma_low_level_interface_msgs::VelmaLowLevelCommand> port_command_in_;
+    RTT::InputPort<velma_low_level_interface_msgs::VelmaLowLevelStatus> port_status_in_;
 
     bool emergency_;
-//    int no_new_data_;
-//    bool connecting_;
-//    int connecting_counter_;
 
 };
 

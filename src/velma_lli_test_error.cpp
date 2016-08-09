@@ -38,7 +38,8 @@ VelmaTestError::VelmaTestError(const std::string &name) :
     TaskContext(name, PreOperational),
     out_(*this)
 {
-    this->ports()->addPort("comm_status_INPORT", port_comm_status_in_);
+    this->ports()->addPort("command_INPORT", port_command_in_);
+    this->ports()->addPort("status_INPORT", port_status_in_);
 }
 
 bool VelmaTestError::configureHook() {
@@ -60,33 +61,33 @@ void VelmaTestError::updateHook() {
     Logger::In in("VelmaTestError::updateHook");
 //    RESTRICT_ALLOC;
 
+    if (port_status_in_.read(status_in_) == NewData) {
+        // verify robot status here
+    }
+
     uint32_t comm_status_in = 0;
-    if (port_comm_status_in_.read(comm_status_in) == NewData) {
-        if (comm_status_in == 0) {
-            velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
-            VelmaLLITestGenerator gen_;
-            gen_.generate(0, cmd_out_, status_gen);
-            out_.writePorts(cmd_out_);
-            if (!emergency_) {
-                emergency_ = true;
-                Logger::log() << Logger::Info << "sending emergency data..." << Logger::endl;
-            }
-            else {
-                Logger::log() << Logger::Debug << "sending emergency data" << Logger::endl;
-            }
+    if (port_command_in_.read(cmd_in_) == NewData) {
+        out_.writePorts(cmd_in_);
+        if (emergency_) {
+            emergency_ = false;
+            Logger::log() << Logger::Info << "sending valid data..." << Logger::endl;
         }
         else {
-            if (emergency_) {
-                emergency_ = false;
-                Logger::log() << Logger::Info << "sending valid data..." << Logger::endl;
-            }
-            else {
-                Logger::log() << Logger::Debug << "sending valid data..." << Logger::endl;
-            }
+            Logger::log() << Logger::Debug << "sending valid data..." << Logger::endl;
         }
     }
     else {
-        Logger::log() << Logger::Error << "no comm status data" << Logger::endl;
+        velma_low_level_interface_msgs::VelmaLowLevelStatus status_gen;
+        VelmaLLITestGenerator gen_;
+        gen_.generate(0, cmd_out_, status_gen);
+        out_.writePorts(cmd_out_);
+        if (!emergency_) {
+            emergency_ = true;
+            Logger::log() << Logger::Info << "sending emergency data..." << Logger::endl;
+        }
+        else {
+            Logger::log() << Logger::Debug << "sending emergency data" << Logger::endl;
+        }
     }
 }
 
