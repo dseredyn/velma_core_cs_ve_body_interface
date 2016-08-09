@@ -56,9 +56,6 @@ VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
 bool VelmaLLILoRx::configureHook() {
     Logger::In in("VelmaLLILoRx::configureHook");
 
-//    const size_t size = sizeof(VelmaLowLevelCommand);
-//    const uint32_t readers = 3;
-
     if (create_shm_object(shm_name_, sizeof(VelmaLowLevelCommand), 1) != 0) {
         Logger::log() << Logger::Error << "create_shm_object failed" << Logger::endl;
         return false;
@@ -69,46 +66,6 @@ bool VelmaLLILoRx::configureHook() {
         return false;
     }
 
-/*
-    shm_unlink(shm_name_);
-
-    channel_hdr_t *shm_hdr_;
-
-    shm_fd_ = shm_open(shm_name_, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-    if (shm_fd_ < 0) {
-        std::string err_str(strerror(errno));
-        Logger::log() << Logger::Error << "shm_open (O_EXCL) failed: " << err_str << Logger::endl;
-        return false;
-    }
-
-    if (ftruncate(shm_fd_, CHANNEL_DATA_SIZE(size, readers)) != 0) {
-        Logger::log() << Logger::Error << "ftruncate failed" << Logger::endl;
-        shm_unlink(shm_name_);
-        return false;
-    }
-
-    close(shm_fd_);
-
-    shm_fd_ = shm_open(shm_name_, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-    if (shm_fd_ < 0) {
-        std::string err_str(strerror(errno));
-        Logger::log() << Logger::Error << "shm_open failed: " << err_str << Logger::endl;
-        return false;
-    }
-
-    shm_hdr_ = reinterpret_cast<channel_hdr_t*>( mmap(NULL, CHANNEL_DATA_SIZE(size, readers), PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd_, 0) );
-
-    if (shm_hdr_ == MAP_FAILED) {
-        std::string err_str(strerror(errno));
-        Logger::log() << Logger::Error << "mmap failed: " << err_str << Logger::endl;
-        shm_unlink(shm_name_);
-        return false;
-    }
-
-    init_channel_hdr(size, readers, SHM_SHARED, shm_hdr_);
-
-    init_channel(shm_hdr_, &chan_);
-*/
     int ret = create_reader(&chan_, &re_);
 
     if (ret != 0) {
@@ -134,16 +91,6 @@ void VelmaLLILoRx::cleanupHook() {
     disconnect_channel(&chan_);
 
     delete_shm_object(shm_name_);
-
-/*    munmap(chan_.hdr, size);
-    chan_.reader_ids = NULL;
-    chan_.reading = NULL;
-    free(chan_.buffer);
-    chan_.buffer = NULL;
-    chan_.hdr = NULL;
-*/
-//    close(shm_fd_);
-//    shm_unlink(shm_name_);
 }
 
 bool VelmaLLILoRx::startHook() {
@@ -168,7 +115,6 @@ void VelmaLLILoRx::updateHook() {
 //    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
 
     if (buf == NULL) {
-//        Logger::log() << Logger::Error << "reader got NULL buffer" << Logger::endl;
         Logger::log() << Logger::Debug << "could not receive data (NULL buffer)" << Logger::endl;
     }
     else {

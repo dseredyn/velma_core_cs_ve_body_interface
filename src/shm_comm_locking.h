@@ -84,3 +84,4 @@ void* reader_buffer_timedwait (reader_t *, time_t, long int);
 #endif
 
 #endif // __SHM_COMM__
+

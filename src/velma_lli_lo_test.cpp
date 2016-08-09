@@ -93,26 +93,18 @@ void VelmaLLILoTest::updateHook() {
         out_.writePorts(status_out_);
 
         Logger::log() << Logger::Debug << "sending " << status_out_.test << Logger::endl;
-//        std::cout << "VelmaLLILoTest: send " << status_out_.test << std::endl;
     }
     else if (gen_.toStr(cmd_in_) == str_cmd_nocomm_) {
         no_rec_counter_ = 0;
         Logger::log() << Logger::Debug << "emergency data received " << Logger::endl;
-//        std::cout << "VelmaLLILoTest: emergency " << std::endl;
     }
     else {
         ++no_rec_counter_;
         Logger::log() << Logger::Info << "received wrong data " << cmd_in_.test << ", should be " << prev_cmd_in_.test << Logger::endl;
-//        std::cout << "VelmaLLILoTest: no response " << std::endl;
     }
 
-//    if (no_rec_counter_ > 0) {
-//        std::cout << "VelmaLLILoTest no new data during " << no_rec_counter_ << " loops" << std::endl;
-//        Logger::log() << Logger::Info << "VelmaLLILoTest: no new data during " << no_rec_counter_ << " cycles" << Logger::endl;
-//    }
 
     if (no_rec_counter_ > 20) {
-//        std::cout << "VelmaLLILoTest ERROR" << std::endl;
         Logger::log() << Logger::Error << "could not receive valid data for 20 cycles" << Logger::endl;
         stop();
     }

@@ -145,13 +145,6 @@ connect("lli_test_error.cmd_hpMotor_dq_OUTPORT",        "lli_lo_test.cmd_hpMotor
 connect("lli_test_error.cmd_htMotor_dq_OUTPORT",        "lli_lo_test.cmd_htMotor_dq_INPORT", ConnPolicy())
 connect("lli_test_error.cmd_test_OUTPORT",              "lli_lo_test.cmd_test_INPORT", ConnPolicy())
 
-#
-# the sim time component
-#
-#loadComponent("lli_test_time","VelmaTestTime")
-#setActivity("lli_test_time", 0.001, 1, ORO_SCHED_RT);
-#lli_test_time.configure();
-
 //------------------------------------------------------------------------------
 //-- Controller manager
 //------------------------------------------------------------------------------
@@ -168,8 +161,6 @@ scheme.addBlock("lli_lo_test");
 scheme.addBlock("lli_lo_rx");
 scheme.addBlock("lli_lo_tx");
 scheme.addBlock("lli_test_error");
-
-#lli_test_time.start();
 
 lli_lo_tx.start();
 lli_lo_rx.start();
