@@ -70,6 +70,7 @@ public:
 
     Port<T, Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type, &VelmaLowLevelCommandArm::t> t_;
     Port<T, std_msgs::Int32, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_cmd_type, &VelmaLowLevelCommandArm::cmd> cmd_;
+    bool cmd_valid_;
 };
 
 template <template <typename Type> class T>
@@ -77,7 +78,7 @@ class HandCommand_Ports {
 public:
     HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
-    void readPorts();
+    bool readPorts();
     void writePorts();
 
     void convertFromROS(const VelmaLowLevelCommandHand &ros);
@@ -120,9 +121,11 @@ public:
 
     // right BarrettHand
     HandCommand_Ports<T > rHand_;
+    bool rHand_valid_;
 
     // left BarrettHand
     HandCommand_Ports<T > lHand_;
+    bool lHand_valid_;
 
     // BarrettHand tactile sensors
     Port<T, int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHand_tactileCmd_type, &VelmaLowLevelCommand::rHand_tactileCmd> rHand_tactileCmd_;

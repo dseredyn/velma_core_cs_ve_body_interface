@@ -82,8 +82,8 @@ public:
         tc.ports()->addPort(port_name + "_INPORT", port_);
     }
 
-    void operation(innerT &data) {
-        port_.read(data);
+    bool operation(innerT &data) {
+        return port_.read(data) == RTT::NewData;
     }
 
     void setDataSample(innerT &data) {
@@ -101,8 +101,9 @@ public:
         tc.ports()->addPort(port_name + "_OUTPORT", port_);
     }
 
-    void operation(innerT &data) {
+    bool operation(innerT &data) {
         port_.write(data);
+        return true;
     }
 
     void setDataSample(innerT &data) {
@@ -131,8 +132,8 @@ public:
         data_.convertToROS(container);
     }
 
-    void operation() {
-        po_.operation(data_.getDataRef());
+    bool operation() {
+        return po_.operation(data_.getDataRef());
     }
 
 protected:

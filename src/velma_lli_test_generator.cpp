@@ -52,7 +52,9 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
         cmd.rArm.t[i] = static_cast<double >(rand());
     }
     cmd.lArm.cmd.data = static_cast<int32_t >(rand());
+    cmd.lArm.cmd_valid = true;
     cmd.rArm.cmd.data = static_cast<int32_t >(rand());
+    cmd.rArm.cmd_valid = true;
 
     for (int i = 0; i < 4; ++i) {
         cmd.lHand.q[i] = static_cast<double >(rand());
@@ -67,6 +69,8 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
 
     cmd.lHand.hold = static_cast<bool >(rand()%2);
     cmd.rHand.hold = static_cast<bool >(rand()%2);
+    cmd.lHand_valid = true;
+    cmd.rHand_valid = true;
 
     // random status
     status.test = seed;
