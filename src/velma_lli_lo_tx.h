@@ -72,7 +72,6 @@ class VelmaLLILoTx: public RTT::TaskContext {
     velma_low_level_interface_msgs::VelmaLowLevelStatus status_out_;
 
     VelmaLLIStatusInput in_;
-
 };
 
 #endif  // VELMA_LLI_LO_TX_H_

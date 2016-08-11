@@ -110,6 +110,7 @@ void VelmaLLIHiTx::updateHook() {
     else {
         *buf_ = cmd_out_;
         writer_buffer_write(&wr_);
+        Logger::log() << Logger::Debug << "sending command" << Logger::endl;
     }
     void *pbuf = NULL;
     writer_buffer_get(&wr_, &pbuf);

@@ -75,7 +75,7 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
     // random status
     status.test = seed;
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 8; ++i) {
         status.lHand.q[i] = static_cast<double >(rand());
         status.rHand.q[i] = static_cast<double >(rand());
     }

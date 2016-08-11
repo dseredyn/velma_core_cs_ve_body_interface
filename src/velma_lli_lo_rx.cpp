@@ -96,6 +96,8 @@ bool VelmaLLILoRx::startHook() {
 //    RESTRICT_ALLOC;
     buf_prev_ = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
 
+    receiving_data_ = false;
+
 //    UNRESTRICT_ALLOC;
     return true;
 }
@@ -109,20 +111,31 @@ void VelmaLLILoRx::updateHook() {
     // write outputs
 //    UNRESTRICT_ALLOC;
 
-    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_timedwait(&re_, 1, 0) );
+    VelmaLowLevelCommand *buf = NULL;
+
+    if (receiving_data_) {
+        buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_timedwait(&re_, 1, 0) );
+    }
+    else {
+        buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
+    }
+
 //    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
 
     if (buf == NULL) {
         Logger::log() << Logger::Debug << "could not receive data (NULL buffer)" << Logger::endl;
+        receiving_data_ = false;
     }
     else {
         if (buf != buf_prev_) {
             buf_prev_ = buf;
             port_command_out_.write(*buf);
             Logger::log() << Logger::Debug << "received new data" << Logger::endl;
+            receiving_data_ = true;
         }
         else {
             Logger::log() << Logger::Debug << "could not receive data" << Logger::endl;
+            receiving_data_ = false;
         }
     }
 }

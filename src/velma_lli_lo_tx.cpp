@@ -26,8 +26,8 @@
 */
 
 #include <rtt/Component.hpp>
-
 #include <rtt/types/TypeInfo.hpp>
+//#include <mqueue.h>
 
 #include "velma_lli_lo_tx.h"
 
@@ -35,6 +35,7 @@ VelmaLLILoTx::VelmaLLILoTx(const std::string &name) :
     RTT::TaskContext(name, PreOperational),
     in_(*this)
 {
+//    mq_unlink("/lli_status");
     this->ports()->addPort("status_OUTPORT", port_status_out_);
 }
 
@@ -52,10 +53,15 @@ void VelmaLLILoTx::stopHook() {
 }
 
 void VelmaLLILoTx::updateHook() {
+//    Logger::In in("VelmaLLILoTx::updateHook");
+
 //    RESTRICT_ALLOC;
     in_.readPorts(status_out_);
+
+    if (in_.isAllDataValid()) {
     // write outputs
 //    UNRESTRICT_ALLOC;
-    port_status_out_.write(status_out_);
+        port_status_out_.write(status_out_);
+    }
 }
 

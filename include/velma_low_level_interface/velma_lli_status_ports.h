@@ -67,7 +67,7 @@ public:
     ArmStatus_Ports();
     ArmStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
-    void readPorts();
+    bool readPorts();
     void writePorts();
 
     void convertFromROS(const VelmaLowLevelStatusArm &ros);
@@ -89,7 +89,7 @@ public:
     HandStatus_Ports();
     HandStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
-    void readPorts();
+    bool readPorts();
     void writePorts();
 
     void convertFromROS(const VelmaLowLevelStatusHand &ros);
@@ -105,7 +105,7 @@ public:
     FTSensorStatus_Ports();
     FTSensorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
-    void readPorts();
+    bool readPorts();
     void writePorts();
 
     void convertFromROS(const VelmaLowLevelStatusFT &ros);
@@ -132,21 +132,27 @@ public:
 
     // right LWR
     ArmStatus_Ports<T > rArm_;
+    bool rArm_valid_;
 
     // left LWR
     ArmStatus_Ports<T > lArm_;
+    bool lArm_valid_;
 
     // right BarrettHand
     HandStatus_Ports<T > rHand_;
+    bool rHand_valid_;
 
     // left BarrettHand
     HandStatus_Ports<T > lHand_;
+    bool lHand_valid_;
 
     // right FT sensor
     FTSensorStatus_Ports<T > rFt_;
+    bool rFt_valid_;
 
     // left FT sensor
     FTSensorStatus_Ports<T > lFt_;
+    bool lFt_valid_;
 
     // torsoMotorPosition
     Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q> tMotor_q_;
@@ -166,6 +172,8 @@ public:
     // headTiltMotorVelocity
     Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_htMotor_dq_type, &VelmaLowLevelStatus::htMotor_dq> htMotor_dq_;
 
+    bool torso_valid_;
+
     Port<T, barrett_hand_controller_msgs::BHPressureState, VelmaLowLevelStatus, VelmaLowLevelStatus::_rHand_p_type, &VelmaLowLevelStatus::rHand_p> rHand_p_;
 
     Port<T, VelmaLowLevelStatus::_lHand_f_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_lHand_f_type, &VelmaLowLevelStatus::lHand_f> lHand_f_;
@@ -178,6 +186,8 @@ public:
     VelmaLLIStatusInput(RTT::TaskContext &tc);
 
     void readPorts(velma_low_level_interface_msgs::VelmaLowLevelStatus &status);
+
+    bool isAllDataValid() const;
 
 protected:
     velma_lli_types::VelmaStatus_Ports<RTT::InputPort > ports_in_;

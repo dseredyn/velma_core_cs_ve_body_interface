@@ -69,6 +69,7 @@ private:
     channel_t chan_;
     reader_t re_;
     VelmaLowLevelCommand *buf_prev_;
+    bool receiving_data_;
 
     RTT::OutputPort<velma_low_level_interface_msgs::VelmaLowLevelCommand> port_command_out_;
 };

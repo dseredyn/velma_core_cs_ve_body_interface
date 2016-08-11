@@ -66,6 +66,7 @@ void VelmaLLIHiRx::updateHook() {
         for (TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
             this->getPeer( (*it) )->getActivity()->execute();
         }
+        Logger::log() << Logger::Debug << "received new data" << Logger::endl;
     }
     else {
         Logger::log() << Logger::Info << "received old data" << Logger::endl;

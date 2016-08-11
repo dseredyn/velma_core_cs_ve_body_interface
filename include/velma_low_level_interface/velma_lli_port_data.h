@@ -114,6 +114,27 @@ public:
     Eigen::VectorXd data_;
 };
 
+template < >
+class PortRawData<Eigen::VectorXd, boost::array<double, 8ul> > {
+public:
+    PortRawData() : data_(8) {
+    }
+
+    void convertFromROS(const boost::array<double, 8ul> &ros) {
+        for (int i = 0; i < 8; ++i) {
+            data_(i) = ros[i];
+        }
+    }
+
+    void convertToROS(boost::array<double, 8ul> &ros) {
+        for (int i = 0; i < 8; ++i) {
+            ros[i] = data_(i);
+        }
+    }
+
+    Eigen::VectorXd data_;
+};
+
 // 7x7 mass matrix
 template < >
 class PortRawData<Eigen::Matrix77d, boost::array<double, 28ul> > {

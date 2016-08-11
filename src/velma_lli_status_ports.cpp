@@ -65,15 +65,16 @@ ArmStatus_Ports<T >::ArmStatus_Ports(RTT::TaskContext &tc, const std::string &pr
 
 // read ports
 template <>
-void ArmStatus_Ports<RTT::InputPort >::readPorts() {
-    q_.operation();
-    dq_.operation();
-    t_.operation();
-    gt_.operation();
-    w_.operation();
-    mmx_.operation();
-    friIntfState_.operation();
-    friRobotState_.operation();
+bool ArmStatus_Ports<RTT::InputPort >::readPorts() {
+    bool result = q_.operation();
+    result &= dq_.operation();
+    result &= t_.operation();
+    result &= gt_.operation();
+    result &= w_.operation();
+    result &= mmx_.operation();
+    result &= friIntfState_.operation();
+    result &= friRobotState_.operation();
+    return result;
 }
 
 // write ports
@@ -130,9 +131,10 @@ HandStatus_Ports<T>::HandStatus_Ports(RTT::TaskContext &tc, const std::string &p
 
 // read ports
 template <>
-void HandStatus_Ports<RTT::InputPort >::readPorts() {
-    q_.operation();
-    s_.operation();
+bool HandStatus_Ports<RTT::InputPort >::readPorts() {
+    bool result = q_.operation();
+    result &= s_.operation();
+    return result;
 }
 
 // write ports
@@ -167,10 +169,11 @@ FTSensorStatus_Ports<T >::FTSensorStatus_Ports(RTT::TaskContext &tc, const std::
 
 // read ports
 template <>
-void FTSensorStatus_Ports<RTT::InputPort >::readPorts() {
-    rw_.operation();
-    ffw_.operation();
-    sfw_.operation();
+bool FTSensorStatus_Ports<RTT::InputPort >::readPorts() {
+    bool result = rw_.operation();
+    result &= ffw_.operation();
+    result &= sfw_.operation();
+    return result;
 }
 
 // write ports
@@ -214,25 +217,33 @@ VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc) :
     htMotor_dq_(tc, "status_htMotor_dq"),
     rHand_p_(tc, "status_rHand_p"),
     lHand_f_(tc, "status_lHand_f"),
-    test_(tc, "status_test")
+    test_(tc, "status_test"),
+    rArm_valid_(false),
+    lArm_valid_(false),
+    rHand_valid_(false),
+    lHand_valid_(false),
+    rFt_valid_(false),
+    lFt_valid_(false),
+    torso_valid_(false)
 {
 }
 
 // read ports
 template <>
 void VelmaStatus_Ports<RTT::InputPort >::readPorts() {
-    rArm_.readPorts();
-    lArm_.readPorts();
-    rHand_.readPorts();
-    lHand_.readPorts();
-    rFt_.readPorts();
-    lFt_.readPorts();
-    tMotor_q_.operation();
-    tMotor_dq_.operation();
-    hpMotor_q_.operation();
-    hpMotor_dq_.operation();
-    htMotor_q_.operation();
-    htMotor_dq_.operation();
+    rArm_valid_ |= rArm_.readPorts();
+    lArm_valid_ |= lArm_.readPorts();
+    rHand_valid_ |= rHand_.readPorts();
+    lHand_valid_ |= lHand_.readPorts();
+    rFt_valid_ |= rFt_.readPorts();
+    lFt_valid_ |= lFt_.readPorts();
+    bool torso = tMotor_q_.operation();
+    torso &= tMotor_dq_.operation();
+    torso &= hpMotor_q_.operation();
+    torso &= hpMotor_dq_.operation();
+    torso &= htMotor_q_.operation();
+    torso &= htMotor_dq_.operation();
+    torso_valid_ |= torso;
     rHand_p_.operation();
     lHand_f_.operation();
     test_.operation();
@@ -311,7 +322,15 @@ void VelmaLLIStatusInput::readPorts(velma_low_level_interface_msgs::VelmaLowLeve
     ports_in_.convertToROS(status);
 }
 
-
+bool VelmaLLIStatusInput::isAllDataValid() const {
+    return ports_in_.rArm_valid_ &&
+        ports_in_.lArm_valid_ &&
+        ports_in_.rHand_valid_ &&
+        ports_in_.lHand_valid_ &&
+        ports_in_.rFt_valid_ &&
+        ports_in_.lFt_valid_ &&
+        ports_in_.torso_valid_;
+}
 
 //
 // VelmaLLIStatusOutput interface
