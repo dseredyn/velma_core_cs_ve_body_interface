@@ -43,8 +43,6 @@
 #include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
 #include <barrett_hand_controller_msgs/BHPressureState.h>
 
-#include <kuka_lwr_fri/friComm.h>
-
 #include "eigen_conversions/eigen_msg.h"
 
 #include "velma_low_level_interface/velma_lli_status_ports.h"

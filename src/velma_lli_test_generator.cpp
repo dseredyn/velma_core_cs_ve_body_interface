@@ -38,7 +38,8 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
     cmd.test = seed;
 
     // random command
-    cmd.rTact.tactileCmd = static_cast<int32_t >(rand());
+    cmd.rTact.cmd = static_cast<int32_t >(rand());
+    cmd.rTact.valid = true;
     cmd.tMotor_i = static_cast<double >(rand());
     cmd.hpMotor_i = static_cast<double >(rand());
     cmd.htMotor_i = static_cast<double >(rand());
@@ -51,10 +52,6 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
         cmd.lArm.t[i] = static_cast<double >(rand());
         cmd.rArm.t[i] = static_cast<double >(rand());
     }
-    cmd.lArm.cmd.data = static_cast<int32_t >(rand());
-    cmd.lArm.cmd_valid = true;
-    cmd.rArm.cmd.data = static_cast<int32_t >(rand());
-    cmd.rArm.cmd_valid = true;
 
     for (int i = 0; i < 4; ++i) {
         cmd.lHand.q[i] = static_cast<double >(rand());
@@ -71,6 +68,9 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
     cmd.rHand.hold = static_cast<bool >(rand()%2);
     cmd.lHand.valid = true;
     cmd.rHand.valid = true;
+
+    cmd.sc.cmd = static_cast<int32_t >(rand());
+    cmd.sc.valid = true;
 
     // random status
     status.test = seed;
@@ -98,16 +98,6 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
         status.rArm.mmx[i] = static_cast<double >(rand());
     }
 
-    for (int i = 0; i < 40; ++i) {
-        status.lArm.friIntfState[i] = static_cast<uint8_t >(rand());
-        status.rArm.friIntfState[i] = static_cast<uint8_t >(rand());
-    }
-
-    for (int i = 0; i < 36; ++i) {
-        status.lArm.friRobotState[i] = static_cast<uint8_t >(rand());
-        status.rArm.friRobotState[i] = static_cast<uint8_t >(rand());
-    }
-
     status.lArm.w.force.x = static_cast<double >(rand());
     status.lArm.w.force.y = static_cast<double >(rand());
     status.lArm.w.force.z = static_cast<double >(rand());
@@ -115,15 +105,12 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
     status.lArm.w.torque.y = static_cast<double >(rand());
     status.lArm.w.torque.z = static_cast<double >(rand());
 
-    status.tMotor_q = static_cast<double >(rand());
-    status.tMotor_dq = static_cast<double >(rand());
-    status.tMotor_valid = true;
-    status.hpMotor_q = static_cast<double >(rand());
-    status.hpMotor_dq = static_cast<double >(rand());
-    status.hpMotor_valid = true;
-    status.htMotor_q = static_cast<double >(rand());
-    status.htMotor_dq = static_cast<double >(rand());
-    status.htMotor_valid = true;
+    status.tMotor.q = static_cast<double >(rand());
+    status.tMotor.dq = static_cast<double >(rand());
+    status.hpMotor.q = static_cast<double >(rand());
+    status.hpMotor.dq = static_cast<double >(rand());
+    status.htMotor.q = static_cast<double >(rand());
+    status.htMotor.dq = static_cast<double >(rand());
 
     for (int i = 0; i < 24; ++i) {
         status.rHand_p.finger1_tip[i] = static_cast<int16_t >(rand());
@@ -147,7 +134,6 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
     status.rFt.rw.torque.x = static_cast<double >(rand());
     status.rFt.rw.torque.y = static_cast<double >(rand());
     status.rFt.rw.torque.z = static_cast<double >(rand());
-    status.rFt_valid = true;
 
     status.lFt.rw.force.x = static_cast<double >(rand());
     status.lFt.rw.force.y = static_cast<double >(rand());
@@ -155,10 +141,6 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
     status.lFt.rw.torque.x = static_cast<double >(rand());
     status.lFt.rw.torque.y = static_cast<double >(rand());
     status.lFt.rw.torque.z = static_cast<double >(rand());
-    status.lFt_valid = true;
-
-    status.tact_valid = true;
-    status.optoforce_valid = true;
 }
 
 std::string VelmaLLITestGenerator::toStr(const velma_low_level_interface_msgs::VelmaLowLevelCommand &cmd) {

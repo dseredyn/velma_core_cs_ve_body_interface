@@ -45,8 +45,6 @@
 #include "velma_low_level_interface_msgs/VelmaLowLevelCommand.h"
 #include <barrett_hand_controller_msgs/BHPressureState.h>
 
-#include <kuka_lwr_fri/friComm.h>
-
 #include "eigen_conversions/eigen_msg.h"
 
 #include "velma_low_level_interface/velma_lli_ports.h"
@@ -54,7 +52,7 @@
 using velma_low_level_interface_msgs::VelmaLowLevelCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandHand;
-using velma_low_level_interface_msgs::VelmaLowLevelCommandTactile;
+using velma_low_level_interface_msgs::VelmaLowLevelCommandSimple;
 
 namespace velma_lli_types {
 
@@ -70,8 +68,6 @@ public:
     void convertToROS(VelmaLowLevelCommandArm &ros);
 
     Port<T, Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type, &VelmaLowLevelCommandArm::t> t_;
-    Port<T, std_msgs::Int32, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_cmd_type, &VelmaLowLevelCommandArm::cmd> cmd_;
-    bool cmd_valid_;
 };
 
 template <template <typename Type> class T>
@@ -79,7 +75,7 @@ class HandCommand_Ports {
 public:
     HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
-    bool readPorts();
+    void readPorts();
     void writePorts();
 
     void convertFromROS(const VelmaLowLevelCommandHand &ros);
@@ -94,17 +90,17 @@ public:
 };
 
 template <template <typename Type> class T>
-class TactileCommand_Ports {
+class SimpleCommand_Ports {
 public:
-    TactileCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
+    SimpleCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
     bool readPorts();
     void writePorts();
 
-    void convertFromROS(const VelmaLowLevelCommandTactile &ros);
-    void convertToROS(VelmaLowLevelCommandTactile &ros);
+    void convertFromROS(const VelmaLowLevelCommandSimple &ros);
+    void convertToROS(VelmaLowLevelCommandSimple &ros);
 
-    Port<T, int32_t, VelmaLowLevelCommandTactile, VelmaLowLevelCommandTactile::_tactileCmd_type, &VelmaLowLevelCommandTactile::tactileCmd> tactileCmd_;
+    Port<T, int32_t, VelmaLowLevelCommandSimple, VelmaLowLevelCommandSimple::_cmd_type, &VelmaLowLevelCommandSimple::cmd> cmd_;
     bool valid_;
 };
 
@@ -143,8 +139,7 @@ public:
     HandCommand_Ports<T > lHand_;
 
     // BarrettHand tactile sensors
-    TactileCommand_Ports<T > rTact_;
-//    Port<T, int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHand_tactileCmd_type, &VelmaLowLevelCommand::rHand_tactileCmd> rHand_tactileCmd_;
+    SimpleCommand_Ports<T > rTact_;
 
     // torsoMotorCurrentCommand
     Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_tMotor_i_type, &VelmaLowLevelCommand::tMotor_i> tMotor_i_;
@@ -166,6 +161,8 @@ public:
 
     // headTiltMotorVelocityCommand
     Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_dq_type, &VelmaLowLevelCommand::htMotor_dq> htMotor_dq_;
+
+    SimpleCommand_Ports<T > sc_;
 };
 
 };  // namespace velma_lli_types

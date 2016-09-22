@@ -71,8 +71,8 @@ void VelmaLLIHiTest::updateHook() {
     }
 
     if (no_rec_counter_ > 0) {
-        std::cout << "VelmaLLIHiTest no new data during " << no_rec_counter_ << " loops, status_in.tMotor_q: " << status_in_.tMotor_q <<
-            "   status_gen.tMotor_q: " << status_gen.tMotor_q << std::endl;
+        std::cout << "VelmaLLIHiTest no new data during " << no_rec_counter_ << " loops, status_in.tMotor.q: " << status_in_.tMotor.q <<
+            "   status_gen.tMotor.q: " << status_gen.tMotor.q << std::endl;
     }
 
     if (no_rec_counter_ > 20) {

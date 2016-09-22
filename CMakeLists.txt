@@ -8,7 +8,6 @@ find_package(catkin REQUIRED COMPONENTS
   diagnostic_msgs
   velma_low_level_interface_msgs
   barrett_hand_controller_msgs
-  kuka_lwr_fri
   eigen_conversions
   kdl_conversions cmake_modules
   )

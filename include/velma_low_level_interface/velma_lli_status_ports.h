@@ -48,8 +48,6 @@
 #include "velma_low_level_interface_msgs/VelmaLowLevelStatusFT.h"
 #include "barrett_hand_controller_msgs/BHPressureState.h"
 
-#include <kuka_lwr_fri/friComm.h>
-
 #include "eigen_conversions/eigen_msg.h"
 
 #include "velma_low_level_interface/velma_lli_ports.h"
@@ -68,7 +66,7 @@ public:
     ArmStatus_Ports();
     ArmStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
-    bool readPorts();
+    void readPorts();
     void writePorts();
 
     void convertFromROS(const VelmaLowLevelStatusArm &ros);
@@ -80,8 +78,8 @@ public:
     Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_gt_type, &VelmaLowLevelStatusArm::gt> gt_;
     Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_w_type, &VelmaLowLevelStatusArm::w> w_;
     Port<T, Eigen::Matrix<double, 7, 7>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx> mmx_;
-    Port<T, tFriIntfState, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friIntfState_type, &VelmaLowLevelStatusArm::friIntfState> friIntfState_;
-    Port<T, tFriRobotState, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_friRobotState_type, &VelmaLowLevelStatusArm::friRobotState> friRobotState_;
+
+    bool valid_;
 };
 
 template <template <typename Type> class T>
@@ -90,7 +88,7 @@ public:
     HandStatus_Ports();
     HandStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
-    bool readPorts();
+    void readPorts();
     void writePorts();
 
     void convertFromROS(const VelmaLowLevelStatusHand &ros);
@@ -98,6 +96,8 @@ public:
 
     Port<T, Eigen::VectorXd, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q> q_;
     Port<T, uint32_t, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s> s_;
+
+    bool valid_;
 };
 
 template <template <typename Type> class T>
@@ -106,7 +106,7 @@ public:
     MotorStatus_Ports();
     MotorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
-    bool readPorts();
+    void readPorts();
     void writePorts();
 
     void convertFromROS(const VelmaLowLevelStatusMotor &ros);
@@ -114,6 +114,7 @@ public:
 
     Port<T, double, VelmaLowLevelStatusMotor, VelmaLowLevelStatusMotor::_q_type, &VelmaLowLevelStatusMotor::q> q_;
     Port<T, double, VelmaLowLevelStatusMotor, VelmaLowLevelStatusMotor::_dq_type, &VelmaLowLevelStatusMotor::dq> dq_;
+
     bool valid_;
 };
 
@@ -123,7 +124,7 @@ public:
     FTSensorStatus_Ports();
     FTSensorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
 
-    bool readPorts();
+    void readPorts();
     void writePorts();
 
     void convertFromROS(const VelmaLowLevelStatusFT &ros);
@@ -132,6 +133,8 @@ public:
     Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_rw_type, &VelmaLowLevelStatusFT::rw> rw_;
     Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_ffw_type, &VelmaLowLevelStatusFT::ffw> ffw_;
     Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_sfw_type, &VelmaLowLevelStatusFT::sfw> sfw_;
+
+    bool valid_;
 };
 
 template <template <typename Type> class T>
@@ -150,27 +153,21 @@ public:
 
     // right LWR
     ArmStatus_Ports<T > rArm_;
-    bool rArm_valid_;
 
     // left LWR
     ArmStatus_Ports<T > lArm_;
-    bool lArm_valid_;
 
     // right BarrettHand
     HandStatus_Ports<T > rHand_;
-    bool rHand_valid_;
 
     // left BarrettHand
     HandStatus_Ports<T > lHand_;
-    bool lHand_valid_;
 
     // right FT sensor
     FTSensorStatus_Ports<T > rFt_;
-    bool rFt_valid_;
 
     // left FT sensor
     FTSensorStatus_Ports<T > lFt_;
-    bool lFt_valid_;
 
     MotorStatus_Ports<T> tMotor_;
 
@@ -178,32 +175,9 @@ public:
 
     MotorStatus_Ports<T> htMotor_;
 
-    // torsoMotorPosition
-//    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_q_type, &VelmaLowLevelStatus::tMotor_q> tMotor_q_;
-
-    // torsoMotorVelocity
-//    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_tMotor_dq_type, &VelmaLowLevelStatus::tMotor_dq> tMotor_dq_;
-//    bool tMotor_valid_;
-
-    // headPanMotorPosition
-//    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_hpMotor_q_type, &VelmaLowLevelStatus::hpMotor_q> hpMotor_q_;
-
-    // headPanMotorVelocity
-//    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_hpMotor_dq_type, &VelmaLowLevelStatus::hpMotor_dq> hpMotor_dq_;
-//    bool hpMotor_valid_;
-
-    // headTiltMotorPosition
-//    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_htMotor_q_type, &VelmaLowLevelStatus::htMotor_q> htMotor_q_;
-
-    // headTiltMotorVelocity
-//    Port<T, double, VelmaLowLevelStatus, VelmaLowLevelStatus::_htMotor_dq_type, &VelmaLowLevelStatus::htMotor_dq> htMotor_dq_;
-//    bool htMotor_valid_;
-
     Port<T, barrett_hand_controller_msgs::BHPressureState, VelmaLowLevelStatus, VelmaLowLevelStatus::_rHand_p_type, &VelmaLowLevelStatus::rHand_p> rHand_p_;
-    bool tact_valid_;
 
     Port<T, VelmaLowLevelStatus::_lHand_f_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_lHand_f_type, &VelmaLowLevelStatus::lHand_f> lHand_f_;
-    bool optoforce_valid_;
 };
 
 };  // namespace velma_lli_types
@@ -214,7 +188,7 @@ public:
 
     void readPorts(velma_low_level_interface_msgs::VelmaLowLevelStatus &status);
 
-    bool isAllDataValid() const;
+    const velma_lli_types::VelmaStatus_Ports<RTT::InputPort >& getPorts() const;
 
 protected:
     velma_lli_types::VelmaStatus_Ports<RTT::InputPort > ports_in_;

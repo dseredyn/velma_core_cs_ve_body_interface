@@ -43,8 +43,6 @@
 #include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
 #include <barrett_hand_controller_msgs/BHPressureState.h>
 
-#include <kuka_lwr_fri/friComm.h>
-
 #include "eigen_conversions/eigen_msg.h"
 
 #include "velma_low_level_interface/velma_lli_status_ports.h"
@@ -69,9 +67,10 @@ class VelmaLLILoTx: public RTT::TaskContext {
     RTT::OutputPort<velma_low_level_interface_msgs::VelmaLowLevelStatus> port_status_out_;
 
     // low-level interface port variable
-    velma_low_level_interface_msgs::VelmaLowLevelStatus status_out_;
+    velma_low_level_interface_msgs::VelmaLowLevelStatus status_;
 
-    VelmaLLIStatusInput in_;
+//    VelmaLLIStatusInput in_;
+    RTT::InputPort<VelmaLowLevelStatus> port_status_in_;
 };
 
 #endif  // VELMA_LLI_LO_TX_H_

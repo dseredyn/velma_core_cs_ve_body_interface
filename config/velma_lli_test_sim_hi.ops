@@ -72,8 +72,6 @@ connect("lli_hi_rx.status_rArm_t_OUTPORT",              "lli_hi_test.status_rArm
 connect("lli_hi_rx.status_rArm_gt_OUTPORT",             "lli_hi_test.status_rArm_gt_INPORT", ConnPolicy())
 connect("lli_hi_rx.status_rArm_w_OUTPORT",              "lli_hi_test.status_rArm_w_INPORT", ConnPolicy())
 connect("lli_hi_rx.status_rArm_mmx_OUTPORT",            "lli_hi_test.status_rArm_mmx_INPORT", ConnPolicy())
-connect("lli_hi_rx.status_rArm_friIntfState_OUTPORT",   "lli_hi_test.status_rArm_friIntfState_INPORT", ConnPolicy())
-connect("lli_hi_rx.status_rArm_friRobotState_OUTPORT",  "lli_hi_test.status_rArm_friRobotState_INPORT", ConnPolicy())
 connect("lli_hi_rx.status_rHand_q_OUTPORT",             "lli_hi_test.status_rHand_q_INPORT", ConnPolicy())
 connect("lli_hi_rx.status_rHand_s_OUTPORT",             "lli_hi_test.status_rHand_s_INPORT", ConnPolicy())
 
@@ -83,8 +81,6 @@ connect("lli_hi_rx.status_lArm_t_OUTPORT",              "lli_hi_test.status_lArm
 connect("lli_hi_rx.status_lArm_gt_OUTPORT",             "lli_hi_test.status_lArm_gt_INPORT", ConnPolicy())
 connect("lli_hi_rx.status_lArm_w_OUTPORT",              "lli_hi_test.status_lArm_w_INPORT", ConnPolicy())
 connect("lli_hi_rx.status_lArm_mmx_OUTPORT",            "lli_hi_test.status_lArm_mmx_INPORT", ConnPolicy())
-connect("lli_hi_rx.status_lArm_friIntfState_OUTPORT",   "lli_hi_test.status_lArm_friIntfState_INPORT", ConnPolicy())
-connect("lli_hi_rx.status_lArm_friRobotState_OUTPORT",  "lli_hi_test.status_lArm_friRobotState_INPORT", ConnPolicy())
 connect("lli_hi_rx.status_lHand_q_OUTPORT",             "lli_hi_test.status_lHand_q_INPORT", ConnPolicy())
 connect("lli_hi_rx.status_lHand_s_OUTPORT",             "lli_hi_test.status_lHand_s_INPORT", ConnPolicy())
 

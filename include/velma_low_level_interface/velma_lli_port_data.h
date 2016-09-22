@@ -43,8 +43,6 @@
 #include <geometry_msgs/WrenchStamped.h>
 #include <diagnostic_msgs/DiagnosticArray.h>
 
-#include <kuka_lwr_fri/friComm.h>
-
 #include "eigen_conversions/eigen_msg.h"
 
 namespace Eigen {
@@ -159,54 +157,6 @@ public:
     }
 
     Eigen::Matrix77d data_;
-};
-
-template <>
-class PortRawData<tFriIntfState, boost::array<uint8_t, 40ul> > {
-public:
-
-    PortRawData() {
-    }
-
-    void convertFromROS(const boost::array<uint8_t, 40ul> &ros) {
-        uint8_t *pdata = reinterpret_cast<uint8_t*>(&data_);
-        for (int i = 0; i < 40; ++i) {
-            pdata[i] = ros[i];
-        }
-    }
-
-    void convertToROS(boost::array<uint8_t, 40ul> &ros) {
-        uint8_t *pdata = reinterpret_cast<uint8_t*>(&data_);
-        for (int i = 0; i < 40; ++i) {
-            ros[i] = pdata[i];
-        }
-    }
-
-    tFriIntfState data_;
-};
-
-template <>
-class PortRawData<tFriRobotState, boost::array<uint8_t, 36ul> > {
-public:
-
-    PortRawData() {
-    }
-
-    void convertFromROS(const boost::array<uint8_t, 36ul> &ros) {
-        uint8_t *pdata = reinterpret_cast<uint8_t*>(&data_);
-        for (int i = 0; i < 36; ++i) {
-            pdata[i] = ros[i];
-        }
-    }
-
-    void convertToROS(boost::array<uint8_t, 36ul> &ros) {
-        uint8_t *pdata = reinterpret_cast<uint8_t*>(&data_);
-        for (int i = 0; i < 36; ++i) {
-            ros[i] = pdata[i];
-        }
-    }
-
-    tFriRobotState data_;
 };
 
 };  // namespace velma_lli_types

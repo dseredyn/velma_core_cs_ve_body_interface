@@ -35,11 +35,12 @@
 using namespace RTT;
 
 VelmaLLILoTx::VelmaLLILoTx(const std::string &name) :
-    RTT::TaskContext(name, PreOperational),
-    in_(*this)
+    RTT::TaskContext(name, PreOperational)
+//    in_(*this)
 {
 //    mq_unlink("/lli_status");
     this->ports()->addPort("status_OUTPORT", port_status_out_);
+    this->ports()->addPort("status_INPORT", port_status_in_);
 }
 
 bool VelmaLLILoTx::configureHook() {
@@ -61,12 +62,14 @@ void VelmaLLILoTx::updateHook() {
     Logger::log() << Logger::Debug << Logger::endl;
 
 //    RESTRICT_ALLOC;
-    in_.readPorts(status_out_);
+//    in_.readPorts(status_);
+// TODO: check for new data
+    port_status_in_.read(status_);
 
 //    if (in_.isAllDataValid()) {
     // write outputs
 //    UNRESTRICT_ALLOC;
-        port_status_out_.write(status_out_);
+        port_status_out_.write(status_);
 //    }
 }
 
