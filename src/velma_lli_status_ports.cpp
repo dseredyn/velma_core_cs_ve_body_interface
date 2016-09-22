@@ -156,6 +156,51 @@ void HandStatus_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelStatusHand &ro
     s_.convertToROS(ros);
 }
 
+
+//
+// MotorStatus_Ports interface
+//
+template <template <typename Type> class T >
+MotorStatus_Ports<T>::MotorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix) :
+    q_(tc, prefix + "_q"),
+    dq_(tc, prefix + "_dq"),
+    valid_(false)
+{
+}
+
+// read ports
+template <>
+bool MotorStatus_Ports<RTT::InputPort >::readPorts() {
+    valid_ = q_.operation();
+    valid_ &= dq_.operation();
+    return valid_;
+}
+
+// write ports
+template <>
+void MotorStatus_Ports<RTT::OutputPort >::writePorts() {
+    if (valid_) {
+        q_.operation();
+        dq_.operation();
+    }
+}
+
+template <>
+void MotorStatus_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelStatusMotor &ros) {
+    q_.convertFromROS(ros);
+    dq_.convertFromROS(ros);
+    valid_ = ros.valid;
+}
+
+template <>
+void MotorStatus_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelStatusMotor &ros) {
+    q_.convertToROS(ros);
+    dq_.convertToROS(ros);
+    ros.valid = valid_;
+}
+
+
+
 //
 // FTSensorStatus_Ports interface
 //
@@ -209,6 +254,7 @@ VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc) :
     lHand_(tc, "status_lHand"),
     rFt_(tc, "status_rFt"),
     lFt_(tc, "status_lFt"),
+// TODO
     tMotor_q_(tc, "status_tMotor_q"),
     tMotor_dq_(tc, "status_tMotor_dq"),
     hpMotor_q_(tc, "status_hpMotor_q"),
@@ -224,86 +270,166 @@ VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc) :
     lHand_valid_(false),
     rFt_valid_(false),
     lFt_valid_(false),
-    torso_valid_(false)
+    tMotor_valid_(false),
+    hpMotor_valid_(false),
+    htMotor_valid_(false),
+    tact_valid_(false),
+    optoforce_valid_(false)
 {
 }
 
 // read ports
 template <>
 void VelmaStatus_Ports<RTT::InputPort >::readPorts() {
-    rArm_valid_ |= rArm_.readPorts();
-    lArm_valid_ |= lArm_.readPorts();
-    rHand_valid_ |= rHand_.readPorts();
-    lHand_valid_ |= lHand_.readPorts();
-    rFt_valid_ |= rFt_.readPorts();
-    lFt_valid_ |= lFt_.readPorts();
-    bool torso = tMotor_q_.operation();
-    torso &= tMotor_dq_.operation();
-    torso &= hpMotor_q_.operation();
-    torso &= hpMotor_dq_.operation();
-    torso &= htMotor_q_.operation();
-    torso &= htMotor_dq_.operation();
-    torso_valid_ |= torso;
-    rHand_p_.operation();
-    lHand_f_.operation();
+    rArm_valid_ = rArm_.readPorts();
+    lArm_valid_ = lArm_.readPorts();
+    rHand_valid_ = rHand_.readPorts();
+    lHand_valid_ = lHand_.readPorts();
+    rFt_valid_ = rFt_.readPorts();
+    lFt_valid_ = lFt_.readPorts();
+    tMotor_valid_ = tMotor_q_.operation();
+    tMotor_valid_ &= tMotor_dq_.operation();
+    hpMotor_valid_ = hpMotor_q_.operation();
+    hpMotor_valid_ &= hpMotor_dq_.operation();
+    htMotor_valid_ = htMotor_q_.operation();
+    htMotor_valid_ &= htMotor_dq_.operation();
+    tact_valid_ = rHand_p_.operation();
+    optoforce_valid_ = lHand_f_.operation();
     test_.operation();
 }
 
 // write ports
 template <>
 void VelmaStatus_Ports<RTT::OutputPort >::writePorts() {
-    rArm_.writePorts();
-    lArm_.writePorts();
-    rHand_.writePorts();
-    lHand_.writePorts();
-    rFt_.writePorts();
-    lFt_.writePorts();
-    tMotor_q_.operation();
-    tMotor_dq_.operation();
-    hpMotor_q_.operation();
-    hpMotor_dq_.operation();
-    htMotor_q_.operation();
-    htMotor_dq_.operation();
-    rHand_p_.operation();
-    lHand_f_.operation();
+    if (rArm_valid_) {
+        rArm_.writePorts();
+    }
+
+    if (lArm_valid_) {
+        lArm_.writePorts();
+    }
+
+    if (rHand_valid_) {
+        rHand_.writePorts();
+    }
+
+    if (lHand_valid_) {
+        lHand_.writePorts();
+    }
+
+    if (rFt_valid_) {
+        rFt_.writePorts();
+    }
+
+    if (lFt_valid_) {
+        lFt_.writePorts();
+    }
+
+    if (tMotor_valid_) {
+        tMotor_q_.operation();
+        tMotor_dq_.operation();
+    }
+
+    if (hpMotor_valid_) {
+        hpMotor_q_.operation();
+        hpMotor_dq_.operation();
+    }
+
+    if (htMotor_valid_) {
+        htMotor_q_.operation();
+        htMotor_dq_.operation();
+    }
+
+    if (tact_valid_) {
+        rHand_p_.operation();
+    }
+
+    if (optoforce_valid_) {
+        lHand_f_.operation();
+    }
+
     test_.operation();
 }
 
 template <>
 void VelmaStatus_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelStatus &ros) {
     rArm_.convertFromROS(ros.rArm);
+    rArm_valid_ = ros.rArm_valid;
+
     lArm_.convertFromROS(ros.lArm);
+    lArm_valid_ = ros.lArm_valid;
+
     rHand_.convertFromROS(ros.rHand);
+    rHand_valid_ = ros.rHand_valid;
+
     lHand_.convertFromROS(ros.lHand);
+    lHand_valid_ = ros.lHand_valid;
+
     rFt_.convertFromROS(ros.rFt);
+    rFt_valid_ = ros.rFt_valid;
+
     lFt_.convertFromROS(ros.lFt);
+    lFt_valid_ = ros.lFt_valid;
+
     tMotor_q_.convertFromROS(ros);
     tMotor_dq_.convertFromROS(ros);
+    tMotor_valid_ = ros.tMotor_valid;
+
     hpMotor_q_.convertFromROS(ros);
     hpMotor_dq_.convertFromROS(ros);
+    hpMotor_valid_ = ros.hpMotor_valid;
+
     htMotor_q_.convertFromROS(ros);
     htMotor_dq_.convertFromROS(ros);
+    htMotor_valid_ = ros.htMotor_valid;
+
     rHand_p_.convertFromROS(ros);
+    tact_valid_ = ros.tact_valid;
+
     lHand_f_.convertFromROS(ros);
+    optoforce_valid_ = ros.optoforce_valid;
+
     test_.convertFromROS(ros);
 }
 
 template <>
 void VelmaStatus_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelStatus &ros) {
     rArm_.convertToROS(ros.rArm);
+    ros.rArm_valid = rArm_valid_;
+
     lArm_.convertToROS(ros.lArm);
+    ros.lArm_valid = lArm_valid_;
+
     rHand_.convertToROS(ros.rHand);
+    ros.rHand_valid = rHand_valid_;
+
     lHand_.convertToROS(ros.lHand);
+    ros.lHand_valid = lHand_valid_;
+
     rFt_.convertToROS(ros.rFt);
+    ros.rFt_valid = rFt_valid_;
+
     lFt_.convertToROS(ros.lFt);
+    ros.lFt_valid = lFt_valid_;
+
     tMotor_q_.convertToROS(ros);
     tMotor_dq_.convertToROS(ros);
+    ros.tMotor_valid = tMotor_valid_;
+
     hpMotor_q_.convertToROS(ros);
     hpMotor_dq_.convertToROS(ros);
+    ros.hpMotor_valid = hpMotor_valid_;
+
     htMotor_q_.convertToROS(ros);
     htMotor_dq_.convertToROS(ros);
+    ros.htMotor_valid = htMotor_valid_;
+
     rHand_p_.convertToROS(ros);
+    ros.tact_valid = tact_valid_;
+
     lHand_f_.convertToROS(ros);
+    ros.optoforce_valid = optoforce_valid_;
+
     test_.convertToROS(ros);
 }
 
@@ -329,7 +455,11 @@ bool VelmaLLIStatusInput::isAllDataValid() const {
         ports_in_.lHand_valid_ &&
         ports_in_.rFt_valid_ &&
         ports_in_.lFt_valid_ &&
-        ports_in_.torso_valid_;
+        ports_in_.tMotor_valid_ &&
+        ports_in_.hpMotor_valid_ &&
+        ports_in_.htMotor_valid_ &&
+        ports_in_.tact_valid_ &&
+        ports_in_.optoforce_valid_;
 }
 
 //

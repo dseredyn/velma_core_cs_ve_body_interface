@@ -54,6 +54,7 @@
 using velma_low_level_interface_msgs::VelmaLowLevelCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandHand;
+using velma_low_level_interface_msgs::VelmaLowLevelCommandTactile;
 
 namespace velma_lli_types {
 
@@ -89,6 +90,22 @@ public:
     Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_i_type, &VelmaLowLevelCommandHand::max_i> max_i_;
     Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_p_type, &VelmaLowLevelCommandHand::max_p> max_p_;
     Port<T, bool, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_hold_type, &VelmaLowLevelCommandHand::hold> hold_;
+    bool valid_;
+};
+
+template <template <typename Type> class T>
+class TactileCommand_Ports {
+public:
+    TactileCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
+
+    bool readPorts();
+    void writePorts();
+
+    void convertFromROS(const VelmaLowLevelCommandTactile &ros);
+    void convertToROS(VelmaLowLevelCommandTactile &ros);
+
+    Port<T, int32_t, VelmaLowLevelCommandTactile, VelmaLowLevelCommandTactile::_tactileCmd_type, &VelmaLowLevelCommandTactile::tactileCmd> tactileCmd_;
+    bool valid_;
 };
 
 template <template <typename Type> class T>
@@ -121,14 +138,13 @@ public:
 
     // right BarrettHand
     HandCommand_Ports<T > rHand_;
-    bool rHand_valid_;
 
     // left BarrettHand
     HandCommand_Ports<T > lHand_;
-    bool lHand_valid_;
 
     // BarrettHand tactile sensors
-    Port<T, int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHand_tactileCmd_type, &VelmaLowLevelCommand::rHand_tactileCmd> rHand_tactileCmd_;
+    TactileCommand_Ports<T > rTact_;
+//    Port<T, int32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_rHand_tactileCmd_type, &VelmaLowLevelCommand::rHand_tactileCmd> rHand_tactileCmd_;
 
     // torsoMotorCurrentCommand
     Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_tMotor_i_type, &VelmaLowLevelCommand::tMotor_i> tMotor_i_;

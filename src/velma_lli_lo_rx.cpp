@@ -110,6 +110,7 @@ void VelmaLLILoRx::updateHook() {
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
+    Logger::log() << Logger::Debug << Logger::endl;
 
     VelmaLowLevelCommand *buf = NULL;
 

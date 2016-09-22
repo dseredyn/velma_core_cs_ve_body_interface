@@ -29,6 +29,7 @@
 
 using velma_low_level_interface_msgs::VelmaLowLevelCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
+using velma_low_level_interface_msgs::VelmaLowLevelCommandTactile;
 
 namespace velma_lli_types {
 
@@ -103,29 +104,32 @@ HandCommand_Ports<T>::HandCommand_Ports(RTT::TaskContext &tc, const std::string 
     dq_(tc, prefix + "_dq"),
     max_i_(tc, prefix + "_max_i"),
     max_p_(tc, prefix + "_max_p"),
-    hold_(tc, prefix + "_hold")
+    hold_(tc, prefix + "_hold"),
+    valid_(false)
 {
 }
 
 // read ports
 template <>
 bool HandCommand_Ports<RTT::InputPort >::readPorts() {
-    bool valid = q_.operation();
-    valid |= dq_.operation();
-    valid |= max_i_.operation();
-    valid |= max_p_.operation();
-    valid |= hold_.operation();
-    return valid;
+    valid_ = q_.operation();
+    valid_ &= dq_.operation();
+    valid_ &= max_i_.operation();
+    valid_ &= max_p_.operation();
+    valid_ &= hold_.operation();
+    return valid_;
 }
 
 // write ports
 template <>
 void HandCommand_Ports<RTT::OutputPort >::writePorts() {
-    q_.operation();
-    dq_.operation();
-    max_i_.operation();
-    max_p_.operation();
-    hold_.operation();
+    if (valid_) {
+        q_.operation();
+        dq_.operation();
+        max_i_.operation();
+        max_p_.operation();
+        hold_.operation();
+    }
 }
 
 template <>
@@ -135,6 +139,7 @@ void HandCommand_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelComm
     max_i_.convertFromROS(ros);
     max_p_.convertFromROS(ros);
     hold_.convertFromROS(ros);
+    valid_ = ros.valid;
 }
 
 template <>
@@ -144,6 +149,44 @@ void HandCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommandHand &
     max_i_.convertToROS(ros);
     max_p_.convertToROS(ros);
     hold_.convertToROS(ros);
+    ros.valid = valid_;
+}
+
+//
+// TactileCommand_Ports interface
+//
+template <template <typename Type> class T >
+TactileCommand_Ports<T>::TactileCommand_Ports(RTT::TaskContext &tc, const std::string &prefix) :
+    tactileCmd_(tc, prefix + "_tactile_cmd"),
+    valid_(false)
+{
+}
+
+// read ports
+template <>
+bool TactileCommand_Ports<RTT::InputPort >::readPorts() {
+    valid_ = tactileCmd_.operation();
+    return valid_;
+}
+
+// write ports
+template <>
+void TactileCommand_Ports<RTT::OutputPort >::writePorts() {
+    if (valid_) {
+        tactileCmd_.operation();
+    }
+}
+
+template <>
+void TactileCommand_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelCommandTactile &ros) {
+    tactileCmd_.convertFromROS(ros);
+    valid_ = ros.valid;
+}
+
+template <>
+void TactileCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommandTactile &ros) {
+    tactileCmd_.convertToROS(ros);
+    ros.valid = valid_;
 }
 
 //
@@ -161,10 +204,11 @@ VelmaCommand_Ports<T >::VelmaCommand_Ports(RTT::TaskContext &tc) :
     rArm_(tc, "cmd_rArm"),
     lArm_(tc, "cmd_lArm"),
     rHand_(tc, "cmd_rHand"),
-    rHand_valid_(false),
+//    rHand_valid_(false),
     lHand_(tc, "cmd_lHand"),
-    lHand_valid_(false),
-    rHand_tactileCmd_(tc, "cmd_rHand_tactileCmd"),
+//    lHand_valid_(false),
+    rTact_(tc, "cmd_rTact"),
+//    rHand_tactileCmd_(tc, "cmd_rHand_tactileCmd"),
     tMotor_i_(tc, "cmd_tMotor_i"),
     hpMotor_i_(tc, "cmd_hpMotor_i"),
     htMotor_i_(tc, "cmd_htMotor_i"),
@@ -181,9 +225,12 @@ template <>
 void VelmaCommand_Ports<RTT::InputPort >::readPorts() {
     rArm_.readPorts();
     lArm_.readPorts();
-    rHand_valid_ = rHand_.readPorts();
-    lHand_valid_ = lHand_.readPorts();
-    rHand_tactileCmd_.operation();
+    rHand_.readPorts();
+    lHand_.readPorts();
+    //rHand_valid_ = rHand_.readPorts();
+    //lHand_valid_ = lHand_.readPorts();
+    rTact_.readPorts();
+//    rHand_tactileCmd_.operation();
     tMotor_i_.operation();
     hpMotor_i_.operation();
     htMotor_i_.operation();
@@ -199,13 +246,14 @@ template <>
 void VelmaCommand_Ports<RTT::OutputPort >::writePorts() {
     rArm_.writePorts();
     lArm_.writePorts();
-    if (rHand_valid_) {
+//    if (rHand_valid_) {
         rHand_.writePorts();
-    }
-    if (lHand_valid_) {
+//    }
+//    if (lHand_valid_) {
         lHand_.writePorts();
-    }
-    rHand_tactileCmd_.operation();
+//    }
+    rTact_.writePorts();
+//    rHand_tactileCmd_.operation();
     tMotor_i_.operation();
     hpMotor_i_.operation();
     htMotor_i_.operation();
@@ -221,10 +269,11 @@ void VelmaCommand_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelCom
     rArm_.convertFromROS(ros.rArm);
     lArm_.convertFromROS(ros.lArm);
     rHand_.convertFromROS(ros.rHand);
-    rHand_valid_ = ros.rHand_valid;
+//    rHand_valid_ = ros.rHand_valid;
     lHand_.convertFromROS(ros.lHand);
-    lHand_valid_ = ros.lHand_valid;
-    rHand_tactileCmd_.convertFromROS(ros);
+//    lHand_valid_ = ros.lHand_valid;
+    rTact_.convertFromROS(ros.rTact);
+//    rHand_tactileCmd_.convertFromROS(ros);
     tMotor_i_.convertFromROS(ros);
     hpMotor_i_.convertFromROS(ros);
     htMotor_i_.convertFromROS(ros);
@@ -241,10 +290,11 @@ void VelmaCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommand &ros
     rArm_.convertToROS(ros.rArm);
     lArm_.convertToROS(ros.lArm);
     rHand_.convertToROS(ros.rHand);
-    ros.rHand_valid = rHand_valid_;
+//    ros.rHand_valid = rHand_valid_;
     lHand_.convertToROS(ros.lHand);
-    ros.lHand_valid = lHand_valid_;
-    rHand_tactileCmd_.convertToROS(ros);
+//    ros.lHand_valid = lHand_valid_;
+    rTact_.convertToROS(ros.rTact);
+//    rHand_tactileCmd_.convertToROS(ros);
     tMotor_i_.convertToROS(ros);
     hpMotor_i_.convertToROS(ros);
     htMotor_i_.convertToROS(ros);
