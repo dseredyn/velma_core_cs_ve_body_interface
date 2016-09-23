@@ -53,6 +53,7 @@ using velma_low_level_interface_msgs::VelmaLowLevelCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandHand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandSimple;
+using velma_low_level_interface_msgs::VelmaLowLevelCommandMotor;
 
 namespace velma_lli_types {
 
@@ -105,6 +106,23 @@ public:
 };
 
 template <template <typename Type> class T>
+class MotorCommand_Ports {
+public:
+    MotorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
+
+    void readPorts();
+    void writePorts();
+
+    void convertFromROS(const VelmaLowLevelCommandMotor &ros);
+    void convertToROS(VelmaLowLevelCommandMotor &ros);
+
+    Port<T, double, VelmaLowLevelCommandMotor, VelmaLowLevelCommandMotor::_i_type, &VelmaLowLevelCommandMotor::i> i_;
+    Port<T, double, VelmaLowLevelCommandMotor, VelmaLowLevelCommandMotor::_q_type, &VelmaLowLevelCommandMotor::q> q_;
+    Port<T, double, VelmaLowLevelCommandMotor, VelmaLowLevelCommandMotor::_dq_type, &VelmaLowLevelCommandMotor::dq> dq_;
+};
+
+
+template <template <typename Type> class T>
 class FTSensorCommand_Ports {
 public:
     FTSensorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
@@ -141,26 +159,11 @@ public:
     // BarrettHand tactile sensors
     SimpleCommand_Ports<T > rTact_;
 
-    // torsoMotorCurrentCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_tMotor_i_type, &VelmaLowLevelCommand::tMotor_i> tMotor_i_;
+    MotorCommand_Ports<T > tMotor_;
 
-    // headPanMotorCurrentCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_i_type, &VelmaLowLevelCommand::hpMotor_i> hpMotor_i_;
+    MotorCommand_Ports<T > hpMotor_;
 
-    // headTiltMotorCurrentCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_i_type, &VelmaLowLevelCommand::htMotor_i> htMotor_i_;
-
-    // headPanMotorPositionCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_q_type, &VelmaLowLevelCommand::hpMotor_q> hpMotor_q_;
-
-    // headTiltMotorPositionCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_q_type, &VelmaLowLevelCommand::htMotor_q> htMotor_q_;
-
-    // headPanMotorVelocityCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_hpMotor_dq_type, &VelmaLowLevelCommand::hpMotor_dq> hpMotor_dq_;
-
-    // headTiltMotorVelocityCommand
-    Port<T, double, VelmaLowLevelCommand, VelmaLowLevelCommand::_htMotor_dq_type, &VelmaLowLevelCommand::htMotor_dq> htMotor_dq_;
+    MotorCommand_Ports<T > htMotor_;
 
     SimpleCommand_Ports<T > sc_;
 };
@@ -182,6 +185,8 @@ public:
     VelmaLLICommandOutput(RTT::TaskContext &tc);
 
     void writePorts(const velma_low_level_interface_msgs::VelmaLowLevelCommand &command);
+
+    velma_lli_types::VelmaCommand_Ports<RTT::OutputPort >& getPorts();
 
 protected:
     velma_lli_types::VelmaCommand_Ports<RTT::OutputPort > ports_out_;

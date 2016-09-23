@@ -40,13 +40,15 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
     // random command
     cmd.rTact.cmd = static_cast<int32_t >(rand());
     cmd.rTact.valid = true;
-    cmd.tMotor_i = static_cast<double >(rand());
-    cmd.hpMotor_i = static_cast<double >(rand());
-    cmd.htMotor_i = static_cast<double >(rand());
-    cmd.hpMotor_q = static_cast<double >(rand());
-    cmd.htMotor_q = static_cast<double >(rand());
-    cmd.hpMotor_dq = static_cast<double >(rand());
-    cmd.htMotor_dq = static_cast<double >(rand());
+    cmd.tMotor.i = static_cast<double >(rand());
+    cmd.tMotor.q = static_cast<double >(rand());
+    cmd.tMotor.dq = static_cast<double >(rand());
+    cmd.hpMotor.i = static_cast<double >(rand());
+    cmd.hpMotor.q = static_cast<double >(rand());
+    cmd.hpMotor.dq = static_cast<double >(rand());
+    cmd.htMotor.i = static_cast<double >(rand());
+    cmd.htMotor.q = static_cast<double >(rand());
+    cmd.htMotor.dq = static_cast<double >(rand());
 
     for (int i = 0; i < 7; ++i) {
         cmd.lArm.t[i] = static_cast<double >(rand());

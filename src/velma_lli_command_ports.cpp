@@ -178,6 +178,51 @@ void SimpleCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommandSimp
     ros.valid = valid_;
 }
 
+
+
+//
+// MotorCommand_Ports interface
+//
+template <template <typename Type> class T >
+MotorCommand_Ports<T >::MotorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix) :
+    i_(tc, prefix + "_i"),
+    q_(tc, prefix + "_q"),
+    dq_(tc, prefix + "_dq")
+{}
+
+// read ports
+template <>
+void MotorCommand_Ports<RTT::InputPort >::readPorts() {
+    i_.operation();
+    q_.operation();
+    dq_.operation();
+}
+
+// write ports
+template <>
+void MotorCommand_Ports<RTT::OutputPort >::writePorts() {
+    i_.operation();
+    q_.operation();
+    dq_.operation();
+}
+
+
+template <>
+void MotorCommand_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelCommandMotor &ros) {
+    i_.convertFromROS(ros);
+    q_.convertFromROS(ros);
+    dq_.convertFromROS(ros);
+}
+
+template <>
+void MotorCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommandMotor &ros) {
+    i_.convertToROS(ros);
+    q_.convertToROS(ros);
+    dq_.convertToROS(ros);
+}
+
+
+
 //
 // FTSensorCommand_Ports interface
 //
@@ -195,13 +240,9 @@ VelmaCommand_Ports<T >::VelmaCommand_Ports(RTT::TaskContext &tc) :
     rHand_(tc, "cmd_rHand"),
     lHand_(tc, "cmd_lHand"),
     rTact_(tc, "cmd_rTact"),
-    tMotor_i_(tc, "cmd_tMotor_i"),
-    hpMotor_i_(tc, "cmd_hpMotor_i"),
-    htMotor_i_(tc, "cmd_htMotor_i"),
-    hpMotor_q_(tc, "cmd_hpMotor_q"),
-    htMotor_q_(tc, "cmd_htMotor_q"),
-    hpMotor_dq_(tc, "cmd_hpMotor_dq"),
-    htMotor_dq_(tc, "cmd_htMotor_dq"),
+    tMotor_(tc, "cmd_tMotor"),
+    hpMotor_(tc, "cmd_hpMotor"),
+    htMotor_(tc, "cmd_htMotor"),
     sc_(tc, "cmd_safety_controller"),
     test_(tc, "cmd_test")
 {
@@ -215,13 +256,9 @@ void VelmaCommand_Ports<RTT::InputPort >::readPorts() {
     rHand_.readPorts();
     lHand_.readPorts();
     rTact_.readPorts();
-    tMotor_i_.operation();
-    hpMotor_i_.operation();
-    htMotor_i_.operation();
-    hpMotor_q_.operation();
-    htMotor_q_.operation();
-    hpMotor_dq_.operation();
-    htMotor_dq_.operation();
+    tMotor_.readPorts();
+    hpMotor_.readPorts();
+    htMotor_.readPorts();
     sc_.readPorts();
     test_.operation();
 }
@@ -234,13 +271,9 @@ void VelmaCommand_Ports<RTT::OutputPort >::writePorts() {
     rHand_.writePorts();
     lHand_.writePorts();
     rTact_.writePorts();
-    tMotor_i_.operation();
-    hpMotor_i_.operation();
-    htMotor_i_.operation();
-    hpMotor_q_.operation();
-    htMotor_q_.operation();
-    hpMotor_dq_.operation();
-    htMotor_dq_.operation();
+    tMotor_.writePorts();
+    hpMotor_.writePorts();
+    htMotor_.writePorts();
     sc_.writePorts();
     test_.operation();
 }
@@ -252,13 +285,9 @@ void VelmaCommand_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelCom
     rHand_.convertFromROS(ros.rHand);
     lHand_.convertFromROS(ros.lHand);
     rTact_.convertFromROS(ros.rTact);
-    tMotor_i_.convertFromROS(ros);
-    hpMotor_i_.convertFromROS(ros);
-    htMotor_i_.convertFromROS(ros);
-    hpMotor_q_.convertFromROS(ros);
-    htMotor_q_.convertFromROS(ros);
-    hpMotor_dq_.convertFromROS(ros);
-    htMotor_dq_.convertFromROS(ros);
+    tMotor_.convertFromROS(ros.tMotor);
+    hpMotor_.convertFromROS(ros.hpMotor);
+    htMotor_.convertFromROS(ros.htMotor);
     sc_.convertFromROS(ros.sc);
     test_.convertFromROS(ros);
 
@@ -271,13 +300,9 @@ void VelmaCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommand &ros
     rHand_.convertToROS(ros.rHand);
     lHand_.convertToROS(ros.lHand);
     rTact_.convertToROS(ros.rTact);
-    tMotor_i_.convertToROS(ros);
-    hpMotor_i_.convertToROS(ros);
-    htMotor_i_.convertToROS(ros);
-    hpMotor_q_.convertToROS(ros);
-    htMotor_q_.convertToROS(ros);
-    hpMotor_dq_.convertToROS(ros);
-    htMotor_dq_.convertToROS(ros);
+    tMotor_.convertToROS(ros.tMotor);
+    hpMotor_.convertToROS(ros.hpMotor);
+    htMotor_.convertToROS(ros.htMotor);
     sc_.convertToROS(ros.sc);
     test_.convertToROS(ros);
 }
@@ -310,5 +335,9 @@ VelmaLLICommandOutput::VelmaLLICommandOutput(RTT::TaskContext &tc) :
 void VelmaLLICommandOutput::writePorts(const velma_low_level_interface_msgs::VelmaLowLevelCommand &command) {
     ports_out_.convertFromROS(command);
     ports_out_.writePorts();
+}
+
+velma_lli_types::VelmaCommand_Ports<RTT::OutputPort >& VelmaLLICommandOutput::getPorts() {
+    return ports_out_;
 }
 
