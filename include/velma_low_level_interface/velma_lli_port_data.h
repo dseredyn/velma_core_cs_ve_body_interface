@@ -69,21 +69,21 @@ public:
     innerT data_;
 };
 
-// specialized data type
-template < >
-class PortRawData<Eigen::VectorXd, boost::array<double, 7ul> > {
+// specialized data type: array of double
+template <typename rosT>
+class PortRawData<Eigen::VectorXd, rosT > {
 public:
-    PortRawData() : data_(7) {
+    PortRawData() : data_(rosT::size()) {
     }
 
-    void convertFromROS(const boost::array<double, 7ul> &ros) {
-        for (int i = 0; i < 7; ++i) {
+    void convertFromROS(const rosT &ros) {
+        for (int i = 0; i < rosT::size(); ++i) {
             data_(i) = ros[i];
         }
     }
 
-    void convertToROS(boost::array<double, 7ul> &ros) {
-        for (int i = 0; i < 7; ++i) {
+    void convertToROS(rosT &ros) {
+        for (int i = 0; i < rosT::size(); ++i) {
             ros[i] = data_(i);
         }
     }
@@ -91,49 +91,7 @@ public:
     Eigen::VectorXd data_;
 };
 
-template < >
-class PortRawData<Eigen::VectorXd, boost::array<double, 4ul> > {
-public:
-    PortRawData() : data_(4) {
-    }
-
-    void convertFromROS(const boost::array<double, 4ul> &ros) {
-        for (int i = 0; i < 4; ++i) {
-            data_(i) = ros[i];
-        }
-    }
-
-    void convertToROS(boost::array<double, 4ul> &ros) {
-        for (int i = 0; i < 4; ++i) {
-            ros[i] = data_(i);
-        }
-    }
-
-    Eigen::VectorXd data_;
-};
-
-template < >
-class PortRawData<Eigen::VectorXd, boost::array<double, 8ul> > {
-public:
-    PortRawData() : data_(8) {
-    }
-
-    void convertFromROS(const boost::array<double, 8ul> &ros) {
-        for (int i = 0; i < 8; ++i) {
-            data_(i) = ros[i];
-        }
-    }
-
-    void convertToROS(boost::array<double, 8ul> &ros) {
-        for (int i = 0; i < 8; ++i) {
-            ros[i] = data_(i);
-        }
-    }
-
-    Eigen::VectorXd data_;
-};
-
-// 7x7 mass matrix
+// specialized data type: 7x7 mass matrix
 template < >
 class PortRawData<Eigen::Matrix77d, boost::array<double, 28ul> > {
 public:

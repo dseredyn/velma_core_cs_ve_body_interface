@@ -48,6 +48,8 @@ void PortData<Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm:
 }
 */
 
+
+
 //
 // ArmStatus_Ports interface
 //
@@ -233,6 +235,7 @@ void FTSensorStatus_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelStatusFT &
 //
 template <template <typename Type> class T>
 VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc) :
+    sc_(tc, "status_sc"),
     rArm_(tc, "status_rArm"),
     lArm_(tc, "status_lArm"),
     rHand_(tc, "status_rHand"),
@@ -251,6 +254,7 @@ VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc) :
 // read ports
 template <>
 void VelmaStatus_Ports<RTT::InputPort >::readPorts() {
+    sc_.operation();
     rArm_.readPorts();
     lArm_.readPorts();
     rHand_.readPorts();
@@ -268,6 +272,7 @@ void VelmaStatus_Ports<RTT::InputPort >::readPorts() {
 // write ports
 template <>
 void VelmaStatus_Ports<RTT::OutputPort >::writePorts() {
+    sc_.operation();
     rArm_.writePorts();
     lArm_.writePorts();
     rHand_.writePorts();
@@ -284,6 +289,7 @@ void VelmaStatus_Ports<RTT::OutputPort >::writePorts() {
 
 template <>
 void VelmaStatus_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelStatus &ros) {
+    sc_.convertFromROS(ros);
     rArm_.convertFromROS(ros.rArm);
     lArm_.convertFromROS(ros.lArm);
     rHand_.convertFromROS(ros.rHand);
@@ -300,6 +306,7 @@ void VelmaStatus_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelStat
 
 template <>
 void VelmaStatus_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelStatus &ros) {
+    sc_.convertToROS(ros);
     rArm_.convertToROS(ros.rArm);
     lArm_.convertToROS(ros.lArm);
     rHand_.convertToROS(ros.rHand);

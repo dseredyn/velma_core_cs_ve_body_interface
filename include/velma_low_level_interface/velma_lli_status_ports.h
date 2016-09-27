@@ -57,6 +57,7 @@ using velma_low_level_interface_msgs::VelmaLowLevelStatusArm;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusHand;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusMotor;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusFT;
+using velma_low_level_interface_msgs::VelmaLowLevelStatusSC;
 
 namespace velma_lli_types {
 
@@ -178,6 +179,8 @@ public:
     Port<T, barrett_hand_controller_msgs::BHPressureState, VelmaLowLevelStatus, VelmaLowLevelStatus::_rHand_p_type, &VelmaLowLevelStatus::rHand_p> rHand_p_;
 
     Port<T, VelmaLowLevelStatus::_lHand_f_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_lHand_f_type, &VelmaLowLevelStatus::lHand_f> lHand_f_;
+
+    Port<T, VelmaLowLevelStatus::_sc_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_sc_type, &VelmaLowLevelStatus::sc> sc_;
 };
 
 };  // namespace velma_lli_types
