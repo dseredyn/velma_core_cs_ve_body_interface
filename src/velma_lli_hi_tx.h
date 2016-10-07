@@ -72,6 +72,8 @@ private:
     VelmaLLICommandInput in_;
 
     VelmaLowLevelCommand *buf_;
+
+    int test_counter_;
 };
 
 #endif  // VELMA_LLI_HI_TX_H_

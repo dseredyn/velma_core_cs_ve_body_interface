@@ -25,57 +25,49 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <rtt/Component.hpp>
-#include <rtt/Logger.hpp>
+#ifndef __VELMA_HI_STATE_H__
+#define __VELMA_HI_STATE_H__
 
-#include "velma_lli_hi_rx.h"
+#include <cstring>
 
-using namespace RTT;
+#include <vector>
+#include <string>
 
-VelmaLLIHiRx::VelmaLLIHiRx(const std::string &name) :
-    TaskContext(name, PreOperational),
-    out_(*this)
-{
-    this->ports()->addEventPort("status_INPORT", port_status_in_);
-}
+#include "rtt/RTT.hpp"
+#include "rtt/os/TimeService.hpp"
 
-bool VelmaLLIHiRx::configureHook() {
-    return true;
-}
+class VelmaHiState: public RTT::TaskContext {
+public:
+    explicit VelmaHiState(const std::string &name);
 
-bool VelmaLLIHiRx::startHook() {
-//    RESTRICT_ALLOC;
+    bool configureHook();
 
-//    UNRESTRICT_ALLOC;
-    return true;
-}
+    bool startHook();
 
-void VelmaLLIHiRx::stopHook() {
-}
+    void stopHook();
 
-void VelmaLLIHiRx::updateHook() {
-    Logger::In in("VelmaLLIHiRx::updateHook");
-//    RESTRICT_ALLOC;
-    // write outputs
-//    UNRESTRICT_ALLOC;
-    uint32_t test_prev = status_in_.test;
+    void updateHook();
 
-    if (port_status_in_.read(status_in_) == NewData) {
+    bool switchBehavior(const std::string &behavior_name);
 
-        if (test_prev == status_in_.test) {
-            Logger::log() << Logger::Warning << "executed updateHook twice for the same packet" << Logger::endl;
-        }
+    bool enableHw();
 
-        out_.writePorts(status_in_);
+    bool enableController();
 
-        TaskContext::PeerList l = this->getPeerList();
-        for (TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
-            this->getPeer( (*it) )->getActivity()->trigger();
-        }
-        Logger::log() << Logger::Debug << "received new data" << Logger::endl;
-    }
-    else {
-        Logger::log() << Logger::Info << "received old data" << Logger::endl;
-    }
-}
+private:
+
+    std::string behaviors_str_;
+
+    behavior_manager_msgs::BehaviorList bl_;
+
+    TaskContext *scheme_;
+
+    RTT::OutputPort<int32_t> port_cmd_sc_out_;
+    int32_t cmd_sc_;
+
+    RTT::OperationCaller<bool(std::vector<std::string>&, std::vector<std::string>&, bool, bool)> switchBlocks_;
+    RTT::OperationCaller<bool(const std::string &)> hasBlock_;
+};
+
+#endif  // __VELMA_HI_STATE_H__
 

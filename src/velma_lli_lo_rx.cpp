@@ -112,6 +112,7 @@ void VelmaLLILoRx::updateHook() {
 //    UNRESTRICT_ALLOC;
     Logger::log() << Logger::Debug << Logger::endl;
 
+/*
     VelmaLowLevelCommand *buf = NULL;
 
     if (receiving_data_) {
@@ -120,8 +121,8 @@ void VelmaLLILoRx::updateHook() {
     else {
         buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
     }
-
-//    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
+*/
+    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
 
     if (buf == NULL) {
         Logger::log() << Logger::Debug << "could not receive data (NULL buffer)" << Logger::endl;
@@ -130,6 +131,12 @@ void VelmaLLILoRx::updateHook() {
     else {
         if (buf != buf_prev_) {
             buf_prev_ = buf;
+            if (buf->sc.valid) {
+                Logger::log() << Logger::Info << "received valid sc command: " << buf->sc.cmd << Logger::endl;
+            }
+            else if (buf->sc.cmd == 2) {
+//                Logger::log() << Logger::Info << "received invalid sc command: " << buf->sc.cmd << " test: " << buf->test << Logger::endl;
+            }
             port_command_out_.write(*buf);
             Logger::log() << Logger::Debug << "received new data" << Logger::endl;
             receiving_data_ = true;
