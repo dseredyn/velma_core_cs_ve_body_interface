@@ -122,12 +122,12 @@ void VelmaLLITestGenerator::generate(uint32_t seed, velma_low_level_interface_ms
     }
 
     for (int i = 0; i < 3; ++i) {
-        status.lHand_f[i].wrench.force.x = static_cast<double >(rand());
-        status.lHand_f[i].wrench.force.y = static_cast<double >(rand());
-        status.lHand_f[i].wrench.force.z = static_cast<double >(rand());
-        status.lHand_f[i].wrench.torque.x = static_cast<double >(rand());
-        status.lHand_f[i].wrench.torque.y = static_cast<double >(rand());
-        status.lHand_f[i].wrench.torque.z = static_cast<double >(rand());
+        status.lHand_f[i].force.x = static_cast<double >(rand());
+        status.lHand_f[i].force.y = static_cast<double >(rand());
+        status.lHand_f[i].force.z = static_cast<double >(rand());
+        status.lHand_f[i].torque.x = static_cast<double >(rand());
+        status.lHand_f[i].torque.y = static_cast<double >(rand());
+        status.lHand_f[i].torque.z = static_cast<double >(rand());
     }
 
     status.rFt.rw.force.x = static_cast<double >(rand());
