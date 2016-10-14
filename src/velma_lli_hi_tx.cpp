@@ -40,6 +40,8 @@
 
 #include "velma_lli_hi_tx.h"
 
+#include <rtt_rosclock/rtt_rosclock.h>
+
 using namespace velma_low_level_interface_msgs;
 using namespace RTT;
 
@@ -89,7 +91,7 @@ void VelmaLLIHiTx::cleanupHook() {
 
 bool VelmaLLIHiTx::startHook() {
     Logger::In in("VelmaLLIHiTx::startHook");
-    Logger::log() << Logger::Info << Logger::endl;
+//    Logger::log() << Logger::Info << Logger::endl;
     void *pbuf = NULL;
     writer_buffer_get(&wr_, &pbuf);
     buf_ = reinterpret_cast<VelmaLowLevelCommand*>(pbuf);
@@ -106,30 +108,34 @@ void VelmaLLIHiTx::updateHook() {
     // write outputs
 //    UNRESTRICT_ALLOC;
 
+    ros::Time wall_time = rtt_rosclock::host_wall_now();
+    double sec = wall_time.toSec();
+    long nsec = sec;
+    Logger::log() << Logger::Debug << (nsec%2000) << " " << (sec - nsec) << Logger::endl;
+
     uint32_t test_prev = cmd_out_.test;
 
     in_.readPorts(cmd_out_);
 
+    Logger::log() << Logger::Debug << "test: " << cmd_out_.test << Logger::endl;
+
     if (test_prev == cmd_out_.test) {
-        Logger::log() << Logger::Warning << "executed updateHook twice for the same packet" << Logger::endl;
+        Logger::log() << Logger::Warning << "executed updateHook twice for the same packet " << cmd_out_.test << Logger::endl;
+    }
+    else {
+//        Logger::log() << Logger::Info << Logger::endl;
     }
 
     if (cmd_out_.sc.valid) {
-        Logger::log() << Logger::Info << "received valid sc cmd: " << cmd_out_.sc.cmd << Logger::endl;
+//        Logger::log() << Logger::Info << "received valid sc cmd: " << cmd_out_.sc.cmd << Logger::endl;
     }    
 
     if (buf_ == NULL) {
         Logger::log() << Logger::Error << "writer get NULL buffer" << Logger::endl;
+        error();
     }
     else {
         *buf_ = cmd_out_;
-        if (buf_->sc.valid) {
-            test_counter_ = 0;
-        }
-        test_counter_++;
-        if (test_counter_ < 5) {
-            Logger::log() << Logger::Info << "sending valid sc cmd: " << buf_->sc.cmd << " test: " << buf_->test << Logger::endl;
-        }
         writer_buffer_write(&wr_);
         Logger::log() << Logger::Debug << "sending command" << Logger::endl;
     }

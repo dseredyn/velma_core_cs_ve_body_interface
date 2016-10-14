@@ -28,6 +28,8 @@
 #ifndef VELMA_LLI_LO_TX_H_
 #define VELMA_LLI_LO_TX_H_
 
+#include "shm_comm_api.h"
+
 #include <cstring>
 
 #include <vector>
@@ -55,6 +57,8 @@ class VelmaLLILoTx: public RTT::TaskContext {
 
   bool configureHook();
 
+  void cleanupHook();
+
   bool startHook();
 
   void stopHook();
@@ -69,8 +73,13 @@ class VelmaLLILoTx: public RTT::TaskContext {
     // low-level interface port variable
     velma_low_level_interface_msgs::VelmaLowLevelStatus status_;
 
-//    VelmaLLIStatusInput in_;
-    RTT::InputPort<VelmaLowLevelStatus> port_status_in_;
+    VelmaLLIStatusInput in_;
+//    RTT::InputPort<VelmaLowLevelStatus> port_status_in_;
+
+    channel_t chan_;
+    writer_t wr_;
+    VelmaLowLevelStatus *buf_;
+
 };
 
 #endif  // VELMA_LLI_LO_TX_H_

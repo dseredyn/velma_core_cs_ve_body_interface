@@ -78,9 +78,10 @@ public:
     Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_t_type, &VelmaLowLevelStatusArm::t> t_;
     Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_gt_type, &VelmaLowLevelStatusArm::gt> gt_;
     Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_w_type, &VelmaLowLevelStatusArm::w> w_;
-    Port<T, Eigen::Matrix<double, 7, 7>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx> mmx_;
+    Port<T, Eigen::Matrix77d, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx> mmx_;
 
     bool valid_;
+    bool valid_prev_;
 };
 
 template <template <typename Type> class T>
@@ -181,6 +182,8 @@ public:
     Port<T, VelmaLowLevelStatus::_lHand_f_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_lHand_f_type, &VelmaLowLevelStatus::lHand_f> lHand_f_;
 
     Port<T, VelmaLowLevelStatus::_sc_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_sc_type, &VelmaLowLevelStatus::sc> sc_;
+
+    bool valid_;
 };
 
 };  // namespace velma_lli_types
@@ -192,6 +195,8 @@ public:
     void readPorts(velma_low_level_interface_msgs::VelmaLowLevelStatus &status);
 
     const velma_lli_types::VelmaStatus_Ports<RTT::InputPort >& getPorts() const;
+
+    bool isAllDataValid() const;
 
 protected:
     velma_lli_types::VelmaStatus_Ports<RTT::InputPort > ports_in_;

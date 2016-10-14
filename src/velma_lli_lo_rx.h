@@ -63,6 +63,8 @@ public:
 
     void updateHook();
 
+    bool pushBackPeerExecution(const std::string &peer_name);
+
 private:
 
     const char *shm_name_;
@@ -72,6 +74,9 @@ private:
     bool receiving_data_;
 
     RTT::OutputPort<velma_low_level_interface_msgs::VelmaLowLevelCommand> port_command_out_;
+
+    std::list<std::string > peer_list_;
+    std::list<TaskContext* > peers_;
 };
 
 #endif  // VELMA_LLI_LO_RX_H_

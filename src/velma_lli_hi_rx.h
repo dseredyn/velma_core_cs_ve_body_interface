@@ -28,6 +28,8 @@
 #ifndef VELMA_LLI_HI_RX_H_
 #define VELMA_LLI_HI_RX_H_
 
+#include "shm_comm_api.h"
+
 #include <cstring>
 
 #include <vector>
@@ -52,11 +54,15 @@ public:
 
     bool configureHook();
 
+    void cleanupHook();
+
     bool startHook();
 
     void stopHook();
 
     void updateHook();
+
+    bool pushBackPeerExecution(const std::string &peer_name);
 
 private:
 
@@ -65,6 +71,22 @@ private:
     velma_low_level_interface_msgs::VelmaLowLevelStatus status_in_;
 
     VelmaLLIStatusOutput out_;
+
+    ros::Time wall_time_prev_;
+    int counter_;
+
+    const char *shm_name_;
+    channel_t chan_;
+    reader_t re_;
+    VelmaLowLevelStatus *buf_prev_;
+
+    std::list<std::string > peer_list_;
+    std::list<TaskContext* > peers_;
+
+    unsigned int mCycleCounter_prev_;
+    unsigned int mIOCounter_prev_;
+    unsigned int mTimeOutCounter_prev_;
+    unsigned int mTriggerCounter_prev_;
 };
 
 #endif  // VELMA_LLI_HI_RX_H_

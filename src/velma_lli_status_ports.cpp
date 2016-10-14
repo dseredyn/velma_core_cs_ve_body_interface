@@ -61,12 +61,14 @@ ArmStatus_Ports<T >::ArmStatus_Ports(RTT::TaskContext &tc, const std::string &pr
     gt_(tc, prefix + "_gt"),
     w_(tc, prefix + "_w"),
     mmx_(tc, prefix + "_mmx"),
-    valid_(false)
+    valid_(false),
+    valid_prev_(false)
 {}
 
 // read ports
 template <>
 void ArmStatus_Ports<RTT::InputPort >::readPorts() {
+    valid_prev_ = valid_;
     valid_ = q_.operation();
     valid_ &= dq_.operation();
     valid_ &= t_.operation();
@@ -247,14 +249,15 @@ VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc) :
     htMotor_(tc, "status_htMotor"),
     rHand_p_(tc, "status_rHand_p"),
     lHand_f_(tc, "status_lHand_f"),
-    test_(tc, "status_test")
+    test_(tc, "status_test"),
+    valid_(false)
 {
 }
 
 // read ports
 template <>
 void VelmaStatus_Ports<RTT::InputPort >::readPorts() {
-    sc_.operation();
+    valid_ = sc_.operation();
     rArm_.readPorts();
     lArm_.readPorts();
     rHand_.readPorts();
@@ -264,9 +267,14 @@ void VelmaStatus_Ports<RTT::InputPort >::readPorts() {
     tMotor_.readPorts();
     hpMotor_.readPorts();
     htMotor_.readPorts();
-    rHand_p_.operation();
-    lHand_f_.operation();
-    test_.operation();
+// TODO
+//    valid_ &= rHand_p_.operation();
+//    valid_ &= lHand_f_.operation();
+    valid_ &= test_.operation();
+
+    valid_ &= (rArm_.valid_ || rArm_.valid_prev_) && (lArm_.valid_ || lArm_.valid_prev_) &&
+        rHand_.valid_ && lHand_.valid_ && rFt_.valid_ && lFt_.valid_ && tMotor_.valid_ &&
+        hpMotor_.valid_ && hpMotor_.valid_;
 }
 
 // write ports
@@ -338,6 +346,10 @@ void VelmaLLIStatusInput::readPorts(velma_low_level_interface_msgs::VelmaLowLeve
 
 const velma_lli_types::VelmaStatus_Ports<RTT::InputPort >& VelmaLLIStatusInput::getPorts() const {
     return ports_in_;
+}
+
+bool VelmaLLIStatusInput::isAllDataValid() const {
+    return ports_in_.valid_;
 }
 
 //

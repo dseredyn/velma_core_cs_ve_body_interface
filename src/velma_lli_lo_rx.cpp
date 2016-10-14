@@ -40,6 +40,9 @@
 
 #include "velma_lli_lo_rx.h"
 
+#include <rtt_rosclock/rtt_rosclock.h>
+#include <rtt/extras/SlaveActivity.hpp>
+
 using namespace velma_low_level_interface_msgs;
 
 using namespace RTT;
@@ -50,6 +53,20 @@ VelmaLLILoRx::VelmaLLILoRx(const std::string &name) :
     buf_prev_(NULL)
 {
     this->ports()->addPort("command_OUTPORT", port_command_out_);
+
+    this->addOperation("pushBackPeerExecution", &VelmaLLILoRx::pushBackPeerExecution, this, RTT::ClientThread)
+        .doc("enable HW operation");
+}
+
+bool VelmaLLILoRx::pushBackPeerExecution(const std::string &peer_name) {
+    Logger::In in("VelmaLLILoRx::pushBackPeerExecution");
+    if (isConfigured() || isRunning()) {
+        Logger::log() << Logger::Warning << "this operation should be invoked before configure"
+                      << Logger::endl;
+        return false;
+    }
+    peer_list_.push_back(peer_name);
+    return true;
 }
 
 bool VelmaLLILoRx::configureHook() {
@@ -78,6 +95,52 @@ bool VelmaLLILoRx::configureHook() {
         }
         return false;
     }
+
+/*
+    TaskContext::PeerList l = this->getPeerList();
+    for (TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
+        RTT::TaskContext *peer = this->getPeer( (*it) );
+        peer->setActivity( new RTT::extras::SlaveActivity(this->getActivity(), peer->engine()));
+    }
+*/
+
+    TaskContext::PeerList l = this->getPeerList();
+    if (peer_list_.size() != l.size()) {
+        Logger::log() << Logger::Error << "peer_list_.size() != l.size()   "
+                      << peer_list_.size() << " != " << l.size() << Logger::endl;
+        return false;
+    }
+
+    for (std::list<std::string >::const_iterator it2 = peer_list_.begin(); it2 != peer_list_.end(); ++it2) {
+        TaskContext *tc = NULL;
+        bool found = false;
+        for (TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
+            if ( (*it) == (*it2)) {
+                tc = this->getPeer( (*it) );
+                break;
+            }
+        }
+        if (tc == NULL) {
+            Logger::log() << Logger::Error << "could not find peer "
+                          << (*it2) << " in peer execution list" << Logger::endl;
+            return false;
+        }
+        peers_.push_back(tc);
+    }
+
+    for (std::list<TaskContext* >::iterator it = peers_.begin(); it != peers_.end(); ++it) {
+        (*it)->setActivity( new RTT::extras::SlaveActivity(this->getActivity(), (*it)->engine()));
+
+        Attribute<bool> triggerOnStart = (*it)->attributes()->getAttribute("TriggerOnStart");
+        if (!triggerOnStart.ready()) {
+            Logger::log() << Logger::Error << "attribute TriggerOnStart of peer "
+                          << (*it)->getName() << " is not ready" << Logger::endl;
+            return false;
+        }
+        triggerOnStart.set(false);
+    }
+
+    mTriggerOnStart = false;
 
     return true;
 }
@@ -110,9 +173,13 @@ void VelmaLLILoRx::updateHook() {
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
-    Logger::log() << Logger::Debug << Logger::endl;
 
-/*
+    ros::Time wall_time = rtt_rosclock::host_wall_now();
+    double sec = wall_time.toSec();
+    long nsec = sec;
+    Logger::log() << Logger::Debug << (nsec%2000) << " " << (sec - nsec) << Logger::endl;
+
+
     VelmaLowLevelCommand *buf = NULL;
 
     if (receiving_data_) {
@@ -121,8 +188,9 @@ void VelmaLLILoRx::updateHook() {
     else {
         buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
     }
-*/
-    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
+
+//    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
+
 
     if (buf == NULL) {
         Logger::log() << Logger::Debug << "could not receive data (NULL buffer)" << Logger::endl;
@@ -132,19 +200,39 @@ void VelmaLLILoRx::updateHook() {
         if (buf != buf_prev_) {
             buf_prev_ = buf;
             if (buf->sc.valid) {
-                Logger::log() << Logger::Info << "received valid sc command: " << buf->sc.cmd << Logger::endl;
+//                Logger::log() << Logger::Info << "received valid sc command: " << buf->sc.cmd << Logger::endl;
             }
             else if (buf->sc.cmd == 2) {
 //                Logger::log() << Logger::Info << "received invalid sc command: " << buf->sc.cmd << " test: " << buf->test << Logger::endl;
             }
+
+            Logger::log() << Logger::Debug << "test: " << buf->test << Logger::endl;
+
             port_command_out_.write(*buf);
-            Logger::log() << Logger::Debug << "received new data" << Logger::endl;
+//            Logger::log() << Logger::Debug << "received new data" << Logger::endl;
             receiving_data_ = true;
         }
         else {
-            Logger::log() << Logger::Debug << "could not receive data" << Logger::endl;
+//            Logger::log() << Logger::Debug << "could not receive data" << Logger::endl;
             receiving_data_ = false;
         }
     }
+/*
+    TaskContext::PeerList l = this->getPeerList();
+    for (TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
+        if (!this->getPeer( (*it) )->update()) {
+            Logger::log() << Logger::Error << this->getPeer( (*it) )->getName() << "->update() has failed" << Logger::endl;
+//            error();
+        }
+    }
+*/
+
+    for (std::list<TaskContext* >::iterator it = peers_.begin(); it != peers_.end(); ++it) {
+        if (!(*it)->update()) {
+            Logger::log() << Logger::Error << (*it)->getName() << "->update() has failed" << Logger::endl;
+            error();
+        }
+    }
+
 }
 
