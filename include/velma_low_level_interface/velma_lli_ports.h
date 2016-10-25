@@ -95,8 +95,10 @@ protected:
 template <typename innerT >
 class PortOperation<RTT::OutputPort, innerT> {
 public:
-    PortOperation(RTT::TaskContext &tc, const std::string &port_name) {
-        tc.ports()->addPort(port_name + "_OUTPORT", port_);
+    PortOperation(RTT::TaskContext &tc, const std::string &port_name) :
+        port_(port_name + "_OUTPORT", false)
+    {
+        tc.ports()->addPort(port_);
     }
 
     bool operation(innerT &data) {

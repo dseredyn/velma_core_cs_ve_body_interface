@@ -68,7 +68,7 @@ public:
     void convertFromROS(const VelmaLowLevelCommandArm &ros);
     void convertToROS(VelmaLowLevelCommandArm &ros);
 
-    Port<T, Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type, &VelmaLowLevelCommandArm::t> t_;
+    Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type, &VelmaLowLevelCommandArm::t> t_;
 };
 
 template <template <typename Type> class T>
@@ -82,10 +82,10 @@ public:
     void convertFromROS(const VelmaLowLevelCommandHand &ros);
     void convertToROS(VelmaLowLevelCommandHand &ros);
 
-    Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_q_type, &VelmaLowLevelCommandHand::q> q_;
-    Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_dq_type, &VelmaLowLevelCommandHand::dq> dq_;
-    Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_i_type, &VelmaLowLevelCommandHand::max_i> max_i_;
-    Port<T, Eigen::VectorXd, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_p_type, &VelmaLowLevelCommandHand::max_p> max_p_;
+    Port<T, Eigen::Matrix<double,4,1>, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_q_type, &VelmaLowLevelCommandHand::q> q_;
+    Port<T, Eigen::Matrix<double,4,1>, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_dq_type, &VelmaLowLevelCommandHand::dq> dq_;
+    Port<T, Eigen::Matrix<double,4,1>, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_i_type, &VelmaLowLevelCommandHand::max_i> max_i_;
+    Port<T, Eigen::Matrix<double,4,1>, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_p_type, &VelmaLowLevelCommandHand::max_p> max_p_;
     Port<T, bool, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_hold_type, &VelmaLowLevelCommandHand::hold> hold_;
     bool valid_;
 };

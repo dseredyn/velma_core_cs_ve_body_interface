@@ -71,10 +71,9 @@ public:
 
 // specialized data type: array of double
 template <typename rosT>
-class PortRawData<Eigen::VectorXd, rosT > {
+class PortRawData<Eigen::Matrix<double,7,1>, rosT > {
 public:
-    PortRawData() : data_(rosT::size()) {
-    }
+    PortRawData() { }
 
     void convertFromROS(const rosT &ros) {
         for (int i = 0; i < rosT::size(); ++i) {
@@ -88,7 +87,47 @@ public:
         }
     }
 
-    Eigen::VectorXd data_;
+    Eigen::Matrix<double,7,1> data_;
+};
+
+template <typename rosT>
+class PortRawData<Eigen::Matrix<double,4,1>, rosT > {
+public:
+    PortRawData() { }
+
+    void convertFromROS(const rosT &ros) {
+        for (int i = 0; i < rosT::size(); ++i) {
+            data_(i) = ros[i];
+        }
+    }
+
+    void convertToROS(rosT &ros) {
+        for (int i = 0; i < rosT::size(); ++i) {
+            ros[i] = data_(i);
+        }
+    }
+
+    Eigen::Matrix<double,4,1> data_;
+};
+
+template <typename rosT>
+class PortRawData<Eigen::Matrix<double,8,1>, rosT > {
+public:
+    PortRawData() { }
+
+    void convertFromROS(const rosT &ros) {
+        for (int i = 0; i < rosT::size(); ++i) {
+            data_(i) = ros[i];
+        }
+    }
+
+    void convertToROS(rosT &ros) {
+        for (int i = 0; i < rosT::size(); ++i) {
+            ros[i] = data_(i);
+        }
+    }
+
+    Eigen::Matrix<double,8,1> data_;
 };
 
 // specialized data type: 7x7 mass matrix

@@ -96,14 +96,6 @@ bool VelmaLLILoRx::configureHook() {
         return false;
     }
 
-/*
-    TaskContext::PeerList l = this->getPeerList();
-    for (TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
-        RTT::TaskContext *peer = this->getPeer( (*it) );
-        peer->setActivity( new RTT::extras::SlaveActivity(this->getActivity(), peer->engine()));
-    }
-*/
-
     TaskContext::PeerList l = this->getPeerList();
     if (peer_list_.size() != l.size()) {
         Logger::log() << Logger::Error << "peer_list_.size() != l.size()   "
@@ -169,17 +161,11 @@ void VelmaLLILoRx::stopHook() {
 }
 
 void VelmaLLILoRx::updateHook() {
-    Logger::In in("VelmaLLILoRx::updateHook");
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
 
-    ros::Time wall_time = rtt_rosclock::host_wall_now();
-    double sec = wall_time.toSec();
-    long nsec = sec;
-    Logger::log() << Logger::Debug << (nsec%2000) << " " << (sec - nsec) << Logger::endl;
-
-
+//*
     VelmaLowLevelCommand *buf = NULL;
 
     if (receiving_data_) {
@@ -188,51 +174,32 @@ void VelmaLLILoRx::updateHook() {
     else {
         buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
     }
-
-//    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
-
+/*/
+    VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
+//*/
 
     if (buf == NULL) {
+        Logger::In in("VelmaLLILoRx::updateHook");
         Logger::log() << Logger::Debug << "could not receive data (NULL buffer)" << Logger::endl;
         receiving_data_ = false;
     }
     else {
         if (buf != buf_prev_) {
             buf_prev_ = buf;
-            if (buf->sc.valid) {
-//                Logger::log() << Logger::Info << "received valid sc command: " << buf->sc.cmd << Logger::endl;
-            }
-            else if (buf->sc.cmd == 2) {
-//                Logger::log() << Logger::Info << "received invalid sc command: " << buf->sc.cmd << " test: " << buf->test << Logger::endl;
-            }
-
-            Logger::log() << Logger::Debug << "test: " << buf->test << Logger::endl;
-
             port_command_out_.write(*buf);
-//            Logger::log() << Logger::Debug << "received new data" << Logger::endl;
             receiving_data_ = true;
         }
         else {
-//            Logger::log() << Logger::Debug << "could not receive data" << Logger::endl;
             receiving_data_ = false;
         }
     }
-/*
-    TaskContext::PeerList l = this->getPeerList();
-    for (TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
-        if (!this->getPeer( (*it) )->update()) {
-            Logger::log() << Logger::Error << this->getPeer( (*it) )->getName() << "->update() has failed" << Logger::endl;
-//            error();
-        }
-    }
-*/
 
     for (std::list<TaskContext* >::iterator it = peers_.begin(); it != peers_.end(); ++it) {
         if (!(*it)->update()) {
+            Logger::In in("VelmaLLILoRx::updateHook");
             Logger::log() << Logger::Error << (*it)->getName() << "->update() has failed" << Logger::endl;
             error();
         }
     }
-
 }
 

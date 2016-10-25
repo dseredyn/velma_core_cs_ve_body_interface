@@ -137,8 +137,6 @@ void VelmaLLIHiRx::cleanupHook() {
 bool VelmaLLIHiRx::startHook() {
 //    RESTRICT_ALLOC;
 //    buf_prev_ = reinterpret_cast<VelmaLowLevelStatus*>( reader_buffer_get(&re_) );
-
-    counter_ = 0;
 //    UNRESTRICT_ALLOC;
     return true;
 }
@@ -147,24 +145,10 @@ void VelmaLLIHiRx::stopHook() {
 }
 
 void VelmaLLIHiRx::updateHook() {
-    Logger::In in("VelmaLLIHiRx::updateHook");
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
     uint32_t test_prev = status_in_.test;
-
-    ros::Time wall_time = rtt_rosclock::host_wall_now();
-    double sec = wall_time.toSec();
-    long nsec = sec;
-    Logger::log() << Logger::Debug << (nsec%2000) << " " << (sec - nsec) << Logger::endl;
-
-    ++counter_;
-
-//    ros::Time wall_time = rtt_rosclock::host_wall_now();
-//    Logger::log() << Logger::Debug << (wall_time - wall_time_prev_).toSec() << Logger::endl;
-//    wall_time_prev_ = wall_time;
-
-
 
 /*
 
@@ -194,6 +178,7 @@ void VelmaLLIHiRx::updateHook() {
     if (port_status_in_.read(status_in_) == NewData) {
 
         if (test_prev == status_in_.test) {
+            Logger::In in("VelmaLLIHiRx::updateHook");
             Logger::log() << Logger::Warning << "executed updateHook twice for the same packet " << status_in_.test << Logger::endl;
         }
 
@@ -201,32 +186,20 @@ void VelmaLLIHiRx::updateHook() {
 
         for (std::list<TaskContext* >::iterator it = peers_.begin(); it != peers_.end(); ++it) {
             if (!(*it)->update()) {
+                Logger::In in("VelmaLLIHiRx::updateHook");
                 Logger::log() << Logger::Error << (*it)->getName() << "->update() has failed" << Logger::endl;
                 error();
             }
         }
-/*        TaskContext::PeerList l = this->getPeerList();
-        for (TaskContext::PeerList::const_iterator it = l.begin(); it != l.end(); ++it) {
-            if (!this->getPeer( (*it) )->update()) {
-                Logger::log() << Logger::Error << this->getPeer( (*it) )->getName() << "->update() has failed" << Logger::endl;
-                error();
-            }
-        }
-*/
-//        Logger::log() << Logger::Debug << "received new data" << Logger::endl;
     }
     else {
-        Logger::log() << Logger::Warning << "received old data: "
+/*        Logger::log() << Logger::Warning << "received old data: "
                       << "Cycle: " << (mCycleCounter - mCycleCounter_prev_)
                       << " IO: " << (mIOCounter - mIOCounter_prev_)
                       << " TimeOut: " << (mTimeOutCounter - mTimeOutCounter_prev_)
                       << " Trigger: " << (mTriggerCounter - mTriggerCounter_prev_)
                       << Logger::endl;
+*/
     }
-
-    mCycleCounter_prev_ = mCycleCounter;
-    mIOCounter_prev_ = mIOCounter;
-    mTimeOutCounter_prev_ = mTimeOutCounter;
-    mTriggerCounter_prev_ = mTriggerCounter;
 }
 

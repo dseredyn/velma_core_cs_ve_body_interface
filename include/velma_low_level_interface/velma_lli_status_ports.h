@@ -73,10 +73,10 @@ public:
     void convertFromROS(const VelmaLowLevelStatusArm &ros);
     void convertToROS(VelmaLowLevelStatusArm &ros);
 
-    Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_q_type, &VelmaLowLevelStatusArm::q> q_;
-    Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_dq_type, &VelmaLowLevelStatusArm::dq> dq_;
-    Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_t_type, &VelmaLowLevelStatusArm::t> t_;
-    Port<T, Eigen::VectorXd, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_gt_type, &VelmaLowLevelStatusArm::gt> gt_;
+    Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_q_type, &VelmaLowLevelStatusArm::q> q_;
+    Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_dq_type, &VelmaLowLevelStatusArm::dq> dq_;
+    Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_t_type, &VelmaLowLevelStatusArm::t> t_;
+    Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_gt_type, &VelmaLowLevelStatusArm::gt> gt_;
     Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_w_type, &VelmaLowLevelStatusArm::w> w_;
     Port<T, Eigen::Matrix77d, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx> mmx_;
 
@@ -96,7 +96,7 @@ public:
     void convertFromROS(const VelmaLowLevelStatusHand &ros);
     void convertToROS(VelmaLowLevelStatusHand &ros);
 
-    Port<T, Eigen::VectorXd, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q> q_;
+    Port<T, Eigen::Matrix<double,8,1>, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q> q_;
     Port<T, uint32_t, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s> s_;
 
     bool valid_;

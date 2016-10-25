@@ -56,6 +56,7 @@ bool VelmaLLIHiTx::configureHook() {
 
     if (connect_channel("velma_lli_cmd", &chan_) != 0) {
         Logger::log() << Logger::Error << "connect_channel failed" << Logger::endl;
+        return false;
     }
 
     int ret = create_writer(&chan_, &wr_);
@@ -103,23 +104,16 @@ void VelmaLLIHiTx::stopHook() {
 }
 
 void VelmaLLIHiTx::updateHook() {
-    Logger::In in("VelmaLLIHiTx::updateHook");
 //    RESTRICT_ALLOC;
     // write outputs
 //    UNRESTRICT_ALLOC;
-
-    ros::Time wall_time = rtt_rosclock::host_wall_now();
-    double sec = wall_time.toSec();
-    long nsec = sec;
-    Logger::log() << Logger::Debug << (nsec%2000) << " " << (sec - nsec) << Logger::endl;
 
     uint32_t test_prev = cmd_out_.test;
 
     in_.readPorts(cmd_out_);
 
-    Logger::log() << Logger::Debug << "test: " << cmd_out_.test << Logger::endl;
-
     if (test_prev == cmd_out_.test) {
+        Logger::In in("VelmaLLIHiTx::updateHook");
         Logger::log() << Logger::Warning << "executed updateHook twice for the same packet " << cmd_out_.test << Logger::endl;
     }
     else {
@@ -131,13 +125,14 @@ void VelmaLLIHiTx::updateHook() {
     }    
 
     if (buf_ == NULL) {
+        Logger::In in("VelmaLLIHiTx::updateHook");
         Logger::log() << Logger::Error << "writer get NULL buffer" << Logger::endl;
         error();
     }
     else {
         *buf_ = cmd_out_;
         writer_buffer_write(&wr_);
-        Logger::log() << Logger::Debug << "sending command" << Logger::endl;
+//        Logger::log() << Logger::Debug << "sending command" << Logger::endl;
     }
     void *pbuf = NULL;
     writer_buffer_get(&wr_, &pbuf);
