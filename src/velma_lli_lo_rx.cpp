@@ -179,8 +179,8 @@ void VelmaLLILoRx::updateHook() {
 //*/
 
     if (buf == NULL) {
-        Logger::In in("VelmaLLILoRx::updateHook");
-        Logger::log() << Logger::Debug << "could not receive data (NULL buffer)" << Logger::endl;
+//        Logger::In in("VelmaLLILoRx::updateHook");
+//        Logger::log() << Logger::Debug << "could not receive data (NULL buffer)" << Logger::endl;
         receiving_data_ = false;
     }
     else {

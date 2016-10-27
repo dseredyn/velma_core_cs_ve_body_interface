@@ -105,12 +105,11 @@ void VelmaLLILoTx::stopHook() {
 }
 
 void VelmaLLILoTx::updateHook() {
-    Logger::In in("VelmaLLILoTx::updateHook");
 
     ros::Time wall_time = rtt_rosclock::host_wall_now();
     double sec = wall_time.toSec();
     long nsec = sec;
-    Logger::log() << Logger::Debug << (nsec%2000) << " " << (sec - nsec) << Logger::endl;
+//    Logger::log() << Logger::Debug << (nsec%2000) << " " << (sec - nsec) << Logger::endl;
 
 //    RESTRICT_ALLOC;
     in_.readPorts(status_);
@@ -118,8 +117,9 @@ void VelmaLLILoTx::updateHook() {
 //    if (port_status_in_.read(status_) == RTT::NewData) {
 
     if (in_.isAllDataValid()) {
+//        Logger::In in("VelmaLLILoTx::updateHook");
         // write outputs
-        Logger::log() << Logger::Debug << "test: " << status_.test << Logger::endl;
+//        Logger::log() << Logger::Debug << "test: " << status_.test << Logger::endl;
         port_status_out_.write(status_);
     }
 /*
