@@ -25,8 +25,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef __VELMA_LLI_PORT_DATA_H__
-#define __VELMA_LLI_PORT_DATA_H__
+#ifndef __VELMA_LLI_PORT_DATA_SPEC_H__
+#define __VELMA_LLI_PORT_DATA_SPEC_H__
 
 #include <cstring>
 
@@ -44,30 +44,36 @@
 #include <diagnostic_msgs/DiagnosticArray.h>
 
 #include "eigen_conversions/eigen_msg.h"
-/*
-namespace Eigen {
-    typedef Matrix<double, 7, 7> Matrix77d;
-};
-*/
+
+#include "velma_low_level_interface/velma_lli_port_data.h"
+
 namespace velma_lli_types {
 
-// general data type
-template <typename innerT, typename rosT >
-class PortRawData {
+// specialized data type: array of double
+template <int SIZE>
+class PortRawData<Eigen::Matrix<double,SIZE,1>, boost::array<double, SIZE> > {
 public:
-    PortRawData() {
+    PortRawData() { }
+
+    void convertFromROS(const boost::array<double, SIZE> &ros) {
+        for (int i = 0; i < SIZE; ++i) {
+            data_(i) = ros[i];
+        }
     }
 
-    void convertFromROS(const rosT &ros) {
-        data_ = ros;
+    void convertToROS(boost::array<double, SIZE> &ros) {
+        for (int i = 0; i < SIZE; ++i) {
+            ros[i] = data_(i);
+        }
     }
 
-    void convertToROS(rosT &ros) {
-        ros = data_;
-    }
-
-    innerT data_;
+    Eigen::Matrix<double,SIZE,1> data_;
 };
+
+template class PortRawData<Eigen::Matrix<double,4,1>, boost::array<double, 4> >;
+template class PortRawData<Eigen::Matrix<double,7,1>, boost::array<double, 7> >;
+template class PortRawData<Eigen::Matrix<double,8,1>, boost::array<double, 8> >;
+
 /*
 // specialized data type: array of double
 template <typename rosT>
@@ -129,10 +135,11 @@ public:
 
     Eigen::Matrix<double,8,1> data_;
 };
+*/
 
 // specialized data type: 7x7 mass matrix
 template < >
-class PortRawData<Eigen::Matrix77d, boost::array<double, 28ul> > {
+class PortRawData<Eigen::Matrix<double, 7, 7>, boost::array<double, 28ul> > {
 public:
     PortRawData() {
     }
@@ -153,10 +160,10 @@ public:
         }
     }
 
-    Eigen::Matrix77d data_;
+    Eigen::Matrix<double, 7, 7> data_;
 };
-*/
+
 };  // namespace velma_lli_types
 
-#endif  // __VELMA_LLI_PORT_DATA_H__
+#endif  // __VELMA_LLI_PORT_DATA_SPEC_H__
 

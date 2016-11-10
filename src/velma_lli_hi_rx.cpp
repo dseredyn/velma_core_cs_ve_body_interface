@@ -112,13 +112,15 @@ bool VelmaLLIHiRx::configureHook() {
         if (ret == -1) {
             Logger::log() << Logger::Error << "invalid reader_t pointer" << Logger::endl;
         }
-
-        if (ret == -2) {
+        else if (ret == -2) {
             Logger::log() << Logger::Error << "no reader slots avalible" << Logger::endl;
+        }
+        else {
+            Logger::log() << Logger::Error << "create_reader error: " << ret << Logger::endl;
         }
         return false;
     }
-*/
+//*/
     return true;
 }
 
@@ -131,7 +133,7 @@ void VelmaLLIHiRx::cleanupHook() {
     disconnect_channel(&chan_);
 
     delete_shm_object(shm_name_);
-*/
+//*/
 }
 
 bool VelmaLLIHiRx::startHook() {
@@ -156,13 +158,14 @@ void VelmaLLIHiRx::updateHook() {
 
     bool received = false;
     if (buf == NULL) {
-        Logger::log() << Logger::Debug << "could not receive data (NULL buffer)" << Logger::endl;
+        Logger::log() << Logger::Error << "could not receive data (NULL buffer)" << Logger::endl;
+        error();
     }
     else {
         if (buf != buf_prev_) {
             buf_prev_ = buf;
 
-            Logger::log() << Logger::Debug << "test: " << buf->test << Logger::endl;
+//            Logger::log() << Logger::Debug << "test: " << buf->test << Logger::endl;
             received = true;
 
             status_in_ = *buf;
@@ -172,7 +175,7 @@ void VelmaLLIHiRx::updateHook() {
         }
     }
 
-*/
+//*/
 
 //    if (received) {
     if (port_status_in_.read(status_in_) == NewData) {
@@ -180,6 +183,7 @@ void VelmaLLIHiRx::updateHook() {
         if (test_prev == status_in_.test) {
             Logger::In in("VelmaLLIHiRx::updateHook");
             Logger::log() << Logger::Warning << "executed updateHook twice for the same packet " << status_in_.test << Logger::endl;
+            error();
         }
 
         out_.writePorts(status_in_);
@@ -201,5 +205,6 @@ void VelmaLLIHiRx::updateHook() {
                       << Logger::endl;
 */
     }
+//    trigger();
 }
 

@@ -60,7 +60,7 @@ typedef struct {
 
 typedef struct {
     channel_hdr_t *hdr;
-    int *reader_ids; //! contain information which reader ids are in use
+    pthread_mutex_t *reader_ids; //! contain information which reader ids are in use
     int *reading; //! index to currently used buffers
     char **buffer; //! data buffers (readers + 2)
 } channel_t;

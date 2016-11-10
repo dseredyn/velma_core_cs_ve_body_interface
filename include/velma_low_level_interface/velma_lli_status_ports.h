@@ -52,6 +52,8 @@
 
 #include "velma_low_level_interface/velma_lli_ports.h"
 
+#include "velma_low_level_interface/velma_lli_port_data_spec.h"
+
 using velma_low_level_interface_msgs::VelmaLowLevelStatus;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusArm;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusHand;
@@ -78,7 +80,7 @@ public:
     Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_t_type, &VelmaLowLevelStatusArm::t> t_;
     Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_gt_type, &VelmaLowLevelStatusArm::gt> gt_;
     Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_w_type, &VelmaLowLevelStatusArm::w> w_;
-    Port<T, Eigen::Matrix77d, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx> mmx_;
+    Port<T, Eigen::Matrix<double,7,7>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx> mmx_;
 
     bool valid_;
     bool valid_prev_;

@@ -76,8 +76,8 @@ private:
     int counter_;
 
     const char *shm_name_;
-    channel_t chan_;
-    reader_t re_;
+//    channel_t chan_;
+//    reader_t re_;
     VelmaLowLevelStatus *buf_prev_;
 
     std::list<std::string > peer_list_;

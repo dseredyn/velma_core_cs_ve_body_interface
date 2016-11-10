@@ -76,9 +76,9 @@ class VelmaLLILoTx: public RTT::TaskContext {
     VelmaLLIStatusInput in_;
 //    RTT::InputPort<VelmaLowLevelStatus> port_status_in_;
 
-    channel_t chan_;
-    writer_t wr_;
-    VelmaLowLevelStatus *buf_;
+//    channel_t chan_;
+//    writer_t wr_;
+//    VelmaLowLevelStatus *buf_;
 
 };
 

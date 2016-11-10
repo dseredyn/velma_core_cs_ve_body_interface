@@ -89,9 +89,11 @@ bool VelmaLLILoRx::configureHook() {
         if (ret == -1) {
             Logger::log() << Logger::Error << "invalid reader_t pointer" << Logger::endl;
         }
-
-        if (ret == -2) {
+        else if (ret == -2) {
             Logger::log() << Logger::Error << "no reader slots avalible" << Logger::endl;
+        }
+        else {
+            Logger::log() << Logger::Error << "create_reader error: " << ret << Logger::endl;
         }
         return false;
     }

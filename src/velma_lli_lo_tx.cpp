@@ -42,7 +42,6 @@ VelmaLLILoTx::VelmaLLILoTx(const std::string &name) :
 {
 //    mq_unlink("/lli_status");
     this->ports()->addPort("status_OUTPORT", port_status_out_);
-//    this->ports()->addPort("status_INPORT", port_status_in_);
 }
 
 bool VelmaLLILoTx::configureHook() {
@@ -68,9 +67,11 @@ bool VelmaLLILoTx::configureHook() {
         if (ret == -1) {
             Logger::log() << Logger::Error << "invalid writer_t pointer" << Logger::endl;
         }
-
-        if (ret == -2) {
+        else if (ret == -2) {
             Logger::log() << Logger::Error << "no writers slots avalible" << Logger::endl;
+        }
+        else {
+            Logger::log() << Logger::Error << "create_writer error: " << ret << Logger::endl;
         }
         return false;
     }
@@ -83,7 +84,7 @@ void VelmaLLILoTx::cleanupHook() {
 /*
     Logger::log() << Logger::Info << "releasing writer" << Logger::endl;
     Logger::log() << Logger::Info << "wr_.inuse: " << (size_t)(wr_.inuse) << Logger::endl;
-    release_writer(&wr_);     // this segfaults
+//    release_writer(&wr_);     // this segfaults
 
     Logger::log() << Logger::Info << "disconnecting channel" << Logger::endl;
     disconnect_channel(&chan_);
@@ -121,21 +122,23 @@ void VelmaLLILoTx::updateHook() {
         // write outputs
 //        Logger::log() << Logger::Debug << "test: " << status_.test << Logger::endl;
         port_status_out_.write(status_);
-    }
+//    }
 /*
-    if (buf_ == NULL) {
-        Logger::log() << Logger::Error << "writer get NULL buffer" << Logger::endl;
-        error();
-    }
-    else {
-        *buf_ = status_;
-        writer_buffer_write(&wr_);
-        Logger::log() << Logger::Debug << "sending command" << Logger::endl;
-    }
-    void *pbuf = NULL;
-    writer_buffer_get(&wr_, &pbuf);
-    buf_ = reinterpret_cast<VelmaLowLevelStatus*>(pbuf);
+        if (buf_ == NULL) {
+            Logger::log() << Logger::Error << "writer get NULL buffer" << Logger::endl;
+            error();
+        }
+        else {
+            *buf_ = status_;
+            writer_buffer_write(&wr_);
+//            Logger::log() << Logger::Debug << "sending command" << Logger::endl;
+        }
+        void *pbuf = NULL;
+        writer_buffer_get(&wr_, &pbuf);
+        buf_ = reinterpret_cast<VelmaLowLevelStatus*>(pbuf);
 */
+    }
+//*/
 //    UNRESTRICT_ALLOC;
 }
 

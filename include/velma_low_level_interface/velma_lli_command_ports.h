@@ -49,6 +49,9 @@
 
 #include "velma_low_level_interface/velma_lli_ports.h"
 
+#include "velma_low_level_interface/velma_lli_port_data_spec.h"
+
+
 using velma_low_level_interface_msgs::VelmaLowLevelCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandHand;

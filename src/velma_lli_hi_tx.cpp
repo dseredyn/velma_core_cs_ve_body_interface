@@ -69,9 +69,11 @@ bool VelmaLLIHiTx::configureHook() {
         if (ret == -1) {
             Logger::log() << Logger::Error << "invalid writer_t pointer" << Logger::endl;
         }
-
-        if (ret == -2) {
+        else if (ret == -2) {
             Logger::log() << Logger::Error << "no writers slots avalible" << Logger::endl;
+        }
+        else {
+            Logger::log() << Logger::Error << "create_writer error: " << ret << Logger::endl;
         }
         return false;
     }
@@ -115,14 +117,11 @@ void VelmaLLIHiTx::updateHook() {
     if (test_prev == cmd_out_.test) {
         Logger::In in("VelmaLLIHiTx::updateHook");
         Logger::log() << Logger::Warning << "executed updateHook twice for the same packet " << cmd_out_.test << Logger::endl;
+        error();
     }
     else {
 //        Logger::log() << Logger::Info << Logger::endl;
     }
-
-    if (cmd_out_.sc.valid) {
-//        Logger::log() << Logger::Info << "received valid sc cmd: " << cmd_out_.sc.cmd << Logger::endl;
-    }    
 
     if (buf_ == NULL) {
         Logger::In in("VelmaLLIHiTx::updateHook");
