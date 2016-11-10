@@ -50,9 +50,9 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
-#include "velma_low_level_interface/velma_lli_ports.h"
+#include "controller_common/interface_ports.h"
 
-#include "velma_low_level_interface/velma_lli_port_data_spec.h"
+#include "velma_low_level_interface/velma_lli_port_data.h"
 
 using velma_low_level_interface_msgs::VelmaLowLevelStatus;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusArm;
@@ -60,6 +60,8 @@ using velma_low_level_interface_msgs::VelmaLowLevelStatusHand;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusMotor;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusFT;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusSC;
+
+using namespace interface_ports;
 
 namespace velma_lli_types {
 

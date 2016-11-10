@@ -36,7 +36,6 @@
 #include "rtt/RTT.hpp"
 #include "rtt/os/TimeService.hpp"
 #include "Eigen/Dense"
-#include "Eigen/LU"
 
 #include <std_msgs/Int32.h>
 #include <geometry_msgs/Wrench.h>
@@ -44,95 +43,39 @@
 #include <diagnostic_msgs/DiagnosticArray.h>
 
 #include "eigen_conversions/eigen_msg.h"
-/*
-namespace Eigen {
-    typedef Matrix<double, 7, 7> Matrix77d;
-};
-*/
-namespace velma_lli_types {
 
-// general data type
-template <typename innerT, typename rosT >
-class PortRawData {
-public:
-    PortRawData() {
-    }
+#include "controller_common/interface_port_data.h"
 
-    void convertFromROS(const rosT &ros) {
-        data_ = ros;
-    }
+namespace interface_ports {
 
-    void convertToROS(rosT &ros) {
-        ros = data_;
-    }
-
-    innerT data_;
-};
-/*
 // specialized data type: array of double
-template <typename rosT>
-class PortRawData<Eigen::Matrix<double,7,1>, rosT > {
+template <int SIZE>
+class PortRawData<Eigen::Matrix<double,SIZE,1>, boost::array<double, SIZE> > {
 public:
     PortRawData() { }
 
-    void convertFromROS(const rosT &ros) {
-        for (int i = 0; i < rosT::size(); ++i) {
+    void convertFromROS(const boost::array<double, SIZE> &ros) {
+        for (int i = 0; i < SIZE; ++i) {
             data_(i) = ros[i];
         }
     }
 
-    void convertToROS(rosT &ros) {
-        for (int i = 0; i < rosT::size(); ++i) {
+    void convertToROS(boost::array<double, SIZE> &ros) {
+        for (int i = 0; i < SIZE; ++i) {
             ros[i] = data_(i);
         }
     }
 
-    Eigen::Matrix<double,7,1> data_;
+    Eigen::Matrix<double,SIZE,1> data_;
 };
 
-template <typename rosT>
-class PortRawData<Eigen::Matrix<double,4,1>, rosT > {
-public:
-    PortRawData() { }
-
-    void convertFromROS(const rosT &ros) {
-        for (int i = 0; i < rosT::size(); ++i) {
-            data_(i) = ros[i];
-        }
-    }
-
-    void convertToROS(rosT &ros) {
-        for (int i = 0; i < rosT::size(); ++i) {
-            ros[i] = data_(i);
-        }
-    }
-
-    Eigen::Matrix<double,4,1> data_;
-};
-
-template <typename rosT>
-class PortRawData<Eigen::Matrix<double,8,1>, rosT > {
-public:
-    PortRawData() { }
-
-    void convertFromROS(const rosT &ros) {
-        for (int i = 0; i < rosT::size(); ++i) {
-            data_(i) = ros[i];
-        }
-    }
-
-    void convertToROS(rosT &ros) {
-        for (int i = 0; i < rosT::size(); ++i) {
-            ros[i] = data_(i);
-        }
-    }
-
-    Eigen::Matrix<double,8,1> data_;
-};
+template class PortRawData<Eigen::Matrix<double,4,1>, boost::array<double, 4> >;
+template class PortRawData<Eigen::Matrix<double,7,1>, boost::array<double, 7> >;
+template class PortRawData<Eigen::Matrix<double,8,1>, boost::array<double, 8> >;
 
 // specialized data type: 7x7 mass matrix
 template < >
-class PortRawData<Eigen::Matrix77d, boost::array<double, 28ul> > {
+class PortRawData<Eigen::Matrix<double, 7, 7>, boost::array<double, 28ul> > {
 public:
     PortRawData() {
     }
@@ -153,10 +96,10 @@ public:
         }
     }
 
-    Eigen::Matrix77d data_;
+    Eigen::Matrix<double, 7, 7> data_;
 };
-*/
-};  // namespace velma_lli_types
+
+};  // namespace interface_ports
 
 #endif  // __VELMA_LLI_PORT_DATA_H__
 

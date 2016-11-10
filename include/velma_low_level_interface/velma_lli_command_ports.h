@@ -47,9 +47,9 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
-#include "velma_low_level_interface/velma_lli_ports.h"
+#include "controller_common/interface_ports.h"
 
-#include "velma_low_level_interface/velma_lli_port_data_spec.h"
+#include "velma_low_level_interface/velma_lli_port_data.h"
 
 
 using velma_low_level_interface_msgs::VelmaLowLevelCommand;
@@ -57,6 +57,8 @@ using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandHand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandSimple;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandMotor;
+
+using namespace interface_ports;
 
 namespace velma_lli_types {
 
