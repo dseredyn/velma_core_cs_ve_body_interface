@@ -100,15 +100,15 @@ VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc) :
     htMotor_(new MotorStatus_Ports<T > (tc, "status_htMotor", &VelmaLowLevelStatus::htMotor))
 {
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >(new Port<T, uint32_t, VelmaLowLevelStatus, VelmaLowLevelStatus::_test_type >(tc, "status_test", &VelmaLowLevelStatus::test)));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(rArm_) ));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(lArm_) ));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(rHand_) ));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(lHand_) ));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(rFt_) ));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(lFt_) ));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(tMotor_) ));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(hpMotor_) ));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(htMotor_) ));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(rArm_) )).setName("rArm");
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(lArm_) )).setName("lArm");
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(rHand_) )).setName("rHand");
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(lHand_) )).setName("lHand");
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(rFt_) )).setName("rFt");
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(lFt_) )).setName("lFt");
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(tMotor_) )).setName("tMotor");
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(hpMotor_) )).setName("hpMotor");
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( boost::dynamic_pointer_cast<PortInterface<VelmaLowLevelStatus > >(htMotor_) )).setName("htMotor");
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >(new Port<T, barrett_hand_controller_msgs::BHPressureState, VelmaLowLevelStatus, VelmaLowLevelStatus::_rHand_p_type> (tc, "status_rHand_p", &VelmaLowLevelStatus::rHand_p)));
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >(new Port<T, VelmaLowLevelStatus::_lHand_f_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_lHand_f_type> (tc, "status_lHand_f", &VelmaLowLevelStatus::lHand_f)));
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >(new Port<T, VelmaLowLevelStatus::_sc_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_sc_type> (tc, "status_sc", &VelmaLowLevelStatus::sc)));
@@ -135,6 +135,10 @@ const velma_lli_types::VelmaStatus_Ports<RTT::InputPort >& VelmaLLIStatusInput::
 
 bool VelmaLLIStatusInput::isAllDataValid() const {
     return ports_in_.isValid();
+}
+
+bool VelmaLLIStatusInput::isValid(const std::string& name) const {
+    return ports_in_.isValid(name);
 }
 
 //

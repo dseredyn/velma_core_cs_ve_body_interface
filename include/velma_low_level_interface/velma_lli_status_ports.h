@@ -121,6 +121,8 @@ public:
 
     bool isAllDataValid() const;
 
+    bool isValid(const std::string& name) const;
+
 protected:
     velma_lli_types::VelmaStatus_Ports<RTT::InputPort > ports_in_;
 };
