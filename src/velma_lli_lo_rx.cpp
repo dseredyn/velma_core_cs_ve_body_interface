@@ -72,6 +72,8 @@ bool VelmaLLILoRx::pushBackPeerExecution(const std::string &peer_name) {
 bool VelmaLLILoRx::configureHook() {
     Logger::In in("VelmaLLILoRx::configureHook");
 
+    shm_unlink(shm_name_);
+
     if (create_shm_object(shm_name_, sizeof(VelmaLowLevelCommand), 1) != 0) {
         Logger::log() << Logger::Error << "create_shm_object failed" << Logger::endl;
         return false;
@@ -95,7 +97,7 @@ bool VelmaLLILoRx::configureHook() {
         else {
             Logger::log() << Logger::Error << "create_reader error: " << ret << Logger::endl;
         }
-        return false;
+//        return false;
     }
 
     TaskContext::PeerList l = this->getPeerList();

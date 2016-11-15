@@ -117,7 +117,7 @@ void VelmaLLILoTx::updateHook() {
 // TODO: check for new data
 //    if (port_status_in_.read(status_) == RTT::NewData) {
 
-    if (in_.isAllDataValid()) {
+    if (true) {//in_.isAllDataValid()) {
 //        Logger::In in("VelmaLLILoTx::updateHook");
         // write outputs
 //        Logger::log() << Logger::Debug << "test: " << status_.test << Logger::endl;

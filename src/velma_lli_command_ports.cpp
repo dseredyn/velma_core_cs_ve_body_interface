@@ -33,195 +33,54 @@ using velma_low_level_interface_msgs::VelmaLowLevelCommandSimple;
 
 namespace velma_lli_types {
 
-// example of specialized code
-// arm
-/*
-template < >
-void PortData<Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type, &VelmaLowLevelCommandArm::t>::convertToROS() {
-    for (int i = 0; i < 7; ++i) {
-        getDataRef()(i) = container_.t[i];
-    }
-}
-template < >
-void PortData<Eigen::VectorXd, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type, &VelmaLowLevelCommandArm::t>::convertFromROS() {
-    for (int i = 0; i < 7; ++i) {
-        container_.t[i] = getDataRef()(i);
-    }
-}
-*/
-
 //
 // ArmCommand_Ports interface
 //
 template <template <typename Type> class T >
-ArmCommand_Ports<T >::ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix) :
-    t_(tc, prefix + "_t")
-{}
+ArmCommand_Ports<T >::ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandArm VelmaLowLevelCommand::*ptr) :
+    PortsContainer(ptr)
+{
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandArm > >(new Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type >(tc, prefix + "_t", &VelmaLowLevelCommandArm::t)));
 
-// read ports
-template <>
-void ArmCommand_Ports<RTT::InputPort >::readPorts() {
-    t_.operation();
 }
-
-// write ports
-template <>
-void ArmCommand_Ports<RTT::OutputPort >::writePorts() {
-    t_.operation();
-}
-
-
-template <>
-void ArmCommand_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelCommandArm &ros) {
-    t_.convertFromROS(ros);
-}
-
-template <>
-void ArmCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommandArm &ros) {
-    t_.convertToROS(ros);
-}
-
-
-
-
 
 //
 // HandCommand_Ports interface
 //
 template <template <typename Type> class T >
-HandCommand_Ports<T>::HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix) :
-    q_(tc, prefix + "_q"),
-    dq_(tc, prefix + "_dq"),
-    max_i_(tc, prefix + "_max_i"),
-    max_p_(tc, prefix + "_max_p"),
-    hold_(tc, prefix + "_hold"),
-    valid_(false)
+HandCommand_Ports<T>::HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandHand VelmaLowLevelCommand::*ptr) :
+    PortsContainer(ptr)
 {
-}
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandHand > >(new Port<T, Eigen::Matrix<double,4,1>, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_q_type >(tc, prefix + "_q", &VelmaLowLevelCommandHand::q)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandHand > >(new Port<T, Eigen::Matrix<double,4,1>, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_dq_type >(tc, prefix + "_dq", &VelmaLowLevelCommandHand::dq)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandHand > >(new Port<T, Eigen::Matrix<double,4,1>, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_i_type >(tc, prefix + "_max_i", &VelmaLowLevelCommandHand::max_i)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandHand > >(new Port<T, Eigen::Matrix<double,4,1>, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_max_p_type >(tc, prefix + "_max_p", &VelmaLowLevelCommandHand::max_p)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandHand > >(new Port<T, bool, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_hold_type >(tc, prefix + "_hold", &VelmaLowLevelCommandHand::hold)));
 
-// read ports
-template <>
-void HandCommand_Ports<RTT::InputPort >::readPorts() {
-    valid_ = q_.operation();
-    valid_ &= dq_.operation();
-    valid_ &= max_i_.operation();
-    valid_ &= max_p_.operation();
-    valid_ &= hold_.operation();
-}
-
-// write ports
-template <>
-void HandCommand_Ports<RTT::OutputPort >::writePorts() {
-    if (valid_) {
-        q_.operation();
-        dq_.operation();
-        max_i_.operation();
-        max_p_.operation();
-        hold_.operation();
-    }
-}
-
-template <>
-void HandCommand_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelCommandHand &ros) {
-    q_.convertFromROS(ros);
-    dq_.convertFromROS(ros);
-    max_i_.convertFromROS(ros);
-    max_p_.convertFromROS(ros);
-    hold_.convertFromROS(ros);
-    valid_ = ros.valid;
-}
-
-template <>
-void HandCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommandHand &ros) {
-    q_.convertToROS(ros);
-    dq_.convertToROS(ros);
-    max_i_.convertToROS(ros);
-    max_p_.convertToROS(ros);
-    hold_.convertToROS(ros);
-    ros.valid = valid_;
 }
 
 //
 // SimpleCommand_Ports interface
 //
 template <template <typename Type> class T >
-SimpleCommand_Ports<T>::SimpleCommand_Ports(RTT::TaskContext &tc, const std::string &prefix) :
-    cmd_(tc, prefix + "_cmd"),
-    valid_(false)
+SimpleCommand_Ports<T>::SimpleCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandSimple VelmaLowLevelCommand::*ptr) :
+    PortsContainer(ptr)
 {
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandSimple > >(new Port<T, int32_t, VelmaLowLevelCommandSimple, VelmaLowLevelCommandSimple::_cmd_type>(tc, prefix + "_cmd", &VelmaLowLevelCommandSimple::cmd)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandSimple > >(new Port<T, bool, VelmaLowLevelCommandSimple, VelmaLowLevelCommandSimple::_valid_type>(tc, prefix + "_valid", &VelmaLowLevelCommandSimple::valid)));
 }
-
-// read ports
-template <>
-bool SimpleCommand_Ports<RTT::InputPort >::readPorts() {
-    valid_ = cmd_.operation();
-    return valid_;
-}
-
-// write ports
-template <>
-void SimpleCommand_Ports<RTT::OutputPort >::writePorts() {
-    if (valid_) {
-        cmd_.operation();
-    }
-}
-
-template <>
-void SimpleCommand_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelCommandSimple &ros) {
-    cmd_.convertFromROS(ros);
-    valid_ = ros.valid;
-}
-
-template <>
-void SimpleCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommandSimple &ros) {
-    cmd_.convertToROS(ros);
-    ros.valid = valid_;
-}
-
-
 
 //
 // MotorCommand_Ports interface
 //
 template <template <typename Type> class T >
-MotorCommand_Ports<T >::MotorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix) :
-    i_(tc, prefix + "_i"),
-    q_(tc, prefix + "_q"),
-    dq_(tc, prefix + "_dq")
-{}
-
-// read ports
-template <>
-void MotorCommand_Ports<RTT::InputPort >::readPorts() {
-    i_.operation();
-    q_.operation();
-    dq_.operation();
+MotorCommand_Ports<T >::MotorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandMotor VelmaLowLevelCommand::*ptr) :
+    PortsContainer(ptr)
+{
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandMotor > >(new Port<T, double, VelmaLowLevelCommandMotor, VelmaLowLevelCommandMotor::_i_type >(tc, prefix + "_i", &VelmaLowLevelCommandMotor::i)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandMotor > >(new Port<T, double, VelmaLowLevelCommandMotor, VelmaLowLevelCommandMotor::_q_type >(tc, prefix + "_q", &VelmaLowLevelCommandMotor::q)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandMotor > >(new Port<T, double, VelmaLowLevelCommandMotor, VelmaLowLevelCommandMotor::_dq_type >(tc, prefix + "_dq", &VelmaLowLevelCommandMotor::dq)));
 }
-
-// write ports
-template <>
-void MotorCommand_Ports<RTT::OutputPort >::writePorts() {
-    i_.operation();
-    q_.operation();
-    dq_.operation();
-}
-
-
-template <>
-void MotorCommand_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelCommandMotor &ros) {
-    i_.convertFromROS(ros);
-    q_.convertFromROS(ros);
-    dq_.convertFromROS(ros);
-}
-
-template <>
-void MotorCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommandMotor &ros) {
-    i_.convertToROS(ros);
-    q_.convertToROS(ros);
-    dq_.convertToROS(ros);
-}
-
-
 
 //
 // FTSensorCommand_Ports interface
@@ -234,77 +93,19 @@ FTSensorCommand_Ports<T >::FTSensorCommand_Ports(RTT::TaskContext &tc, const std
 // VelmaCommand_Ports interface
 //
 template <template <typename Type> class T>
-VelmaCommand_Ports<T >::VelmaCommand_Ports(RTT::TaskContext &tc) :
-    rArm_(tc, "cmd_rArm"),
-    lArm_(tc, "cmd_lArm"),
-    rHand_(tc, "cmd_rHand"),
-    lHand_(tc, "cmd_lHand"),
-    rTact_(tc, "cmd_rTact"),
-    tMotor_(tc, "cmd_tMotor"),
-    hpMotor_(tc, "cmd_hpMotor"),
-    htMotor_(tc, "cmd_htMotor"),
-    sc_(tc, "cmd_safety_controller"),
-    test_(tc, "cmd_test")
+VelmaCommand_Ports<T >::VelmaCommand_Ports(RTT::TaskContext &tc)
 {
-}
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new Port<T, uint32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_test_type >(tc, "cmd_test", &VelmaLowLevelCommand::test)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new ArmCommand_Ports<T >(tc, "cmd_rArm", &VelmaLowLevelCommand::rArm)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new ArmCommand_Ports<T >(tc, "cmd_lArm", &VelmaLowLevelCommand::lArm)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new HandCommand_Ports<T >(tc, "cmd_rHand", &VelmaLowLevelCommand::rHand)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new HandCommand_Ports<T >(tc, "cmd_lHand", &VelmaLowLevelCommand::lHand)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new SimpleCommand_Ports<T >(tc, "cmd_rTact", &VelmaLowLevelCommand::rTact)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new MotorCommand_Ports<T >(tc, "cmd_tMotor", &VelmaLowLevelCommand::tMotor)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new MotorCommand_Ports<T >(tc, "cmd_hpMotor", &VelmaLowLevelCommand::hpMotor)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new MotorCommand_Ports<T >(tc, "cmd_htMotor", &VelmaLowLevelCommand::htMotor)));
+    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new SimpleCommand_Ports<T >(tc, "cmd_safety_controller", &VelmaLowLevelCommand::sc)));
 
-// read ports
-template <>
-void VelmaCommand_Ports<RTT::InputPort >::readPorts() {
-    rArm_.readPorts();
-    lArm_.readPorts();
-    rHand_.readPorts();
-    lHand_.readPorts();
-    rTact_.readPorts();
-    tMotor_.readPorts();
-    hpMotor_.readPorts();
-    htMotor_.readPorts();
-    sc_.readPorts();
-    test_.operation();
-}
-
-// write ports
-template <>
-void VelmaCommand_Ports<RTT::OutputPort >::writePorts() {
-    rArm_.writePorts();
-    lArm_.writePorts();
-    rHand_.writePorts();
-    lHand_.writePorts();
-    rTact_.writePorts();
-    tMotor_.writePorts();
-    hpMotor_.writePorts();
-    htMotor_.writePorts();
-    sc_.writePorts();
-    test_.operation();
-}
-
-template <>
-void VelmaCommand_Ports<RTT::OutputPort >::convertFromROS(const VelmaLowLevelCommand &ros) {
-    rArm_.convertFromROS(ros.rArm);
-    lArm_.convertFromROS(ros.lArm);
-    rHand_.convertFromROS(ros.rHand);
-    lHand_.convertFromROS(ros.lHand);
-    rTact_.convertFromROS(ros.rTact);
-    tMotor_.convertFromROS(ros.tMotor);
-    hpMotor_.convertFromROS(ros.hpMotor);
-    htMotor_.convertFromROS(ros.htMotor);
-    sc_.convertFromROS(ros.sc);
-    test_.convertFromROS(ros);
-
-}
-
-template <>
-void VelmaCommand_Ports<RTT::InputPort >::convertToROS(VelmaLowLevelCommand &ros) {
-    rArm_.convertToROS(ros.rArm);
-    lArm_.convertToROS(ros.lArm);
-    rHand_.convertToROS(ros.rHand);
-    lHand_.convertToROS(ros.lHand);
-    rTact_.convertToROS(ros.rTact);
-    tMotor_.convertToROS(ros.tMotor);
-    hpMotor_.convertToROS(ros.hpMotor);
-    htMotor_.convertToROS(ros.htMotor);
-    sc_.convertToROS(ros.sc);
-    test_.convertToROS(ros);
 }
 
 };

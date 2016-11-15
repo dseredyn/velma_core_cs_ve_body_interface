@@ -183,7 +183,7 @@ void VelmaLLIHiRx::updateHook() {
         if (test_prev == status_in_.test) {
             Logger::In in("VelmaLLIHiRx::updateHook");
             Logger::log() << Logger::Warning << "executed updateHook twice for the same packet " << status_in_.test << Logger::endl;
-            error();
+//            error();
         }
 
         out_.writePorts(status_in_);

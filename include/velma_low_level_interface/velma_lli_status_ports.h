@@ -66,128 +66,47 @@ using namespace interface_ports;
 namespace velma_lli_types {
 
 template <template <typename Type> class T>
-class ArmStatus_Ports {
+class ArmStatus_Ports : public PortsContainer<VelmaLowLevelStatus, VelmaLowLevelStatusArm > {
 public:
-    ArmStatus_Ports();
-    ArmStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
-
-    void readPorts();
-    void writePorts();
-
-    void convertFromROS(const VelmaLowLevelStatusArm &ros);
-    void convertToROS(VelmaLowLevelStatusArm &ros);
-
-    Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_q_type, &VelmaLowLevelStatusArm::q> q_;
-    Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_dq_type, &VelmaLowLevelStatusArm::dq> dq_;
-    Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_t_type, &VelmaLowLevelStatusArm::t> t_;
-    Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_gt_type, &VelmaLowLevelStatusArm::gt> gt_;
-    Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_w_type, &VelmaLowLevelStatusArm::w> w_;
-    Port<T, Eigen::Matrix<double,7,7>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_mmx_type, &VelmaLowLevelStatusArm::mmx> mmx_;
-
-    bool valid_;
-    bool valid_prev_;
+    ArmStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusArm VelmaLowLevelStatus::*ptr);
 };
 
 template <template <typename Type> class T>
-class HandStatus_Ports {
+class HandStatus_Ports : public PortsContainer<VelmaLowLevelStatus, VelmaLowLevelStatusHand > {
 public:
-    HandStatus_Ports();
-    HandStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
-
-    void readPorts();
-    void writePorts();
-
-    void convertFromROS(const VelmaLowLevelStatusHand &ros);
-    void convertToROS(VelmaLowLevelStatusHand &ros);
-
-    Port<T, Eigen::Matrix<double,8,1>, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type, &VelmaLowLevelStatusHand::q> q_;
-    Port<T, uint32_t, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_s_type, &VelmaLowLevelStatusHand::s> s_;
-
-    bool valid_;
+    HandStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusHand VelmaLowLevelStatus::*ptr);
 };
 
 template <template <typename Type> class T>
-class MotorStatus_Ports {
+class MotorStatus_Ports : public PortsContainer<VelmaLowLevelStatus, VelmaLowLevelStatusMotor > {
 public:
-    MotorStatus_Ports();
-    MotorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
-
-    void readPorts();
-    void writePorts();
-
-    void convertFromROS(const VelmaLowLevelStatusMotor &ros);
-    void convertToROS(VelmaLowLevelStatusMotor &ros);
-
-    Port<T, double, VelmaLowLevelStatusMotor, VelmaLowLevelStatusMotor::_q_type, &VelmaLowLevelStatusMotor::q> q_;
-    Port<T, double, VelmaLowLevelStatusMotor, VelmaLowLevelStatusMotor::_dq_type, &VelmaLowLevelStatusMotor::dq> dq_;
-
-    bool valid_;
+    MotorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusMotor VelmaLowLevelStatus::*ptr);
 };
 
 template <template <typename Type> class T>
-class FTSensorStatus_Ports {
+class FTSensorStatus_Ports : public PortsContainer<VelmaLowLevelStatus, VelmaLowLevelStatusFT > {
 public:
-    FTSensorStatus_Ports();
-    FTSensorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix);
-
-    void readPorts();
-    void writePorts();
-
-    void convertFromROS(const VelmaLowLevelStatusFT &ros);
-    void convertToROS(VelmaLowLevelStatusFT &ros);
-
-    Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_rw_type, &VelmaLowLevelStatusFT::rw> rw_;
-    Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_ffw_type, &VelmaLowLevelStatusFT::ffw> ffw_;
-    Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_sfw_type, &VelmaLowLevelStatusFT::sfw> sfw_;
-
-    bool valid_;
+    FTSensorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusFT VelmaLowLevelStatus::*ptr);
 };
 
 template <template <typename Type> class T>
-class VelmaStatus_Ports{
+class VelmaStatus_Ports : public PortsContainerOuter<VelmaLowLevelStatus > {
 public:
-    VelmaStatus_Ports();
     VelmaStatus_Ports(RTT::TaskContext &tc);
 
-    void readPorts();
-    void writePorts();
+    boost::shared_ptr<ArmStatus_Ports<T > > rArm_;
+    boost::shared_ptr<ArmStatus_Ports<T > > lArm_;
 
-    void convertFromROS(const VelmaLowLevelStatus &ros);
-    void convertToROS(VelmaLowLevelStatus &ros);
+    boost::shared_ptr<HandStatus_Ports<T > > rHand_;
+    boost::shared_ptr<HandStatus_Ports<T > > lHand_;
 
-    Port<T, uint32_t, VelmaLowLevelStatus, VelmaLowLevelStatus::_test_type, &VelmaLowLevelStatus::test> test_;
+    boost::shared_ptr<FTSensorStatus_Ports<T > > rFt_;
+    boost::shared_ptr<FTSensorStatus_Ports<T > > lFt_;
 
-    // right LWR
-    ArmStatus_Ports<T > rArm_;
+    boost::shared_ptr<MotorStatus_Ports<T > > tMotor_;
+    boost::shared_ptr<MotorStatus_Ports<T > > hpMotor_;
+    boost::shared_ptr<MotorStatus_Ports<T > > htMotor_;
 
-    // left LWR
-    ArmStatus_Ports<T > lArm_;
-
-    // right BarrettHand
-    HandStatus_Ports<T > rHand_;
-
-    // left BarrettHand
-    HandStatus_Ports<T > lHand_;
-
-    // right FT sensor
-    FTSensorStatus_Ports<T > rFt_;
-
-    // left FT sensor
-    FTSensorStatus_Ports<T > lFt_;
-
-    MotorStatus_Ports<T> tMotor_;
-
-    MotorStatus_Ports<T> hpMotor_;
-
-    MotorStatus_Ports<T> htMotor_;
-
-    Port<T, barrett_hand_controller_msgs::BHPressureState, VelmaLowLevelStatus, VelmaLowLevelStatus::_rHand_p_type, &VelmaLowLevelStatus::rHand_p> rHand_p_;
-
-    Port<T, VelmaLowLevelStatus::_lHand_f_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_lHand_f_type, &VelmaLowLevelStatus::lHand_f> lHand_f_;
-
-    Port<T, VelmaLowLevelStatus::_sc_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_sc_type, &VelmaLowLevelStatus::sc> sc_;
-
-    bool valid_;
 };
 
 };  // namespace velma_lli_types
