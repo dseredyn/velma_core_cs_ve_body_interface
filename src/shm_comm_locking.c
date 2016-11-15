@@ -77,6 +77,7 @@ int init_channel_hdr (int size, int readers, int flags, channel_hdr_t *shdata)
   for (size_t i = 0; i < readers; i++)
   {
     pthread_mutexattr_t mutexAttr;
+    pthread_mutexattr_init(&mutexAttr);
     pthread_mutexattr_setpshared(&mutexAttr, PTHREAD_PROCESS_SHARED);
     pthread_mutexattr_setrobust(&mutexAttr, PTHREAD_MUTEX_ROBUST);
     pthread_mutex_init(&reader_ids[i], &mutexAttr);
