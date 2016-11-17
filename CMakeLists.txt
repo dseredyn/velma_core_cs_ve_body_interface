@@ -10,8 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   barrett_hand_controller_msgs
   eigen_conversions
   kdl_conversions cmake_modules
-  controller_common
-  shm_comm
+  common_interfaces
   )
 
 find_package(OROCOS-RTT REQUIRED COMPONENTS rtt-scripting rtt-transport-corba)
@@ -58,7 +57,7 @@ target_link_libraries(velma_low_level_interface ${catkin_LIBRARIES})
 orocos_generate_package(
   INCLUDE_DIRS include
   LIBRARIES velma_low_level_interface
-  DEPENDS rtt_ros geometry_msgs std_msgs message_runtime rtt_roscomm controller_common
+  CATKIN_DEPENDS rtt_ros geometry_msgs std_msgs message_runtime rtt_roscomm common_interfaces
 )
 
 #orocos_install_headers(

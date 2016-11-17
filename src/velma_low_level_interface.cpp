@@ -38,8 +38,8 @@
 #include "velma_low_level_interface/velma_lli_status_ports.h"
 #include "velma_low_level_interface/velma_lli_command_ports.h"
 
-#include "interface_tx.h"
-#include "interface_rx.h"
+#include "common_interfaces/interface_tx.h"
+#include "common_interfaces/interface_rx.h"
 
 typedef InterfaceTx<velma_lli_types::VelmaStatus_Ports > VelmaLLILoTx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLILoTx)

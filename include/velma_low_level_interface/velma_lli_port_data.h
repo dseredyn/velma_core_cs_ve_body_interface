@@ -44,7 +44,7 @@
 
 #include "eigen_conversions/eigen_msg.h"
 
-#include "controller_common/interface_port_data.h"
+#include "common_interfaces/interface_port_data.h"
 
 namespace interface_ports {
 
