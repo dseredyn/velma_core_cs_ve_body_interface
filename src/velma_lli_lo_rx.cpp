@@ -72,32 +72,46 @@ bool VelmaLLILoRx::pushBackPeerExecution(const std::string &peer_name) {
 bool VelmaLLILoRx::configureHook() {
     Logger::In in("VelmaLLILoRx::configureHook");
 
-    shm_unlink(shm_name_);
+    bool create_channel = false;
 
-    if (create_shm_object(shm_name_, sizeof(VelmaLowLevelCommand), 1) != 0) {
-        Logger::log() << Logger::Error << "create_shm_object failed" << Logger::endl;
+    int result = shm_connect_reader(shm_name_, &re_);
+    if (result == SHM_INVAL) {
+        Logger::log() << Logger::Error << "shm_connect_reader: invalid parameters" << Logger::endl;
+        return false;
+    }
+    else if (result == SHM_FATAL) {
+        Logger::log() << Logger::Error << "shm_connect_reader: memory error" << Logger::endl;
+        return false;
+    }
+    else if (result == SHM_NO_CHANNEL) {
+        Logger::log() << Logger::Warning << "shm_connect_reader: could not open shm object, trying to initialize the channel..." << Logger::endl;
+        create_channel = true;
+    }
+    else if (result == SHM_CHANNEL_INCONSISTENT) {
+        Logger::log() << Logger::Warning << "shm_connect_reader: shm channel is inconsistent, trying to initialize the channel..." << Logger::endl;
+        create_channel = true;
+    }
+    else if (result == SHM_ERR_INIT) {
+        Logger::log() << Logger::Error << "shm_connect_reader: could not initialize channel" << Logger::endl;
+        return false;
+    }
+    else if (result == SHM_ERR_CREATE) {
+        Logger::log() << Logger::Error << "shm_connect_reader: could not create reader" << Logger::endl;
         return false;
     }
 
-    if (connect_channel(shm_name_, &chan_) != 0) {
-        Logger::log() << Logger::Error << "connect_channel failed" << Logger::endl;
-        return false;
-    }
-
-    int ret = create_reader(&chan_, &re_);
-
-    if (ret != 0) {
-
-        if (ret == -1) {
-            Logger::log() << Logger::Error << "invalid reader_t pointer" << Logger::endl;
+    if (create_channel) {
+        result = shm_create_channel(shm_name_, sizeof(VelmaLowLevelCommand), 1, true);
+        if (result != 0) {
+            Logger::log() << Logger::Error << "create_shm_object: error: " << result << "   errno: " << errno << Logger::endl;
+            return false;
         }
-        else if (ret == -2) {
-            Logger::log() << Logger::Error << "no reader slots avalible" << Logger::endl;
+
+        result = shm_connect_reader(shm_name_, &re_);
+        if (result != 0) {
+            Logger::log() << Logger::Error << "shm_connect_reader: error: " << result << Logger::endl;
+            return false;
         }
-        else {
-            Logger::log() << Logger::Error << "create_reader error: " << ret << Logger::endl;
-        }
-//        return false;
     }
 
     TaskContext::PeerList l = this->getPeerList();
@@ -142,18 +156,28 @@ bool VelmaLLILoRx::configureHook() {
 }
 
 void VelmaLLILoRx::cleanupHook() {
-    const size_t size = CHANNEL_DATA_SIZE(chan_.hdr->size, chan_.hdr->max_readers);
+    shm_release_reader(re_);
 
-    release_reader(&re_);
+    shm_remove_channel(shm_name_);
 
-    disconnect_channel(&chan_);
+//    disconnect_channel(&chan_);
 
-    delete_shm_object(shm_name_);
+//    delete_shm_object(shm_name_);
 }
 
 bool VelmaLLILoRx::startHook() {
 //    RESTRICT_ALLOC;
-    buf_prev_ = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
+    void *pbuf = NULL;
+
+    int result = shm_reader_buffer_get(re_, &pbuf);
+    if (result < 0) {
+        Logger::In in("VelmaLLILoRx::startHook");
+        Logger::log() << Logger::Error << "shm_reader_buffer_get failed: "
+                      << result << Logger::endl;
+        return false;
+    }
+
+    buf_prev_ = reinterpret_cast<VelmaLowLevelCommand*>( pbuf );
 
     receiving_data_ = false;
 
@@ -170,19 +194,28 @@ void VelmaLLILoRx::updateHook() {
 //    UNRESTRICT_ALLOC;
 
 //*
+    void *pbuf = NULL;
     VelmaLowLevelCommand *buf = NULL;
 
+    bool buffer_valid = false;
     if (receiving_data_) {
-        buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_timedwait(&re_, 1, 0) );
+        timespec ts;
+        clock_gettime(CLOCK_REALTIME, &ts);
+        ts.tv_sec += 1;
+        buffer_valid = (shm_reader_buffer_timedwait(re_, &ts, &pbuf) == 0);
     }
     else {
-        buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
+        buffer_valid = (shm_reader_buffer_get(re_, &pbuf) == 0);
+    }
+
+    if (buffer_valid) {
+        buf = reinterpret_cast<VelmaLowLevelCommand*>( pbuf );
     }
 /*/
     VelmaLowLevelCommand *buf = reinterpret_cast<VelmaLowLevelCommand*>( reader_buffer_get(&re_) );
 //*/
 
-    if (buf == NULL) {
+    if (!buffer_valid) {
 //        Logger::In in("VelmaLLILoRx::updateHook");
 //        Logger::log() << Logger::Debug << "could not receive data (NULL buffer)" << Logger::endl;
         receiving_data_ = false;

@@ -54,6 +54,13 @@ VelmaLLIHiTx::VelmaLLIHiTx(const std::string &name) :
 bool VelmaLLIHiTx::configureHook() {
     Logger::In in("VelmaLLIHiTx::configureHook");
 
+    int result = shm_connect_writer("velma_lli_cmd", &wr_);
+    if (result != 0) {
+        Logger::log() << Logger::Error << "shm_connect_writer: error: " << result << Logger::endl;
+        return false;
+    }
+
+/*
     if (connect_channel("velma_lli_cmd", &chan_) != 0) {
         Logger::log() << Logger::Error << "connect_channel failed" << Logger::endl;
         return false;
@@ -77,28 +84,30 @@ bool VelmaLLIHiTx::configureHook() {
         }
         return false;
     }
-
+*/
     return true;
 }
 
 void VelmaLLIHiTx::cleanupHook() {
     Logger::In in("VelmaLLIHiTx::cleanupHook");
 
-    Logger::log() << Logger::Info << "releasing writer" << Logger::endl;
-    Logger::log() << Logger::Info << "wr_.inuse: " << (size_t)(wr_.inuse) << Logger::endl;
-    release_writer(&wr_);     // this segfaults
+//    Logger::log() << Logger::Info << "releasing writer" << Logger::endl;
+//    Logger::log() << Logger::Info << "wr_.inuse: " << (size_t)(wr_.inuse) << Logger::endl;
+    shm_release_writer(wr_);     // this segfaults
 
-    Logger::log() << Logger::Info << "disconnecting channel" << Logger::endl;
-    disconnect_channel(&chan_);
+//    Logger::log() << Logger::Info << "disconnecting channel" << Logger::endl;
+//    disconnect_channel(&chan_);
 }
 
 bool VelmaLLIHiTx::startHook() {
     Logger::In in("VelmaLLIHiTx::startHook");
 //    Logger::log() << Logger::Info << Logger::endl;
     void *pbuf = NULL;
-    writer_buffer_get(&wr_, &pbuf);
+    if (shm_writer_buffer_get(wr_, &pbuf) != 0) {
+        return false;
+    }
+
     buf_ = reinterpret_cast<VelmaLowLevelCommand*>(pbuf);
-    test_counter_ = 100;
     return true;
 }
 
@@ -106,10 +115,6 @@ void VelmaLLIHiTx::stopHook() {
 }
 
 void VelmaLLIHiTx::updateHook() {
-//    RESTRICT_ALLOC;
-    // write outputs
-//    UNRESTRICT_ALLOC;
-
     uint32_t test_prev = cmd_out_.test;
 
     in_.readPorts(cmd_out_);
@@ -130,11 +135,11 @@ void VelmaLLIHiTx::updateHook() {
     }
     else {
         *buf_ = cmd_out_;
-        writer_buffer_write(&wr_);
+        shm_writer_buffer_write(wr_);
 //        Logger::log() << Logger::Debug << "sending command" << Logger::endl;
     }
     void *pbuf = NULL;
-    writer_buffer_get(&wr_, &pbuf);
+    shm_writer_buffer_get(wr_, &pbuf);
     buf_ = reinterpret_cast<VelmaLowLevelCommand*>(pbuf);
 }
 

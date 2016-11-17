@@ -28,7 +28,7 @@
 #ifndef VELMA_LLI_HI_RX_H_
 #define VELMA_LLI_HI_RX_H_
 
-#include "shm_comm_api.h"
+#include "shm_comm/shm_channel.h"
 
 #include <cstring>
 
@@ -76,8 +76,6 @@ private:
     int counter_;
 
     const char *shm_name_;
-//    channel_t chan_;
-//    reader_t re_;
     VelmaLowLevelStatus *buf_prev_;
 
     std::list<std::string > peer_list_;

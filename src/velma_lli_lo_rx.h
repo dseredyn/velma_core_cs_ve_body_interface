@@ -28,7 +28,8 @@
 #ifndef VELMA_LLI_LO_RX_H_
 #define VELMA_LLI_LO_RX_H_
 
-#include "shm_comm_api.h"
+//#include "shm_comm_api.h"
+#include "shm_comm/shm_channel.h"
 
 #include <cstring>
 
@@ -67,9 +68,9 @@ public:
 
 private:
 
-    const char *shm_name_;
-    channel_t chan_;
-    reader_t re_;
+    const char* shm_name_;
+//    channel_t chan_;
+    shm_reader_t* re_;
     VelmaLowLevelCommand *buf_prev_;
     bool receiving_data_;
 

@@ -28,7 +28,7 @@
 #ifndef VELMA_LLI_LO_TX_H_
 #define VELMA_LLI_LO_TX_H_
 
-#include "shm_comm_api.h"
+#include "shm_comm/shm_channel.h"
 
 #include <cstring>
 

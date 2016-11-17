@@ -28,7 +28,8 @@
 #ifndef VELMA_LLI_HI_TX_H_
 #define VELMA_LLI_HI_TX_H_
 
-#include "shm_comm_api.h"
+//#include "shm_comm_api.h"
+#include "shm_comm/shm_channel.h"
 
 #include <cstring>
 
@@ -64,8 +65,8 @@ public:
 
 private:
 
-    channel_t chan_;
-    writer_t wr_;
+//    channel_t chan_;
+    shm_writer_t* wr_;
 
     velma_low_level_interface_msgs::VelmaLowLevelCommand cmd_out_;
 

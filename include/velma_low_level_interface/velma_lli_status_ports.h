@@ -92,21 +92,8 @@ public:
 template <template <typename Type> class T>
 class VelmaStatus_Ports : public PortsContainerOuter<VelmaLowLevelStatus > {
 public:
+    typedef VelmaLowLevelStatus Container;
     VelmaStatus_Ports(RTT::TaskContext &tc);
-
-    boost::shared_ptr<ArmStatus_Ports<T > > rArm_;
-    boost::shared_ptr<ArmStatus_Ports<T > > lArm_;
-
-    boost::shared_ptr<HandStatus_Ports<T > > rHand_;
-    boost::shared_ptr<HandStatus_Ports<T > > lHand_;
-
-    boost::shared_ptr<FTSensorStatus_Ports<T > > rFt_;
-    boost::shared_ptr<FTSensorStatus_Ports<T > > lFt_;
-
-    boost::shared_ptr<MotorStatus_Ports<T > > tMotor_;
-    boost::shared_ptr<MotorStatus_Ports<T > > hpMotor_;
-    boost::shared_ptr<MotorStatus_Ports<T > > htMotor_;
-
 };
 
 };  // namespace velma_lli_types

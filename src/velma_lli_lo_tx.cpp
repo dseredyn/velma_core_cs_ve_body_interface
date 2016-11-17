@@ -107,12 +107,6 @@ void VelmaLLILoTx::stopHook() {
 
 void VelmaLLILoTx::updateHook() {
 
-    ros::Time wall_time = rtt_rosclock::host_wall_now();
-    double sec = wall_time.toSec();
-    long nsec = sec;
-//    Logger::log() << Logger::Debug << (nsec%2000) << " " << (sec - nsec) << Logger::endl;
-
-//    RESTRICT_ALLOC;
     in_.readPorts(status_);
 // TODO: check for new data
 //    if (port_status_in_.read(status_) == RTT::NewData) {

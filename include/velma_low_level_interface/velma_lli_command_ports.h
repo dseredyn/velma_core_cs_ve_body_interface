@@ -96,6 +96,7 @@ public:
 template <template <typename Type> class T>
 class VelmaCommand_Ports : public PortsContainerOuter<VelmaLowLevelCommand > {
 public:
+    typedef VelmaLowLevelCommand Container;
     VelmaCommand_Ports(RTT::TaskContext &tc);
 };
 

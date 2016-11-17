@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   eigen_conversions
   kdl_conversions cmake_modules
   controller_common
+  shm_comm
   )
 
 find_package(OROCOS-RTT REQUIRED COMPONENTS rtt-scripting rtt-transport-corba)
@@ -38,7 +39,7 @@ orocos_component(velma_low_level_components src/velma_low_level_interface.cpp sr
                     src/velma_lli_lo_tx.cpp src/velma_lli_hi_rx.cpp src/velma_lli_hi_tx.cpp
                     src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp
                     src/velma_lli_lo_test.cpp src/velma_lli_hi_test.cpp src/velma_lli_test_generator.cpp
-                    src/velma_lli_test_error.cpp src/shm_comm_locking.c src/shm_comm_api.c)
+                    src/velma_lli_test_error.cpp)
 
 target_link_libraries(velma_low_level_components
     ${catkin_LIBRARIES}
