@@ -27,29 +27,31 @@
 
 #include <rtt/Component.hpp>
 
-#include "velma_lli_hi_rx.h"
-#include "velma_lli_hi_tx.h"
-#include "velma_lli_lo_rx.h"
-#include "velma_lli_lo_tx.h"
+//#include "velma_lli_hi_test.h"
+//#include "velma_lli_lo_test.h"
+//#include "velma_lli_test_error.h"
 
-#include "velma_lli_hi_test.h"
-#include "velma_lli_lo_test.h"
+//ORO_LIST_COMPONENT_TYPE(VelmaLLILoTest)
+//ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTest)
+//ORO_LIST_COMPONENT_TYPE(VelmaTestError)
 
-#include "velma_lli_test_error.h"
+#include "velma_low_level_interface/velma_lli_status_ports.h"
+#include "velma_low_level_interface/velma_lli_command_ports.h"
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
+#include "interface_tx.h"
+#include "interface_rx.h"
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
-
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoRx)
-
+typedef InterfaceTx<velma_lli_types::VelmaStatus_Ports > VelmaLLILoTx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLILoTx)
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoTest)
+typedef InterfaceRx<velma_lli_types::VelmaStatus_Ports > VelmaLLIHiRx;
+ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
 
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTest)
+typedef InterfaceTx<velma_lli_types::VelmaCommand_Ports > VelmaLLIHiTx;
+ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
 
-ORO_LIST_COMPONENT_TYPE(VelmaTestError)
+typedef InterfaceRx<velma_lli_types::VelmaCommand_Ports > VelmaLLILoRx;
+ORO_LIST_COMPONENT_TYPE(VelmaLLILoRx)
 
 ORO_CREATE_COMPONENT_LIBRARY()
 
