@@ -100,29 +100,10 @@ public:
     VelmaCommand_Ports(RTT::TaskContext &tc);
 };
 
+template class VelmaCommand_Ports<RTT::InputPort >;
+template class VelmaCommand_Ports<RTT::OutputPort >;
+
 };  // namespace velma_lli_types
-
-class VelmaLLICommandInput {
-public:
-    VelmaLLICommandInput(RTT::TaskContext &tc);
-
-    void readPorts(velma_low_level_interface_msgs::VelmaLowLevelCommand &command);
-
-protected:
-    velma_lli_types::VelmaCommand_Ports<RTT::InputPort > ports_in_;
-};
-
-class VelmaLLICommandOutput {
-public:
-    VelmaLLICommandOutput(RTT::TaskContext &tc);
-
-    void writePorts(const velma_low_level_interface_msgs::VelmaLowLevelCommand &command);
-
-    velma_lli_types::VelmaCommand_Ports<RTT::OutputPort >& getPorts();
-
-protected:
-    velma_lli_types::VelmaCommand_Ports<RTT::OutputPort > ports_out_;
-};
 
 #endif  // __VELMA_LLI_COMMAND_PORTS_H__
 

@@ -96,33 +96,10 @@ public:
     VelmaStatus_Ports(RTT::TaskContext &tc);
 };
 
+template class VelmaStatus_Ports<RTT::InputPort >;
+template class VelmaStatus_Ports<RTT::OutputPort >;
+
 };  // namespace velma_lli_types
-
-class VelmaLLIStatusInput {
-public:
-    VelmaLLIStatusInput(RTT::TaskContext &tc);
-
-    void readPorts(velma_low_level_interface_msgs::VelmaLowLevelStatus &status);
-
-    const velma_lli_types::VelmaStatus_Ports<RTT::InputPort >& getPorts() const;
-
-    bool isAllDataValid() const;
-
-    bool isValid(const std::string& name) const;
-
-protected:
-    velma_lli_types::VelmaStatus_Ports<RTT::InputPort > ports_in_;
-};
-
-class VelmaLLIStatusOutput {
-public:
-    VelmaLLIStatusOutput(RTT::TaskContext &tc);
-
-    void writePorts(const velma_low_level_interface_msgs::VelmaLowLevelStatus &status);
-
-protected:
-    velma_lli_types::VelmaStatus_Ports<RTT::OutputPort > ports_out_;
-};
 
 #endif  // __VELMA_LLI_STATUS_PORTS_H__
 

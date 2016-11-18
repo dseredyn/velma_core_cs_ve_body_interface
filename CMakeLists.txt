@@ -34,10 +34,14 @@ include_directories(${USE_OROCOS_INCLUDE_DIRS} include)
 ADD_DEFINITIONS(-DEIGEN_RUNTIME_NO_MALLOC)
 ### Orocos Targets ###
 
-orocos_component(velma_low_level_components src/velma_low_level_interface.cpp
-                    src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp
-                    src/velma_lli_lo_test.cpp src/velma_lli_hi_test.cpp src/velma_lli_test_generator.cpp
-                    src/velma_lli_test_error.cpp)
+orocos_component(velma_low_level_components
+    src/velma_low_level_interface.cpp
+    src/velma_lli_status_ports.cpp
+    src/velma_lli_command_ports.cpp
+)
+
+#                    src/velma_lli_lo_test.cpp src/velma_lli_hi_test.cpp src/velma_lli_test_generator.cpp
+#                    src/velma_lli_test_error.cpp)
 
 target_link_libraries(velma_low_level_components
     ${catkin_LIBRARIES}

@@ -110,35 +110,3 @@ VelmaCommand_Ports<T >::VelmaCommand_Ports(RTT::TaskContext &tc)
 
 };
 
-//
-// VelmaLLICommandInput interface
-//
-VelmaLLICommandInput::VelmaLLICommandInput(RTT::TaskContext &tc) :
-    ports_in_(tc)
-{
-}
-
-void VelmaLLICommandInput::readPorts(velma_low_level_interface_msgs::VelmaLowLevelCommand &command) {
-    ports_in_.readPorts();
-    ports_in_.convertToROS(command);
-}
-
-
-
-//
-// VelmaLLICommandOutput interface
-//
-VelmaLLICommandOutput::VelmaLLICommandOutput(RTT::TaskContext &tc) :
-    ports_out_(tc)
-{
-}
-
-void VelmaLLICommandOutput::writePorts(const velma_low_level_interface_msgs::VelmaLowLevelCommand &command) {
-    ports_out_.convertFromROS(command);
-    ports_out_.writePorts();
-}
-
-velma_lli_types::VelmaCommand_Ports<RTT::OutputPort >& VelmaLLICommandOutput::getPorts() {
-    return ports_out_;
-}
-
