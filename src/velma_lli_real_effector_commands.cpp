@@ -25,9 +25,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "velma_low_level_interface/velma_lli_command_ports.h"
+#include "velma_low_level_interface/velma_lli_real_effector_commands.h"
 
-using velma_low_level_interface_msgs::VelmaLowLevelCommand;
+using velma_low_level_interface_msgs::VelmaRealEffectorCommand;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
 using velma_low_level_interface_msgs::VelmaLowLevelCommandSimple;
 
@@ -37,7 +37,7 @@ namespace velma_lli_types {
 // ArmCommand_Ports interface
 //
 template <template <typename Type> class T >
-ArmCommand_Ports<T >::ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandArm VelmaLowLevelCommand::*ptr) :
+RE_ArmCommand_Ports<T >::RE_ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandArm VelmaRealEffectorCommand::*ptr) :
     PortsContainer(ptr)
 {
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandArm > >(new Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelCommandArm, VelmaLowLevelCommandArm::_t_type >(tc, prefix + "_t", &VelmaLowLevelCommandArm::t)));
@@ -48,7 +48,7 @@ ArmCommand_Ports<T >::ArmCommand_Ports(RTT::TaskContext &tc, const std::string &
 // HandCommand_Ports interface
 //
 template <template <typename Type> class T >
-HandCommand_Ports<T>::HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandHand VelmaLowLevelCommand::*ptr) :
+RE_HandCommand_Ports<T>::RE_HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandHand VelmaRealEffectorCommand::*ptr) :
     PortsContainer(ptr)
 {
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandHand > >(new Port<T, Eigen::Matrix<double,4,1>, VelmaLowLevelCommandHand, VelmaLowLevelCommandHand::_q_type >(tc, prefix + "_q", &VelmaLowLevelCommandHand::q)));
@@ -63,7 +63,7 @@ HandCommand_Ports<T>::HandCommand_Ports(RTT::TaskContext &tc, const std::string 
 // SimpleCommand_Ports interface
 //
 template <template <typename Type> class T >
-SimpleCommand_Ports<T>::SimpleCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandSimple VelmaLowLevelCommand::*ptr) :
+RE_SimpleCommand_Ports<T>::RE_SimpleCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandSimple VelmaRealEffectorCommand::*ptr) :
     PortsContainer(ptr)
 {
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandSimple > >(new Port<T, int32_t, VelmaLowLevelCommandSimple, VelmaLowLevelCommandSimple::_cmd_type>(tc, prefix + "_cmd", &VelmaLowLevelCommandSimple::cmd)));
@@ -74,7 +74,7 @@ SimpleCommand_Ports<T>::SimpleCommand_Ports(RTT::TaskContext &tc, const std::str
 // MotorCommand_Ports interface
 //
 template <template <typename Type> class T >
-MotorCommand_Ports<T >::MotorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandMotor VelmaLowLevelCommand::*ptr) :
+RE_MotorCommand_Ports<T >::RE_MotorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandMotor VelmaRealEffectorCommand::*ptr) :
     PortsContainer(ptr)
 {
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommandMotor > >(new Port<T, double, VelmaLowLevelCommandMotor, VelmaLowLevelCommandMotor::_i_type >(tc, prefix + "_i", &VelmaLowLevelCommandMotor::i)));
@@ -86,25 +86,27 @@ MotorCommand_Ports<T >::MotorCommand_Ports(RTT::TaskContext &tc, const std::stri
 // FTSensorCommand_Ports interface
 //
 template <template <typename Type> class T>
-FTSensorCommand_Ports<T >::FTSensorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix) {
+RE_FTSensorCommand_Ports<T >::RE_FTSensorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix) {
 }
 
 //
 // VelmaCommand_Ports interface
 //
 template <template <typename Type> class T>
-VelmaCommand_Ports<T >::VelmaCommand_Ports(RTT::TaskContext &tc)
+RE_VelmaCommand_Ports<T >::RE_VelmaCommand_Ports(RTT::TaskContext &tc)
 {
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new Port<T, uint32_t, VelmaLowLevelCommand, VelmaLowLevelCommand::_test_type >(tc, "cmd_test", &VelmaLowLevelCommand::test)));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new ArmCommand_Ports<T >(tc, "cmd_rArm", &VelmaLowLevelCommand::rArm)), &VelmaLowLevelCommand::rArm_valid);
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new ArmCommand_Ports<T >(tc, "cmd_lArm", &VelmaLowLevelCommand::lArm)), &VelmaLowLevelCommand::lArm_valid);
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new HandCommand_Ports<T >(tc, "cmd_rHand", &VelmaLowLevelCommand::rHand)), &VelmaLowLevelCommand::rHand_valid);
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new HandCommand_Ports<T >(tc, "cmd_lHand", &VelmaLowLevelCommand::lHand)), &VelmaLowLevelCommand::lHand_valid);
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new SimpleCommand_Ports<T >(tc, "cmd_rTact", &VelmaLowLevelCommand::rTact)), &VelmaLowLevelCommand::rTact_valid);
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new MotorCommand_Ports<T >(tc, "cmd_tMotor", &VelmaLowLevelCommand::tMotor)), &VelmaLowLevelCommand::tMotor_valid);
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new MotorCommand_Ports<T >(tc, "cmd_hpMotor", &VelmaLowLevelCommand::hpMotor)), &VelmaLowLevelCommand::hpMotor_valid);
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new MotorCommand_Ports<T >(tc, "cmd_htMotor", &VelmaLowLevelCommand::htMotor)), &VelmaLowLevelCommand::htMotor_valid);
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelCommand > >(new SimpleCommand_Ports<T >(tc, "cmd_safety_controller", &VelmaLowLevelCommand::sc)), &VelmaLowLevelCommand::sc_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new Port<T, uint32_t, VelmaRealEffectorCommand, VelmaRealEffectorCommand::_test_type >(tc, "cmd_test", &VelmaRealEffectorCommand::test)));
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_ArmCommand_Ports<T >(tc, "cmd_rArm", &VelmaRealEffectorCommand::rArm)), &VelmaRealEffectorCommand::rArm_valid).setName("rArm");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_ArmCommand_Ports<T >(tc, "cmd_lArm", &VelmaRealEffectorCommand::lArm)), &VelmaRealEffectorCommand::lArm_valid).setName("lArm");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_rArmFri", &VelmaRealEffectorCommand::rArmFri)), &VelmaRealEffectorCommand::rArmFri_valid).setName("rArmFri");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_lArmFri", &VelmaRealEffectorCommand::lArmFri)), &VelmaRealEffectorCommand::lArmFri_valid).setName("lArmFri");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_HandCommand_Ports<T >(tc, "cmd_rHand", &VelmaRealEffectorCommand::rHand)), &VelmaRealEffectorCommand::rHand_valid).setName("rHand");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_HandCommand_Ports<T >(tc, "cmd_lHand", &VelmaRealEffectorCommand::lHand)), &VelmaRealEffectorCommand::lHand_valid).setName("lHand");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_rTact", &VelmaRealEffectorCommand::rTact)), &VelmaRealEffectorCommand::rTact_valid).setName("rTact");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_MotorCommand_Ports<T >(tc, "cmd_tMotor", &VelmaRealEffectorCommand::tMotor)), &VelmaRealEffectorCommand::tMotor_valid).setName("tMotor");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_MotorCommand_Ports<T >(tc, "cmd_hpMotor", &VelmaRealEffectorCommand::hpMotor)), &VelmaRealEffectorCommand::hpMotor_valid).setName("hpMotor");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_MotorCommand_Ports<T >(tc, "cmd_htMotor", &VelmaRealEffectorCommand::htMotor)), &VelmaRealEffectorCommand::htMotor_valid).setName("htMotor");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_safety_controller", &VelmaRealEffectorCommand::sc)), &VelmaRealEffectorCommand::sc_valid).setName("safety_controller");
 
 }
 

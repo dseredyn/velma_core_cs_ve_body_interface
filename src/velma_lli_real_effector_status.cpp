@@ -25,10 +25,10 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "velma_low_level_interface/velma_lli_status_ports.h"
+#include "velma_low_level_interface/velma_lli_real_effector_status.h"
 
 using namespace interface_ports;
-using velma_low_level_interface_msgs::VelmaLowLevelStatus;
+using velma_low_level_interface_msgs::VelmaRealEffectorStatus;
 using velma_low_level_interface_msgs::VelmaLowLevelStatusArm;
 
 namespace velma_lli_types {
@@ -37,7 +37,7 @@ namespace velma_lli_types {
 // ArmStatus_Ports interface
 //
 template <template <typename Type> class T >
-ArmStatus_Ports<T >::ArmStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusArm VelmaLowLevelStatus::*ptr) :
+RE_ArmStatus_Ports<T >::RE_ArmStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusArm VelmaRealEffectorStatus::*ptr) :
     PortsContainer(ptr)
 {
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatusArm > >(new Port<T, Eigen::Matrix<double,7,1>, VelmaLowLevelStatusArm, VelmaLowLevelStatusArm::_q_type >(tc, prefix + "_q", &VelmaLowLevelStatusArm::q)));
@@ -52,7 +52,7 @@ ArmStatus_Ports<T >::ArmStatus_Ports(RTT::TaskContext &tc, const std::string &pr
 // HandStatus_Ports interface
 //
 template <template <typename Type> class T >
-HandStatus_Ports<T >::HandStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusHand VelmaLowLevelStatus::*ptr) :
+RE_HandStatus_Ports<T >::RE_HandStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusHand VelmaRealEffectorStatus::*ptr) :
     PortsContainer(ptr)
 {
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatusHand > >(new Port<T, Eigen::Matrix<double,8,1>, VelmaLowLevelStatusHand, VelmaLowLevelStatusHand::_q_type >(tc, prefix + "_q", &VelmaLowLevelStatusHand::q)));
@@ -64,7 +64,7 @@ HandStatus_Ports<T >::HandStatus_Ports(RTT::TaskContext &tc, const std::string &
 // MotorStatus_Ports interface
 //
 template <template <typename Type> class T >
-MotorStatus_Ports<T >::MotorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusMotor VelmaLowLevelStatus::*ptr) :
+RE_MotorStatus_Ports<T >::RE_MotorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusMotor VelmaRealEffectorStatus::*ptr) :
     PortsContainer(ptr)
 {
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatusMotor > >(new Port<T, double, VelmaLowLevelStatusMotor, VelmaLowLevelStatusMotor::_q_type >(tc, prefix + "_q", &VelmaLowLevelStatusMotor::q)));
@@ -75,7 +75,7 @@ MotorStatus_Ports<T >::MotorStatus_Ports(RTT::TaskContext &tc, const std::string
 // FTSensorStatus_Ports interface
 //
 template <template <typename Type> class T >
-FTSensorStatus_Ports<T >::FTSensorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusFT VelmaLowLevelStatus::*ptr) :
+RE_FTSensorStatus_Ports<T >::RE_FTSensorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusFT VelmaRealEffectorStatus::*ptr) :
     PortsContainer(ptr)
 {
     addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatusFT > >(new Port<T, geometry_msgs::Wrench, VelmaLowLevelStatusFT, VelmaLowLevelStatusFT::_rw_type >(tc, prefix + "_rw", &VelmaLowLevelStatusFT::rw)));
@@ -88,21 +88,25 @@ FTSensorStatus_Ports<T >::FTSensorStatus_Ports(RTT::TaskContext &tc, const std::
 // VelmaStatus_Ports interface
 //
 template <template <typename Type> class T>
-VelmaStatus_Ports<T >::VelmaStatus_Ports(RTT::TaskContext &tc)
+RE_VelmaStatus_Ports<T >::RE_VelmaStatus_Ports(RTT::TaskContext &tc)
 {
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >(new Port<T, uint32_t, VelmaLowLevelStatus, VelmaLowLevelStatus::_test_type >(tc, "status_test", &VelmaLowLevelStatus::test)));
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( new ArmStatus_Ports<T >(tc, "status_rArm", &VelmaLowLevelStatus::rArm) ), &VelmaLowLevelStatus::rArm_valid).setName("rArm");
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( new ArmStatus_Ports<T >(tc, "status_lArm", &VelmaLowLevelStatus::lArm) ), &VelmaLowLevelStatus::lArm_valid).setName("lArm");
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( new HandStatus_Ports<T > (tc, "status_rHand", &VelmaLowLevelStatus::rHand) ), &VelmaLowLevelStatus::rHand_valid).setName("rHand");
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( new HandStatus_Ports<T > (tc, "status_lHand", &VelmaLowLevelStatus::lHand) ), &VelmaLowLevelStatus::lHand_valid).setName("lHand");
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( new FTSensorStatus_Ports<T > (tc, "status_rFt", &VelmaLowLevelStatus::rFt) ), &VelmaLowLevelStatus::rFt_valid).setName("rFt");
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( new FTSensorStatus_Ports<T > (tc, "status_lFt", &VelmaLowLevelStatus::lFt) ), &VelmaLowLevelStatus::lFt_valid).setName("lFt");
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( new MotorStatus_Ports<T > (tc, "status_tMotor", &VelmaLowLevelStatus::tMotor) ), &VelmaLowLevelStatus::tMotor_valid).setName("tMotor");
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( new MotorStatus_Ports<T > (tc, "status_hpMotor", &VelmaLowLevelStatus::hpMotor) ), &VelmaLowLevelStatus::hpMotor_valid).setName("hpMotor");
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >( new MotorStatus_Ports<T > (tc, "status_htMotor", &VelmaLowLevelStatus::htMotor) ), &VelmaLowLevelStatus::htMotor_valid).setName("htMotor");
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >(new Port<T, barrett_hand_controller_msgs::BHPressureState, VelmaLowLevelStatus, VelmaLowLevelStatus::_rHand_p_type> (tc, "status_rHand_p", &VelmaLowLevelStatus::rHand_p)), &VelmaLowLevelStatus::rHand_p_valid);
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >(new Port<T, VelmaLowLevelStatus::_lHand_f_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_lHand_f_type> (tc, "status_lHand_f", &VelmaLowLevelStatus::lHand_f)), &VelmaLowLevelStatus::lHand_f_valid);
-    addPort(boost::shared_ptr<PortInterface<VelmaLowLevelStatus > >(new Port<T, VelmaLowLevelStatus::_sc_type, VelmaLowLevelStatus, VelmaLowLevelStatus::_sc_type> (tc, "status_sc", &VelmaLowLevelStatus::sc)), &VelmaLowLevelStatus::sc_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >(new Port<T, uint32_t, VelmaRealEffectorStatus, VelmaRealEffectorStatus::_test_type >(tc, "status_test", &VelmaRealEffectorStatus::test)));
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >( new RE_ArmStatus_Ports<T >(tc, "status_rArm", &VelmaRealEffectorStatus::rArm) ), &VelmaRealEffectorStatus::rArm_valid).setName("rArm");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >( new RE_ArmStatus_Ports<T >(tc, "status_lArm", &VelmaRealEffectorStatus::lArm) ), &VelmaRealEffectorStatus::lArm_valid).setName("lArm");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >(new Port<T, tFriRobotState, VelmaRealEffectorStatus, VelmaRealEffectorStatus::_rArmFriRobot_type >(tc, "status_rArmFriRobot", &VelmaRealEffectorStatus::rArmFriRobot))).setName("rArmFriRobot");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >(new Port<T, tFriIntfState, VelmaRealEffectorStatus, VelmaRealEffectorStatus::_rArmFriIntf_type >(tc, "status_rArmFriIntf", &VelmaRealEffectorStatus::rArmFriIntf))).setName("rArmFriIntf");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >(new Port<T, tFriRobotState, VelmaRealEffectorStatus, VelmaRealEffectorStatus::_rArmFriRobot_type >(tc, "status_lArmFriRobot", &VelmaRealEffectorStatus::lArmFriRobot))).setName("lArmFriRobot");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >(new Port<T, tFriIntfState, VelmaRealEffectorStatus, VelmaRealEffectorStatus::_rArmFriIntf_type >(tc, "status_lArmFriIntf", &VelmaRealEffectorStatus::lArmFriIntf))).setName("lArmFriIntf");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >( new RE_HandStatus_Ports<T > (tc, "status_rHand", &VelmaRealEffectorStatus::rHand) ), &VelmaRealEffectorStatus::rHand_valid).setName("rHand");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >( new RE_HandStatus_Ports<T > (tc, "status_lHand", &VelmaRealEffectorStatus::lHand) ), &VelmaRealEffectorStatus::lHand_valid).setName("lHand");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >( new RE_FTSensorStatus_Ports<T > (tc, "status_rFt", &VelmaRealEffectorStatus::rFt) ), &VelmaRealEffectorStatus::rFt_valid).setName("rFt");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >( new RE_FTSensorStatus_Ports<T > (tc, "status_lFt", &VelmaRealEffectorStatus::lFt) ), &VelmaRealEffectorStatus::lFt_valid).setName("lFt");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >( new RE_MotorStatus_Ports<T > (tc, "status_tMotor", &VelmaRealEffectorStatus::tMotor) ), &VelmaRealEffectorStatus::tMotor_valid).setName("tMotor");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >( new RE_MotorStatus_Ports<T > (tc, "status_hpMotor", &VelmaRealEffectorStatus::hpMotor) ), &VelmaRealEffectorStatus::hpMotor_valid).setName("hpMotor");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >( new RE_MotorStatus_Ports<T > (tc, "status_htMotor", &VelmaRealEffectorStatus::htMotor) ), &VelmaRealEffectorStatus::htMotor_valid).setName("htMotor");
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >(new Port<T, barrett_hand_controller_msgs::BHPressureState, VelmaRealEffectorStatus, VelmaRealEffectorStatus::_rHand_p_type> (tc, "status_rHand_p", &VelmaRealEffectorStatus::rHand_p)), &VelmaRealEffectorStatus::rHand_p_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >(new Port<T, VelmaRealEffectorStatus::_lHand_f_type, VelmaRealEffectorStatus, VelmaRealEffectorStatus::_lHand_f_type> (tc, "status_lHand_f", &VelmaRealEffectorStatus::lHand_f)), &VelmaRealEffectorStatus::lHand_f_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorStatus > >(new Port<T, VelmaRealEffectorStatus::_sc_type, VelmaRealEffectorStatus, VelmaRealEffectorStatus::_sc_type> (tc, "status_sc", &VelmaRealEffectorStatus::sc)), &VelmaRealEffectorStatus::sc_valid);
 }
 
 };  // namespace velma_lli_types

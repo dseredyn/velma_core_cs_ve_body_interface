@@ -35,6 +35,7 @@
 //ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTest)
 //ORO_LIST_COMPONENT_TYPE(VelmaTestError)
 
+#include "velma_low_level_interface/velma_lli_real_effector_status.h"
 #include "velma_low_level_interface/velma_lli_status_ports.h"
 #include "velma_low_level_interface/velma_lli_command_ports.h"
 
@@ -52,6 +53,9 @@ ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
 
 typedef InterfaceRx<velma_lli_types::VelmaCommand_Ports > VelmaLLILoRx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLILoRx)
+
+typedef InterfaceRx<velma_lli_types::RE_VelmaStatus_Ports > VelmaLLIReLoRx;
+ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
 
 ORO_CREATE_COMPONENT_LIBRARY()
 
