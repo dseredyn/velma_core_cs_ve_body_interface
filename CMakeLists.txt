@@ -50,9 +50,9 @@ target_link_libraries(velma_low_level_components
     ${OROCOS-RTT_LIBRARIES})
 
 
-add_library(velma_low_level_interface src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp)
+#add_library(velma_low_level_interface src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp)
 
-target_link_libraries(velma_low_level_interface ${catkin_LIBRARIES})
+#target_link_libraries(velma_low_level_interface ${catkin_LIBRARIES})
 #add_dependencies(velma_low_level_interface ${PROJECT_NAME}_gencpp)
 
 ### Orocos Package Exports and Install Targets ###
