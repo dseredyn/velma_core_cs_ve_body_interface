@@ -96,18 +96,16 @@ template <template <typename Type> class T>
 RE_VelmaCommand_Ports<T >::RE_VelmaCommand_Ports(RTT::TaskContext &tc)
 {
     addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new Port<T, uint32_t, VelmaRealEffectorCommand, VelmaRealEffectorCommand::_test_type >(tc, "cmd_test", &VelmaRealEffectorCommand::test)));
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_ArmCommand_Ports<T >(tc, "cmd_rArm", &VelmaRealEffectorCommand::rArm)), &VelmaRealEffectorCommand::rArm_valid).setName("rArm");
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_ArmCommand_Ports<T >(tc, "cmd_lArm", &VelmaRealEffectorCommand::lArm)), &VelmaRealEffectorCommand::lArm_valid).setName("lArm");
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_rArmFri", &VelmaRealEffectorCommand::rArmFri)), &VelmaRealEffectorCommand::rArmFri_valid).setName("rArmFri");
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_lArmFri", &VelmaRealEffectorCommand::lArmFri)), &VelmaRealEffectorCommand::lArmFri_valid).setName("lArmFri");
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_HandCommand_Ports<T >(tc, "cmd_rHand", &VelmaRealEffectorCommand::rHand)), &VelmaRealEffectorCommand::rHand_valid).setName("rHand");
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_HandCommand_Ports<T >(tc, "cmd_lHand", &VelmaRealEffectorCommand::lHand)), &VelmaRealEffectorCommand::lHand_valid).setName("lHand");
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_rTact", &VelmaRealEffectorCommand::rTact)), &VelmaRealEffectorCommand::rTact_valid).setName("rTact");
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_MotorCommand_Ports<T >(tc, "cmd_tMotor", &VelmaRealEffectorCommand::tMotor)), &VelmaRealEffectorCommand::tMotor_valid).setName("tMotor");
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_MotorCommand_Ports<T >(tc, "cmd_hpMotor", &VelmaRealEffectorCommand::hpMotor)), &VelmaRealEffectorCommand::hpMotor_valid).setName("hpMotor");
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_MotorCommand_Ports<T >(tc, "cmd_htMotor", &VelmaRealEffectorCommand::htMotor)), &VelmaRealEffectorCommand::htMotor_valid).setName("htMotor");
-    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_safety_controller", &VelmaRealEffectorCommand::sc)), &VelmaRealEffectorCommand::sc_valid).setName("safety_controller");
-
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_ArmCommand_Ports<T >(tc, "cmd_rArm", &VelmaRealEffectorCommand::rArm)), &VelmaRealEffectorCommand::rArm_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_ArmCommand_Ports<T >(tc, "cmd_lArm", &VelmaRealEffectorCommand::lArm)), &VelmaRealEffectorCommand::lArm_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_rArmFri", &VelmaRealEffectorCommand::rArmFri)), &VelmaRealEffectorCommand::rArmFri_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_lArmFri", &VelmaRealEffectorCommand::lArmFri)), &VelmaRealEffectorCommand::lArmFri_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_HandCommand_Ports<T >(tc, "cmd_rHand", &VelmaRealEffectorCommand::rHand)), &VelmaRealEffectorCommand::rHand_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_HandCommand_Ports<T >(tc, "cmd_lHand", &VelmaRealEffectorCommand::lHand)), &VelmaRealEffectorCommand::lHand_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_SimpleCommand_Ports<T >(tc, "cmd_rTact", &VelmaRealEffectorCommand::rTact)), &VelmaRealEffectorCommand::rTact_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_MotorCommand_Ports<T >(tc, "cmd_tMotor", &VelmaRealEffectorCommand::tMotor)), &VelmaRealEffectorCommand::tMotor_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_MotorCommand_Ports<T >(tc, "cmd_hpMotor", &VelmaRealEffectorCommand::hpMotor)), &VelmaRealEffectorCommand::hpMotor_valid);
+    addPort(boost::shared_ptr<PortInterface<VelmaRealEffectorCommand > >(new RE_MotorCommand_Ports<T >(tc, "cmd_htMotor", &VelmaRealEffectorCommand::htMotor)), &VelmaRealEffectorCommand::htMotor_valid);
 }
 
 };
