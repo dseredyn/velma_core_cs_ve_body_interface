@@ -43,9 +43,6 @@ orocos_component(velma_low_level_components
     src/velma_lli_real_effector_commands.cpp
 )
 
-#                    src/velma_lli_lo_test.cpp src/velma_lli_hi_test.cpp src/velma_lli_test_generator.cpp
-#                    src/velma_lli_test_error.cpp)
-
 target_link_libraries(velma_low_level_components
     ${catkin_LIBRARIES}
     ${USE_OROCOS_LIBRARIES}
