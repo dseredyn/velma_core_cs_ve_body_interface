@@ -25,8 +25,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef __VELMA_LLI_REAL_EFFECTOR_COMMANDS_H__
-#define __VELMA_LLI_REAL_EFFECTOR_COMMANDS_H__
+#ifndef __VELMA_LLI_COMMAND_PORTS_H__
+#define __VELMA_LLI_COMMAND_PORTS_H__
 
 #include <cstring>
 
@@ -42,68 +42,63 @@
 #include <geometry_msgs/Wrench.h>
 #include <geometry_msgs/WrenchStamped.h>
 #include <diagnostic_msgs/DiagnosticArray.h>
-#include "velma_low_level_interface_msgs/VelmaRealEffectorCommand.h"
+#include "velma_core_cs_ve_body_msgs/VelmaLowLevelCommand.h"
 #include <barrett_hand_controller_msgs/BHPressureState.h>
 
 #include "eigen_conversions/eigen_msg.h"
 
 #include "common_interfaces/interface_ports.h"
 
-#include "velma_low_level_interface/velma_lli_port_data.h"
-#include "velma_low_level_interface/velma_lli_real_effector_port_data.h"
+#include "velma_core_cs_ve_body_interface/velma_lli_port_data.h"
 
-using velma_low_level_interface_msgs::VelmaRealEffectorCommand;
-using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
-using velma_low_level_interface_msgs::VelmaLowLevelCommandHand;
-using velma_low_level_interface_msgs::VelmaLowLevelCommandSimple;
-using velma_low_level_interface_msgs::VelmaLowLevelCommandMotor;
 
+using namespace velma_core_cs_ve_body_msgs;
 using namespace interface_ports;
 
 namespace velma_lli_types {
 
 template <template <typename Type> class T>
-class RE_ArmCommand_Ports : public PortsContainer<VelmaRealEffectorCommand, VelmaLowLevelCommandArm > {
+class ArmCommand_Ports : public PortsContainer<VelmaLowLevelCommand, VelmaLowLevelCommandArm > {
 public:
-    RE_ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandArm VelmaRealEffectorCommand::*ptr);
+    ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandArm VelmaLowLevelCommand::*ptr);
 };
 
 template <template <typename Type> class T>
-class RE_HandCommand_Ports : public PortsContainer<VelmaRealEffectorCommand, VelmaLowLevelCommandHand > {
+class HandCommand_Ports : public PortsContainer<VelmaLowLevelCommand, VelmaLowLevelCommandHand > {
 public:
-    RE_HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandHand VelmaRealEffectorCommand::*ptr);
+    HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandHand VelmaLowLevelCommand::*ptr);
 };
 
 template <template <typename Type> class T>
-class RE_SimpleCommand_Ports : public PortsContainer<VelmaRealEffectorCommand, VelmaLowLevelCommandSimple > {
+class SimpleCommand_Ports : public PortsContainer<VelmaLowLevelCommand, VelmaLowLevelCommandSimple > {
 public:
-    RE_SimpleCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandSimple VelmaRealEffectorCommand::*ptr);
+    SimpleCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandSimple VelmaLowLevelCommand::*ptr);
 };
 
 template <template <typename Type> class T>
-class RE_MotorCommand_Ports : public PortsContainer<VelmaRealEffectorCommand, VelmaLowLevelCommandMotor > {
+class MotorCommand_Ports : public PortsContainer<VelmaLowLevelCommand, VelmaLowLevelCommandMotor > {
 public:
-    RE_MotorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandMotor VelmaRealEffectorCommand::*ptr);
+    MotorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandMotor VelmaLowLevelCommand::*ptr);
 };
 
 
 template <template <typename Type> class T>
-class RE_FTSensorCommand_Ports {
+class FTSensorCommand_Ports {
 public:
-    RE_FTSensorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
+    FTSensorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix);
 };
 
 template <template <typename Type> class T>
-class RE_VelmaCommand_Ports : public PortsContainerOuter<VelmaRealEffectorCommand > {
+class VelmaCommand_Ports : public PortsContainerOuter<VelmaLowLevelCommand > {
 public:
-    typedef VelmaRealEffectorCommand Container;
-    RE_VelmaCommand_Ports(RTT::TaskContext &tc);
+    typedef VelmaLowLevelCommand Container;
+    VelmaCommand_Ports(RTT::TaskContext &tc);
 };
 
-template class RE_VelmaCommand_Ports<RTT::InputPort >;
-template class RE_VelmaCommand_Ports<RTT::OutputPort >;
+template class VelmaCommand_Ports<RTT::InputPort >;
+template class VelmaCommand_Ports<RTT::OutputPort >;
 
 };  // namespace velma_lli_types
 
-#endif  // __VELMA_LLI_REAL_EFFECTOR_COMMANDS_H__
+#endif  // __VELMA_LLI_COMMAND_PORTS_H__
 

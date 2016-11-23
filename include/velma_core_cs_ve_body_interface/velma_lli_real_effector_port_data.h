@@ -44,20 +44,22 @@
 
 #include "common_interfaces/interface_port_data.h"
 
-#include "velma_low_level_interface_msgs/VelmaRealEffectorArmFriIntf.h"
-#include "velma_low_level_interface_msgs/VelmaRealEffectorArmFriRobot.h"
+#include "velma_core_cs_ve_body_msgs/VelmaRealEffectorArmFriIntf.h"
+#include "velma_core_cs_ve_body_msgs/VelmaRealEffectorArmFriRobot.h"
 
 #include <kuka_lwr_fri/friComm.h>
 
 namespace interface_ports {
 
+using namespace velma_core_cs_ve_body_msgs;
+
 template < >
-class PortRawData<tFriIntfState, velma_low_level_interface_msgs::VelmaRealEffectorArmFriIntf > {
+class PortRawData<tFriIntfState, VelmaRealEffectorArmFriIntf > {
 public:
     PortRawData() {
     }
 
-    void convertFromROS(const velma_low_level_interface_msgs::VelmaRealEffectorArmFriIntf &ros) {
+    void convertFromROS(const VelmaRealEffectorArmFriIntf &ros) {
         data_.timestamp = ros.timestamp;
         data_.state = ros.state;
         data_.quality = ros.quality;
@@ -71,7 +73,7 @@ public:
         data_.stat.missCounter = ros.missCounter;
     }
 
-    void convertToROS(velma_low_level_interface_msgs::VelmaRealEffectorArmFriIntf &ros) {
+    void convertToROS(VelmaRealEffectorArmFriIntf &ros) {
         ros.timestamp = data_.timestamp;
         ros.state = data_.state;
         ros.quality = data_.quality;
@@ -89,12 +91,12 @@ public:
 };
 
 template < >
-class PortRawData<tFriRobotState, velma_low_level_interface_msgs::VelmaRealEffectorArmFriRobot > {
+class PortRawData<tFriRobotState, VelmaRealEffectorArmFriRobot > {
 public:
     PortRawData() {
     }
 
-    void convertFromROS(const velma_low_level_interface_msgs::VelmaRealEffectorArmFriRobot &ros) {
+    void convertFromROS(const VelmaRealEffectorArmFriRobot &ros) {
         data_.power = ros.power;
         data_.control = ros.control;
         data_.error = ros.error;
@@ -104,7 +106,7 @@ public:
         }
     }
 
-    void convertToROS(velma_low_level_interface_msgs::VelmaRealEffectorArmFriRobot &ros) {
+    void convertToROS(VelmaRealEffectorArmFriRobot &ros) {
         ros.power = data_.power;
         ros.control = data_.control;
         ros.error = data_.error;

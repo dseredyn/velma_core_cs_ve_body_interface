@@ -42,24 +42,16 @@
 #include <geometry_msgs/Wrench.h>
 #include <geometry_msgs/WrenchStamped.h>
 #include <diagnostic_msgs/DiagnosticArray.h>
-#include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
-#include "velma_low_level_interface_msgs/VelmaLowLevelStatusArm.h"
-#include "velma_low_level_interface_msgs/VelmaLowLevelStatusHand.h"
-#include "velma_low_level_interface_msgs/VelmaLowLevelStatusFT.h"
+#include "velma_core_cs_ve_body_msgs/VelmaLowLevelStatus.h"
 #include "barrett_hand_controller_msgs/BHPressureState.h"
 
 #include "eigen_conversions/eigen_msg.h"
 
 #include "common_interfaces/interface_ports.h"
 
-#include "velma_low_level_interface/velma_lli_port_data.h"
+#include "velma_core_cs_ve_body_interface/velma_lli_port_data.h"
 
-using velma_low_level_interface_msgs::VelmaLowLevelStatus;
-using velma_low_level_interface_msgs::VelmaLowLevelStatusArm;
-using velma_low_level_interface_msgs::VelmaLowLevelStatusHand;
-using velma_low_level_interface_msgs::VelmaLowLevelStatusMotor;
-using velma_low_level_interface_msgs::VelmaLowLevelStatusFT;
-using velma_low_level_interface_msgs::VelmaLowLevelStatusSC;
+using namespace velma_core_cs_ve_body_msgs;
 
 using namespace interface_ports;
 

@@ -25,11 +25,10 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "velma_low_level_interface/velma_lli_real_effector_status.h"
+#include "velma_core_cs_ve_body_interface/velma_lli_real_effector_status.h"
 
 using namespace interface_ports;
-using velma_low_level_interface_msgs::VelmaRealEffectorStatus;
-using velma_low_level_interface_msgs::VelmaLowLevelStatusArm;
+using namespace velma_core_cs_ve_body_msgs;
 
 namespace velma_lli_types {
 

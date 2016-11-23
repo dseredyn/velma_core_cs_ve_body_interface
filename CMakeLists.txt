@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(velma_low_level_interface)
+project(velma_core_cs_ve_body_interface)
 
 ### ROS Dependencies ###
 # Find the RTT-ROS package (this transitively includes the Orocos CMake macros)
 find_package(catkin REQUIRED COMPONENTS
   rtt_ros
   diagnostic_msgs
-  velma_low_level_interface_msgs
+  velma_core_cs_ve_body_msgs
   barrett_hand_controller_msgs
   eigen_conversions
   kdl_conversions cmake_modules
@@ -35,32 +35,27 @@ include_directories(${USE_OROCOS_INCLUDE_DIRS} include)
 ADD_DEFINITIONS(-DEIGEN_RUNTIME_NO_MALLOC)
 ### Orocos Targets ###
 
-orocos_component(velma_low_level_components
-    src/velma_low_level_interface.cpp
+orocos_component(velma_core_cs_ve_body_interface
+    src/velma_core_cs_ve_body_interface.cpp
     src/velma_lli_status_ports.cpp
     src/velma_lli_command_ports.cpp
     src/velma_lli_real_effector_status.cpp
     src/velma_lli_real_effector_commands.cpp
 )
 
-target_link_libraries(velma_low_level_components
+target_link_libraries(velma_core_cs_ve_body_interface
     ${catkin_LIBRARIES}
     ${USE_OROCOS_LIBRARIES}
     ${orocos_kdl_LIBRARIES}
     ${OROCOS-RTT_LIBRARIES})
 
 
-#add_library(velma_low_level_interface src/velma_lli_status_ports.cpp src/velma_lli_command_ports.cpp)
-
-#target_link_libraries(velma_low_level_interface ${catkin_LIBRARIES})
-#add_dependencies(velma_low_level_interface ${PROJECT_NAME}_gencpp)
-
 ### Orocos Package Exports and Install Targets ###
 
 # Export package information (replaces catkin_package() macro) 
 orocos_generate_package(
   INCLUDE_DIRS include
-  LIBRARIES velma_low_level_interface
+  LIBRARIES velma_core_cs_ve_body_interface
   CATKIN_DEPENDS rtt_ros geometry_msgs std_msgs message_runtime rtt_roscomm common_interfaces
 )
 

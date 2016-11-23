@@ -27,12 +27,12 @@
 
 #include <rtt/Component.hpp>
 
-#include "velma_low_level_interface/velma_lli_command_ports.h"
-#include "velma_low_level_interface/velma_lli_status_ports.h"
+#include "velma_core_cs_ve_body_interface/velma_lli_command_ports.h"
+#include "velma_core_cs_ve_body_interface/velma_lli_status_ports.h"
 
-#include "velma_low_level_interface_msgs/VelmaRealEffectorStatus.h"
-#include "velma_low_level_interface_msgs/VelmaLowLevelStatus.h"
-#include "velma_low_level_interface_msgs/VelmaLowLevelCommand.h"
+#include "velma_core_cs_ve_body_msgs/VelmaRealEffectorStatus.h"
+#include "velma_core_cs_ve_body_msgs/VelmaLowLevelStatus.h"
+#include "velma_core_cs_ve_body_msgs/VelmaLowLevelCommand.h"
 
 #include "common_interfaces/interface_tx.h"
 #include "common_interfaces/interface_rx.h"
@@ -40,16 +40,18 @@
 #include "common_interfaces/message_split.h"
 #include "common_interfaces/message_concate.h"
 
-typedef InterfaceTx<velma_low_level_interface_msgs::VelmaLowLevelStatus > VelmaLLILoTx;
+using namespace velma_core_cs_ve_body_msgs;
+
+typedef InterfaceTx<VelmaLowLevelStatus > VelmaLLILoTx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLILoTx)
 
-typedef InterfaceRx<velma_low_level_interface_msgs::VelmaLowLevelStatus > VelmaLLIHiRx;
+typedef InterfaceRx<VelmaLowLevelStatus > VelmaLLIHiRx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
 
-typedef InterfaceTx<velma_low_level_interface_msgs::VelmaLowLevelCommand > VelmaLLIHiTx;
+typedef InterfaceTx<VelmaLowLevelCommand > VelmaLLIHiTx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
 
-typedef InterfaceRx<velma_low_level_interface_msgs::VelmaLowLevelCommand > VelmaLLILoRx;
+typedef InterfaceRx<VelmaLowLevelCommand > VelmaLLILoRx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLILoRx)
 
 typedef MessageSplit<velma_lli_types::VelmaCommand_Ports > VelmaLLICommandSplit;
@@ -65,4 +67,3 @@ typedef MessageConcate<velma_lli_types::VelmaCommand_Ports > VelmaLLICommandConc
 ORO_LIST_COMPONENT_TYPE(VelmaLLICommandConcate)
 
 ORO_CREATE_COMPONENT_LIBRARY()
-

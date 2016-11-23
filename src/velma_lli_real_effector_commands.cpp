@@ -25,11 +25,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "velma_low_level_interface/velma_lli_real_effector_commands.h"
+#include "velma_core_cs_ve_body_interface/velma_lli_real_effector_commands.h"
 
-using velma_low_level_interface_msgs::VelmaRealEffectorCommand;
-using velma_low_level_interface_msgs::VelmaLowLevelCommandArm;
-using velma_low_level_interface_msgs::VelmaLowLevelCommandSimple;
+using namespace velma_core_cs_ve_body_msgs;
 
 namespace velma_lli_types {
 
