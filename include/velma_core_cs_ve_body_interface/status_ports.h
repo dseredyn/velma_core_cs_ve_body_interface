@@ -25,73 +25,65 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef __VELMA_LLI_STATUS_PORTS_H__
-#define __VELMA_LLI_STATUS_PORTS_H__
-
-#include <cstring>
-
-#include <vector>
-#include <string>
+#ifndef __VELMA_CORE_CS_VE_BODY_STATUS_PORTS_H__
+#define __VELMA_CORE_CS_VE_BODY_STATUS_PORTS_H__
 
 #include "rtt/RTT.hpp"
-#include "rtt/os/TimeService.hpp"
-#include "Eigen/Dense"
-#include "Eigen/LU"
 
-#include <std_msgs/Int32.h>
-#include <geometry_msgs/Wrench.h>
-#include <geometry_msgs/WrenchStamped.h>
-#include <diagnostic_msgs/DiagnosticArray.h>
-#include "velma_core_cs_ve_body_msgs/VelmaLowLevelStatus.h"
-#include "barrett_hand_controller_msgs/BHPressureState.h"
-
-#include "eigen_conversions/eigen_msg.h"
+#include "velma_core_cs_ve_body_msgs/Status.h"
+#include "velma_core_ve_body_re_body_msgs/StatusArm.h"
+#include "velma_core_ve_body_re_body_msgs/StatusHand.h"
+#include "velma_core_ve_body_re_body_msgs/StatusMotor.h"
+#include "velma_core_ve_body_re_body_msgs/StatusFT.h"
 
 #include "common_interfaces/interface_ports.h"
 
-#include "velma_core_cs_ve_body_interface/velma_lli_port_data.h"
+#include "velma_core_cs_ve_body_interface/port_data.h"
 
-using namespace velma_core_cs_ve_body_msgs;
+namespace velma_core_cs_ve_body_interface {
 
 using namespace interface_ports;
-
-namespace velma_lli_types {
+using velma_core_cs_ve_body_msgs::Status;
+using velma_core_ve_body_re_body_msgs::StatusArm;
+using velma_core_ve_body_re_body_msgs::StatusHand;
+using velma_core_ve_body_re_body_msgs::StatusMotor;
+using velma_core_ve_body_re_body_msgs::StatusFT;
 
 template <template <typename Type> class T>
-class ArmStatus_Ports : public PortsContainer<VelmaLowLevelStatus, VelmaLowLevelStatusArm > {
+class ArmStatus_Ports : public PortsContainer<Status, StatusArm > {
 public:
-    ArmStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusArm VelmaLowLevelStatus::*ptr);
+    ArmStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, StatusArm Status::*ptr);
 };
 
 template <template <typename Type> class T>
-class HandStatus_Ports : public PortsContainer<VelmaLowLevelStatus, VelmaLowLevelStatusHand > {
+class HandStatus_Ports : public PortsContainer<Status, StatusHand > {
 public:
-    HandStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusHand VelmaLowLevelStatus::*ptr);
+    HandStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, StatusHand Status::*ptr);
 };
 
 template <template <typename Type> class T>
-class MotorStatus_Ports : public PortsContainer<VelmaLowLevelStatus, VelmaLowLevelStatusMotor > {
+class MotorStatus_Ports : public PortsContainer<Status, StatusMotor > {
 public:
-    MotorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusMotor VelmaLowLevelStatus::*ptr);
+    MotorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, StatusMotor Status::*ptr);
 };
 
 template <template <typename Type> class T>
-class FTSensorStatus_Ports : public PortsContainer<VelmaLowLevelStatus, VelmaLowLevelStatusFT > {
+class FTSensorStatus_Ports : public PortsContainer<Status, StatusFT > {
 public:
-    FTSensorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelStatusFT VelmaLowLevelStatus::*ptr);
+    FTSensorStatus_Ports(RTT::TaskContext &tc, const std::string &prefix, StatusFT Status::*ptr);
 };
 
 template <template <typename Type> class T>
-class VelmaStatus_Ports : public PortsContainerOuter<VelmaLowLevelStatus > {
+class VelmaStatus_Ports : public PortsContainerOuter<Status > {
 public:
-    typedef VelmaLowLevelStatus Container;
+    typedef Status Container;
     VelmaStatus_Ports(RTT::TaskContext &tc);
 };
 
 template class VelmaStatus_Ports<RTT::InputPort >;
 template class VelmaStatus_Ports<RTT::OutputPort >;
 
-};  // namespace velma_lli_types
+};  // namespace velma_core_cs_ve_body_interface
 
-#endif  // __VELMA_LLI_STATUS_PORTS_H__
+#endif  // __VELMA_CORE_CS_VE_BODY_STATUS_PORTS_H__
 

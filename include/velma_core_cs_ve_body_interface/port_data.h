@@ -25,26 +25,12 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef __VELMA_LLI_PORT_DATA_H__
-#define __VELMA_LLI_PORT_DATA_H__
-
-#include <cstring>
-
-#include <vector>
-#include <string>
-
-#include "rtt/RTT.hpp"
-#include "rtt/os/TimeService.hpp"
-#include "Eigen/Dense"
-
-#include <std_msgs/Int32.h>
-#include <geometry_msgs/Wrench.h>
-#include <geometry_msgs/WrenchStamped.h>
-#include <diagnostic_msgs/DiagnosticArray.h>
-
-#include "eigen_conversions/eigen_msg.h"
+#ifndef __VELMA_CORE_CS_VE_BODY_PORT_DATA_H__
+#define __VELMA_CORE_CS_VE_BODY_PORT_DATA_H__
 
 #include "common_interfaces/interface_port_data.h"
+
+#include "Eigen/Dense"
 
 namespace interface_ports {
 
@@ -101,5 +87,5 @@ public:
 
 };  // namespace interface_ports
 
-#endif  // __VELMA_LLI_PORT_DATA_H__
+#endif  // __VELMA_CORE_CS_VE_BODY_PORT_DATA_H__
 

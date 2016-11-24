@@ -27,43 +27,42 @@
 
 #include <rtt/Component.hpp>
 
-#include "velma_core_cs_ve_body_interface/velma_lli_command_ports.h"
-#include "velma_core_cs_ve_body_interface/velma_lli_status_ports.h"
-
-#include "velma_core_cs_ve_body_msgs/VelmaRealEffectorStatus.h"
-#include "velma_core_cs_ve_body_msgs/VelmaLowLevelStatus.h"
-#include "velma_core_cs_ve_body_msgs/VelmaLowLevelCommand.h"
-
 #include "common_interfaces/interface_tx.h"
 #include "common_interfaces/interface_rx.h"
 
 #include "common_interfaces/message_split.h"
 #include "common_interfaces/message_concate.h"
 
-using namespace velma_core_cs_ve_body_msgs;
+#include "velma_core_cs_ve_body_interface/command_ports.h"
+#include "velma_core_cs_ve_body_interface/status_ports.h"
 
-typedef InterfaceTx<VelmaLowLevelStatus > VelmaLLILoTx;
+#include "velma_core_cs_ve_body_msgs/Status.h"
+#include "velma_core_cs_ve_body_msgs/Command.h"
+
+using namespace velma_core_cs_ve_body_interface;
+
+typedef InterfaceTx<velma_core_cs_ve_body_msgs::Status > VelmaLLILoTx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLILoTx)
 
-typedef InterfaceRx<VelmaLowLevelStatus > VelmaLLIHiRx;
+typedef InterfaceRx<velma_core_cs_ve_body_msgs::Status > VelmaLLIHiRx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
 
-typedef InterfaceTx<VelmaLowLevelCommand > VelmaLLIHiTx;
+typedef InterfaceTx<velma_core_cs_ve_body_msgs::Command > VelmaLLIHiTx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
 
-typedef InterfaceRx<VelmaLowLevelCommand > VelmaLLILoRx;
+typedef InterfaceRx<velma_core_cs_ve_body_msgs::Command > VelmaLLILoRx;
 ORO_LIST_COMPONENT_TYPE(VelmaLLILoRx)
 
-typedef MessageSplit<velma_lli_types::VelmaCommand_Ports > VelmaLLICommandSplit;
+typedef MessageSplit<VelmaCommand_Ports > VelmaLLICommandSplit;
 ORO_LIST_COMPONENT_TYPE(VelmaLLICommandSplit)
 
-typedef MessageConcate<velma_lli_types::VelmaStatus_Ports > VelmaLLIStatusConcate;
+typedef MessageConcate<VelmaStatus_Ports > VelmaLLIStatusConcate;
 ORO_LIST_COMPONENT_TYPE(VelmaLLIStatusConcate)
 
-typedef MessageSplit<velma_lli_types::VelmaStatus_Ports > VelmaLLIStatusSplit;
+typedef MessageSplit<VelmaStatus_Ports > VelmaLLIStatusSplit;
 ORO_LIST_COMPONENT_TYPE(VelmaLLIStatusSplit)
 
-typedef MessageConcate<velma_lli_types::VelmaCommand_Ports > VelmaLLICommandConcate;
+typedef MessageConcate<VelmaCommand_Ports > VelmaLLICommandConcate;
 ORO_LIST_COMPONENT_TYPE(VelmaLLICommandConcate)
 
 ORO_CREATE_COMPONENT_LIBRARY()

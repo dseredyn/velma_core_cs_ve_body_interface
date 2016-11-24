@@ -6,6 +6,7 @@ project(velma_core_cs_ve_body_interface)
 find_package(catkin REQUIRED COMPONENTS
   rtt_ros
   diagnostic_msgs
+  velma_core_ve_body_re_body_msgs
   velma_core_cs_ve_body_msgs
   barrett_hand_controller_msgs
   eigen_conversions
@@ -37,10 +38,8 @@ ADD_DEFINITIONS(-DEIGEN_RUNTIME_NO_MALLOC)
 
 orocos_component(velma_core_cs_ve_body_interface
     src/velma_core_cs_ve_body_interface.cpp
-    src/velma_lli_status_ports.cpp
-    src/velma_lli_command_ports.cpp
-    src/velma_lli_real_effector_status.cpp
-    src/velma_lli_real_effector_commands.cpp
+    src/status_ports.cpp
+    src/command_ports.cpp
 )
 
 target_link_libraries(velma_core_cs_ve_body_interface

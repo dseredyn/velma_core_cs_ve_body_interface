@@ -25,60 +25,52 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef __VELMA_LLI_COMMAND_PORTS_H__
-#define __VELMA_LLI_COMMAND_PORTS_H__
-
-#include <cstring>
-
-#include <vector>
-#include <string>
+#ifndef __VELMA_CORE_CS_VE_BODY_COMMAND_PORTS_H__
+#define __VELMA_CORE_CS_VE_BODY_COMMAND_PORTS_H__
 
 #include "rtt/RTT.hpp"
-#include "rtt/os/TimeService.hpp"
-#include "Eigen/Dense"
-#include "Eigen/LU"
 
-#include <std_msgs/Int32.h>
-#include <geometry_msgs/Wrench.h>
-#include <geometry_msgs/WrenchStamped.h>
-#include <diagnostic_msgs/DiagnosticArray.h>
-#include "velma_core_cs_ve_body_msgs/VelmaLowLevelCommand.h"
-#include <barrett_hand_controller_msgs/BHPressureState.h>
-
-#include "eigen_conversions/eigen_msg.h"
+#include "velma_core_cs_ve_body_msgs/Command.h"
+#include "velma_core_ve_body_re_body_msgs/CommandArm.h"
+#include "velma_core_ve_body_re_body_msgs/CommandHand.h"
+#include "velma_core_ve_body_re_body_msgs/CommandMotor.h"
+#include "velma_core_ve_body_re_body_msgs/CommandSimple.h"
 
 #include "common_interfaces/interface_ports.h"
 
-#include "velma_core_cs_ve_body_interface/velma_lli_port_data.h"
+#include "velma_core_cs_ve_body_interface/port_data.h"
 
+namespace velma_core_cs_ve_body_interface {
 
-using namespace velma_core_cs_ve_body_msgs;
 using namespace interface_ports;
-
-namespace velma_lli_types {
+using velma_core_cs_ve_body_msgs::Command;
+using velma_core_ve_body_re_body_msgs::CommandArm;
+using velma_core_ve_body_re_body_msgs::CommandHand;
+using velma_core_ve_body_re_body_msgs::CommandSimple;
+using velma_core_ve_body_re_body_msgs::CommandMotor;
 
 template <template <typename Type> class T>
-class ArmCommand_Ports : public PortsContainer<VelmaLowLevelCommand, VelmaLowLevelCommandArm > {
+class ArmCommand_Ports : public PortsContainer<Command, CommandArm > {
 public:
-    ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandArm VelmaLowLevelCommand::*ptr);
+    ArmCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, CommandArm Command::*ptr);
 };
 
 template <template <typename Type> class T>
-class HandCommand_Ports : public PortsContainer<VelmaLowLevelCommand, VelmaLowLevelCommandHand > {
+class HandCommand_Ports : public PortsContainer<Command, CommandHand > {
 public:
-    HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandHand VelmaLowLevelCommand::*ptr);
+    HandCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, CommandHand Command::*ptr);
 };
 
 template <template <typename Type> class T>
-class SimpleCommand_Ports : public PortsContainer<VelmaLowLevelCommand, VelmaLowLevelCommandSimple > {
+class SimpleCommand_Ports : public PortsContainer<Command, CommandSimple > {
 public:
-    SimpleCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandSimple VelmaLowLevelCommand::*ptr);
+    SimpleCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, CommandSimple Command::*ptr);
 };
 
 template <template <typename Type> class T>
-class MotorCommand_Ports : public PortsContainer<VelmaLowLevelCommand, VelmaLowLevelCommandMotor > {
+class MotorCommand_Ports : public PortsContainer<Command, CommandMotor > {
 public:
-    MotorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, VelmaLowLevelCommandMotor VelmaLowLevelCommand::*ptr);
+    MotorCommand_Ports(RTT::TaskContext &tc, const std::string &prefix, CommandMotor Command::*ptr);
 };
 
 
@@ -89,16 +81,17 @@ public:
 };
 
 template <template <typename Type> class T>
-class VelmaCommand_Ports : public PortsContainerOuter<VelmaLowLevelCommand > {
+class VelmaCommand_Ports : public PortsContainerOuter<Command > {
 public:
-    typedef VelmaLowLevelCommand Container;
+    typedef Command Container;
     VelmaCommand_Ports(RTT::TaskContext &tc);
 };
 
 template class VelmaCommand_Ports<RTT::InputPort >;
 template class VelmaCommand_Ports<RTT::OutputPort >;
 
-};  // namespace velma_lli_types
+};  // namespace velma_core_cs_ve_body_interface
 
-#endif  // __VELMA_LLI_COMMAND_PORTS_H__
+
+#endif  // __VELMA_CORE_CS_VE_BODY_COMMAND_PORTS_H__
 
