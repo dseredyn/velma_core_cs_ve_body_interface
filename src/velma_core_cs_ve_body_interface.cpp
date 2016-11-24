@@ -41,28 +41,28 @@
 
 using namespace velma_core_cs_ve_body_interface;
 
-typedef InterfaceTx<velma_core_cs_ve_body_msgs::Status > VelmaLLILoTx;
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoTx)
+typedef InterfaceTx<velma_core_cs_ve_body_msgs::Status > VelmaCoreCsVeBodyStatusTx;
+ORO_LIST_COMPONENT_TYPE(VelmaCoreCsVeBodyStatusTx)
 
-typedef InterfaceRx<velma_core_cs_ve_body_msgs::Status > VelmaLLIHiRx;
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiRx)
+typedef InterfaceRx<velma_core_cs_ve_body_msgs::Status > VelmaCoreCsVeBodyStatusRx;
+ORO_LIST_COMPONENT_TYPE(VelmaCoreCsVeBodyStatusRx)
 
-typedef InterfaceTx<velma_core_cs_ve_body_msgs::Command > VelmaLLIHiTx;
-ORO_LIST_COMPONENT_TYPE(VelmaLLIHiTx)
+typedef InterfaceTx<velma_core_cs_ve_body_msgs::Command > VelmaCoreCsVeBodyCommandTx;
+ORO_LIST_COMPONENT_TYPE(VelmaCoreCsVeBodyCommandTx)
 
-typedef InterfaceRx<velma_core_cs_ve_body_msgs::Command > VelmaLLILoRx;
-ORO_LIST_COMPONENT_TYPE(VelmaLLILoRx)
+typedef InterfaceRx<velma_core_cs_ve_body_msgs::Command > VelmaCoreCsVeBodyCommandRx;
+ORO_LIST_COMPONENT_TYPE(VelmaCoreCsVeBodyCommandRx)
 
-typedef MessageSplit<VelmaCommand_Ports > VelmaLLICommandSplit;
-ORO_LIST_COMPONENT_TYPE(VelmaLLICommandSplit)
+typedef MessageSplit<VelmaCommand_Ports > VelmaCoreCsVeBodyCommandSplit;
+ORO_LIST_COMPONENT_TYPE(VelmaCoreCsVeBodyCommandSplit)
 
-typedef MessageConcate<VelmaStatus_Ports > VelmaLLIStatusConcate;
-ORO_LIST_COMPONENT_TYPE(VelmaLLIStatusConcate)
+typedef MessageConcate<VelmaStatus_Ports > VelmaCoreCsVeBodyStatusConcate;
+ORO_LIST_COMPONENT_TYPE(VelmaCoreCsVeBodyStatusConcate)
 
-typedef MessageSplit<VelmaStatus_Ports > VelmaLLIStatusSplit;
-ORO_LIST_COMPONENT_TYPE(VelmaLLIStatusSplit)
+typedef MessageSplit<VelmaStatus_Ports > VelmaCoreCsVeBodyStatusSplit;
+ORO_LIST_COMPONENT_TYPE(VelmaCoreCsVeBodyStatusSplit)
 
-typedef MessageConcate<VelmaCommand_Ports > VelmaLLICommandConcate;
-ORO_LIST_COMPONENT_TYPE(VelmaLLICommandConcate)
+typedef MessageConcate<VelmaCommand_Ports > VelmaCoreCsVeBodyCommandConcate;
+ORO_LIST_COMPONENT_TYPE(VelmaCoreCsVeBodyCommandConcate)
 
 ORO_CREATE_COMPONENT_LIBRARY()
